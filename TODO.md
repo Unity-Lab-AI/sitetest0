@@ -1,0 +1,182 @@
+# TODO List
+
+## Examples (python)
+    - [] Model Retreval
+        - [] Get Text Models
+            - [] Split Models By Category
+                - [] Name (string)
+                - [] Description (string)
+                - [] Max Input (int)
+                - [] Reasoning (bool)
+                - [] Tier (string)
+                - [] Community (bool)
+                - [] Input Types (array)
+                - [] Output Types (array)
+                - [] Tooling (bool)
+                - [] Aliases (array)
+                - [] Vision (bool)
+                - [] Audio (bool)
+                - [] Voices (array)
+                - [] System Messages (true)
+                - [] Unsensored (bool)
+        - [] Get Image Models
+    - [] Text To Image Generation
+        - [] Generate Images With All Models
+        - [] Generate Images With Safty Filters
+    - [] Text To Text Generation
+        - [] Single-Turn
+        - [] Multi-Turn Conversational
+        - [] Generate Text With Safty Filters
+    - [] Text To Speech Generation
+        - [] Generate Speech With All Voices
+        - [] Generate Speech With Safty Filters
+    - [] Speech To Text Generation
+        - [] Generate Text From Voice
+        - [] Generate Text From Voice With Safty Filters
+    - [] Image To Text Generation
+        - [] Generate Summary From Image
+        - [] Generate Object Text From Image
+        - [] Generate Text From Image With Safty Filters
+    - [] Image To Image Generation
+        - [] Generate Image From Image
+        - [] Generate Image From Image And Text
+        - [] Edit Image
+        - [] Add Text To Image
+        - [] Generate Meme From Image
+    - [] Safty Filtering
+        - [] Test Safty Filter Thuroughly
+        - [] Test Safty Filter on Input
+        - [] Test Safty Filter on Output
+        - [] Add In Extra Safty Filter Layer
+    - [] Reasoning Controls
+        - [] Test Reasoning Capabilities With Supporting Models (minimal, low, medium, high. none?)
+    - [] Seed Based Generation
+        - [] Test Same Seed Generation
+        - [] Test Different Seed Generation
+        - [] Test Micro Change In Seeds
+        - [] Test Moderate Change In Seeds
+        - [] Test Default Random Seed Generation
+    - [] Function Calling
+        - [] Get Function Calling Working With Tests
+            - [] Add Two Numbers
+            - [] Subtract Two Numbers
+            - [] Get A Random Number
+            - [] Full Equasion Evaluation
+        - [] Add Function Calling For Value Extraction In Data Or Site
+        - [] Add Function Calling For Value Manipulation
+        - [] Add Function Calling For Application Interaction
+    - [] Streaming Mode
+    - [] Exponential Backoff For Retries
+
+### Additional Testing / Features
+    - [] Seperate Image Data From Text Data
+
+## Landing Page
+    - [] Header With Navigation To Pages
+        - [] Home
+            - [] Introductions
+            - [] What Is "Unity AI Lab"
+            - [] Stat Overview (Count + Summaries)
+                - [] AI Intigrations
+                - [] Projects Developed
+                - [] Activity (2020 - Current)
+                - [] Deployments
+        - [] AI
+            - [] Demo Page
+            - [] Full AI Page
+        - [] Projects
+            - [] Project Showcase
+            - [] Project Projections
+            - [] Back Burner Projects
+            - [] Github Link
+        - [] About
+            - [] Who We Are
+            - [] What We Do
+            - [] Mission Statment
+            - [] How We Got Here
+            - [] Timeline
+        - [] Services
+            - [] Prompt Engineering
+            - [] Model Jailbreaking / Model Unrestriction
+            - [] Red Teaming (Attacking Generative AI Or Using AI In Attacks (WHITE HAT))
+            - [] Blue Teaming (Securing Generative AI Or Using AI in Securing Systems)
+            - [] Specialized Agents (Full Or Prompt)
+            - [] AI Intigration
+            - [] AI Training
+            - [] Chatbot Development
+        - [] Contact
+            - [] Contact Email
+            - [] Discord
+        - [] Legal
+            - [] Terms Of Service
+            - [] Privacy Policy
+            - [] Liscense
+
+## /demo page (demo AI chat app)
+    - [] Text Box
+    - [] Send Button
+    - [] Enter Key Works As Send
+    - [] Shift Enter Works As New Line
+    - [] Displays User Messages On The Right
+    - [] Displays AI Messages On the Left
+    - [] Messages are in a chat bubble style
+    - [] Voice Recognition (Speech To Text)
+        - [] Button For Speech To Text
+    - [] Direct Talking To The AI (Voice To Voice)
+        - [] Button For Voice To Voice
+    - [] Images Displayed Seperate From Text Message
+    - [] Save Previous Chat History
+    - [] Max History Sent (Last 5 User And Last 5 AI Messages)
+    - [] Auto Context (history) Compression
+    - [] Image Buttons
+        - [] Save Image (download)
+        - [] Copy Image (clipboard)
+        - [] Re-Generate Image (Different Seed)
+        - [] Open Image (New Tab As Image Data)
+    - [] Stop Talking Button
+    - [] Reset Button
+        - [] Clears Cache
+        - [] Clears Message History
+        - [] 
+
+## Establish responsiveness
+    - [] Both Pages Are Responcisve To Phone, Laptop, Tablet, and Desktop
+        - [] Hambuger Menu On Small Screens
+        - [] Responsivly Sized Font Size
+        - [] Responsivly Sized Buttons
+        - [] Responsivly Sized Elements (Heros, Models, Divs, ect.)
+
+## Cross-Browser support
+    - [] Baseline Works In Chrome + WebKit
+    - [] Voice Recognition Works In Major Browsers
+        - [] Browsers With Native Speech Recognition, Should Use Native Speech Recogniton
+        - [] Browsers Without Native Speech Recognition, Should Use A Fallback Solution For Speech Recognition (Vosklet or Using Pollinations)
+        - [] Direct Voice to Voice Should Not Require Speech Recognition (Pollinations Has Models With Speech To Text)
+    - [] Major Browser Support For Non-Standard Elements
+
+## Cross-Platform support (mobile)
+    - [] Styled Like Device Type
+    - [] Generic Style For Unknown Device Types
+
+## Main AI chat app
+    - [] All Of The Demo Chat Functionality
+    - [] Session Saving (automatic)
+    - [] Session Loading
+    - [] Left Panel For Previous And Ongoing Chat Sessions
+    - [] Safe and Non-Safe (SFW and NSFW) Versions + Cookies
+        - [] Are You Over The Age Of 18 Question (Yes / No)
+        - [] What Is Your Date Of Birth Question (Must Be 18 Years Or Older)
+        - [] Are You Sure You Are Over The Age Of 18 Question (Yes / No)
+        - [] Red Model Saying "Warning! You are now entering an adult only area! If you are under the age of 18, leave now!" (Spoken and text) with "I Understand" or "Leave Now" Buttons
+        - [] Safe Version Appends safe=true + Extra Protections
+        - [] Not Safe Version Appends safe=false + Protections Disabled
+    - [] Add Cookie To Block NSFW Access If Determined Under 18 (Redirect to SFW Version)
+    - [] New Chat Button
+    - [] Agents
+        - [] Create New Agents With Custom Prompts
+        - [] Add Custom Tooling (Javascript) (Backburner)
+    - [] Search Functionality
+    - [] File Upload
+        - [] Max Upload Size 2MB
+        - [] Files Must Be UTF-8 Processable
+        - [] .txt, .md, .py, .go, and other file types should be accepted (all langauges in a non-compiled non-binary form)
