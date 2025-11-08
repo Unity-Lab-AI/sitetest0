@@ -133,11 +133,18 @@
         - [] Copy Image (clipboard)
         - [] Re-Generate Image (Different Seed)
         - [] Open Image (New Tab As Image Data)
+    - [] Text Buttons
+        - [] Copy Text
+        - [] Edit Text (User Or AI)
+            - [] Editing AI Messages Updates History + Cache
+        - [] Regenerate (AI Messages Only)
     - [] Stop Talking Button
-    - [] Reset Button
+    - [] Reset Button (Demo App Only, for Debugging)
         - [] Clears Cache
         - [] Clears Message History
-        - [] 
+        - [] Clears Cookies
+    - [] Markdown Rendering inside AI Message
+    - [] Full programing / coding language markdown support (most common 30+ languages)
 
 ## Establish responsiveness
     - [] Both Pages Are Responcisve To Phone, Laptop, Tablet, and Desktop
@@ -180,3 +187,42 @@
         - [] Max Upload Size 2MB
         - [] Files Must Be UTF-8 Processable
         - [] .txt, .md, .py, .go, and other file types should be accepted (all langauges in a non-compiled non-binary form)
+    - [] Session folders
+        - [] Ability to move chat sessions on the left pannel into a "folder"
+        - [] Ability to name the folders
+        - [] Ability to create new folders
+        - [] Ability to set a color for the folder
+        - [] Ability to set one of 50 common emojis (SVG)
+        - [] Folder Icon Colors The Same As the folder text
+        - [] Preset non-conflicting color swatches (3 shades of most colors)
+    - [] Dark, Light, And Other Themes
+    - [] Settings Model
+        - [] Change Theme
+        - [] Delete All Chats
+            - [] Double Confirmation Model
+        - [] Clear All Cookies (Factory Resets Site)
+            - [] Double Confirmation Model
+        - [] Default Model
+        - [] Voice Selection
+        - [] Automatic Playback (on / off)
+        - [] Voice Volume (Slider, default 50)
+        - [] Max History (default 10)
+            - [] Max History Limits the "Last Messages" to send, rounding to the nearest 2 (3 becomes 4), splitting between user and AI messages
+        - [] Max Memory
+            - [] Limits the maximum entries in memory
+        - [] Memory (on / off)
+            - [] Disables all functionaltiy of memory, keeping memories in-tact
+        - [] Delete Memories
+            - [] Double Confirmation Model
+    - [] All cookies Stored Locally In Small Representable Data
+    - [] Boolean Settings As On / Off Sliders
+    - [] Full programing / coding language markdown support (most common 100+ languages)
+    - [] Functionality For Memory
+        - [] Save Memory
+        - [] Retreive Memory
+        - [] Memories As First Message Or System
+            - [] Memories Are appended as the first user message
+            - [] First AI Message is "I Understand These are Previous Memories"
+            - [] If the Model Supports System Prompt, Append To System Prompt
+        - [] Delete Memory
+        - [] Tooling For Memory
