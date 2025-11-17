@@ -11,6 +11,10 @@ on:
       - 'styles.css'
       - '.github/workflows/update-cache-busting.yml'
 
+# Grant write permissions for the workflow to push commits
+permissions:
+  contents: write
+
 jobs:
   update-versions:
     runs-on: ubuntu-latest
@@ -20,6 +24,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Update asset versions
         run: |
@@ -33,7 +39,7 @@ jobs:
 
           echo "✓ Updated asset versions"
 
-      - name: Commit changes if needed
+      - name: Commit and push changes if needed
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -43,5 +49,27 @@ jobs:
           else
             git add index.html
             git commit -m "chore: update asset cache-busting versions [skip ci]"
-            git push
+
+            # Push with retry logic for network resilience
+            max_retries=4
+            retry_count=0
+            retry_delay=2
+
+            while [ $retry_count -lt $max_retries ]; do
+              echo "Attempting to push (attempt $((retry_count + 1))/$max_retries)..."
+              if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
+                echo "✓ Successfully pushed changes"
+                exit 0
+              else
+                retry_count=$((retry_count + 1))
+                if [ $retry_count -lt $max_retries ]; then
+                  echo "Push failed, retrying in ${retry_delay}s..."
+                  sleep $retry_delay
+                  retry_delay=$((retry_delay * 2))
+                fi
+              fi
+            done
+
+            echo "Failed to push after $max_retries attempts"
+            exit 1
           fi
