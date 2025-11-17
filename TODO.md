@@ -146,14 +146,65 @@
 ---
 
 ## Additional Testing / Features
-- [ ] P2 Separate image data from text caches
-- [ ] Exclude binary blobs from text logs
-- [ ] Replace binaries with references
-- [ ] Add sample corpus for regression
-- [ ] Add fuzzing for prompt parsers
-- [ ] Add chaos tests for network timeouts
-- [ ] Simulate cold starts in CI
-- [ ] Validate memory footprint at scale
+
+**Status Summary:**
+- ✅ Complete in Both: Binary Data Handling, Sample Corpus, Fuzzing, Chaos Testing, Cold Start Simulation, Memory Validation
+- 🔴 Not Implemented: None
+
+- [x] P2 **Separate image data from text caches** ✓ Complete in Python & JavaScript
+  - [x] Implemented in `test_utils.py` (Python) and `test-utils.js` (JavaScript)
+  - [x] BinaryDataHandler class separates binary data from text
+  - [x] Maintains separate binary store with references
+  - [x] Supports recursive object traversal
+
+- [x] P2 **Exclude binary blobs from text logs** ✓ Complete in Python & JavaScript
+  - [x] Binary data sanitization for logging
+  - [x] Replaces binary with metadata and preview
+  - [x] Configurable preview length
+  - [x] Safe for all logging contexts
+
+- [x] P2 **Replace binaries with references** ✓ Complete in Python & JavaScript
+  - [x] SHA-256 based reference generation
+  - [x] Unique reference IDs for each binary blob
+  - [x] Metadata extraction (size, hash, type)
+  - [x] Reference tracking and retrieval
+
+- [x] P2 **Add sample corpus for regression** ✓ Complete in Python & JavaScript
+  - [x] SampleCorpus class for managing test data
+  - [x] Default sample set included
+  - [x] JSON file persistence
+  - [x] Sample filtering by type and ID
+  - [x] Covers text, image, safety, and edge cases
+
+- [x] P2 **Add fuzzing for prompt parsers** ✓ Complete in Python & JavaScript
+  - [x] PromptFuzzer class with multiple strategies
+  - [x] Special character fuzzing
+  - [x] Unicode and RTL text fuzzing
+  - [x] Length variation testing
+  - [x] Injection attack simulation (SQL, XSS, etc.)
+  - [x] Format string testing
+
+- [x] P2 **Add chaos tests for network timeouts** ✓ Complete in Python & JavaScript
+  - [x] ChaosTestRunner class
+  - [x] Configurable failure and timeout rates
+  - [x] Network delay simulation
+  - [x] Intermittent failure injection
+  - [x] Test result aggregation and reporting
+
+- [x] P2 **Simulate cold starts in CI** ✓ Complete in Python & JavaScript
+  - [x] ColdStartSimulator class
+  - [x] Cache clearing utilities
+  - [x] Cold vs warm start timing
+  - [x] Performance overhead calculation
+  - [x] Compatible with CI environments
+
+- [x] P2 **Validate memory footprint at scale** ✓ Complete in Python & JavaScript
+  - [x] MemoryProfiler class
+  - [x] Snapshot-based memory tracking
+  - [x] Memory diff comparison
+  - [x] Baseline and limit validation
+  - [x] Detailed memory reports
+  - [x] Memory leak detection support
 
 ---
 
