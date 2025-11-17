@@ -27,10 +27,12 @@ The system uses **git commit hashes** as version identifiers for assets. Each ti
    - Updates `index.html` with new version numbers
    - Ensures versions are always in sync
 
-5. **GitHub Actions Workflow** (`.github/workflows/update-cache-busting.yml`)
+5. **GitHub Actions Workflow** (`.github/workflows/deploy.yml`)
    - Runs on push to main/master branch
-   - Automatically updates versions when assets change
-   - Commits the updated `index.html` back to the repository
+   - Automatically updates versions for all assets (styles.css, script.js, template-loader.js, about.js)
+   - Updates both `index.html` and `about/index.html`
+   - Validates the build
+   - Reports build status and deploys to GitHub Pages in parallel
 
 ## Usage
 

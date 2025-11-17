@@ -2,6 +2,21 @@
  * Template Loader - Loads reusable HTML templates (header, footer, etc.)
  */
 
+// Track template loading status
+let templatesLoaded = {
+    header: false,
+    footer: false
+};
+
+// Check if all templates are loaded and dispatch event
+function checkTemplatesLoaded() {
+    if (templatesLoaded.header && templatesLoaded.footer) {
+        // Dispatch custom event to notify that templates are ready
+        const event = new CustomEvent('templatesLoaded');
+        document.dispatchEvent(event);
+    }
+}
+
 // Load templates on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadTemplate('header', 'header-placeholder');
@@ -35,13 +50,22 @@ function loadTemplate(templateName, placeholderId) {
         .then(html => {
             placeholder.innerHTML = html;
 
+            // Mark this template as loaded
+            templatesLoaded[templateName] = true;
+
             // If this is the header, set active nav link
             if (templateName === 'header') {
                 setActiveNavLink();
             }
+
+            // Check if all templates are loaded
+            checkTemplatesLoaded();
         })
         .catch(error => {
             console.error(`Error loading ${templateName}:`, error);
+            // Mark as loaded even on error to prevent hanging
+            templatesLoaded[templateName] = true;
+            checkTemplatesLoaded();
         });
 }
 
