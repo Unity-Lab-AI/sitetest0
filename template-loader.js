@@ -56,11 +56,11 @@ function setActiveNavLink() {
         const href = link.getAttribute('href');
 
         // Check if we're on the about page
-        if (currentPath.includes('/about') && href === '/about') {
+        if (currentPath.includes('/about') && href === './about') {
             link.classList.add('active');
         }
         // Check if we're on home and this is a home link
-        else if ((currentPath === '/' || currentPath === '/index.html') && href === '/#home') {
+        else if ((currentPath.endsWith('/') || currentPath.endsWith('/index.html') || currentPath.includes('sitetest0')) && href === './#home') {
             link.classList.add('active');
         }
         // Remove active from other links
