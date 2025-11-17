@@ -492,14 +492,19 @@ function initSmokeEffect() {
 
         elements.forEach(function(el) {
             var rect = el.getBoundingClientRect();
-            if (rect.width > 0 && rect.height > 0) {
+            // Only cache visible elements within viewport + buffer
+            var buffer = 200;
+            if (rect.width > 0 && rect.height > 0 &&
+                rect.bottom > -buffer && rect.top < window.innerHeight + buffer &&
+                rect.right > -buffer && rect.left < window.innerWidth + buffer) {
                 textElements.push({
                     x: rect.left,
                     y: rect.top,
                     width: rect.width,
                     height: rect.height,
                     centerX: rect.left + rect.width / 2,
-                    centerY: rect.top + rect.height / 2
+                    centerY: rect.top + rect.height / 2,
+                    influenceRange: Math.max(rect.width, rect.height) / 2 + 50
                 });
             }
         });
@@ -508,8 +513,18 @@ function initSmokeEffect() {
     // Initial cache
     cacheTextElements();
 
+    // Re-cache on scroll (throttled) and periodically for dynamic content
+    var lastScrollCache = 0;
+    window.addEventListener('scroll', function() {
+        var now = Date.now();
+        if (now - lastScrollCache > 500) {
+            cacheTextElements();
+            lastScrollCache = now;
+        }
+    }, { passive: true });
+
     // Re-cache periodically to account for dynamic content
-    setInterval(cacheTextElements, 2000);
+    setInterval(cacheTextElements, 3000);
 
     // Initialize particle pool
     for (var i = 0; i < PARTICLE_POOL_SIZE; i++) {
@@ -607,17 +622,25 @@ function initSmokeEffect() {
                 particle.velocityY += (dy / distance) * force * mouseVelocityY * 0.01;
             }
 
-            // Text collision and curling behavior
+            // Text collision and curling behavior (optimized)
             for (var i = 0; i < textElements.length; i++) {
                 var text = textElements[i];
+
+                // Quick bounds check before expensive calculations
+                var maxDist = text.influenceRange + particle.size;
+                if (Math.abs(particle.x - text.centerX) > maxDist ||
+                    Math.abs(particle.y - text.centerY) > maxDist) {
+                    continue;
+                }
+
                 var textDx = particle.x - text.centerX;
                 var textDy = particle.y - text.centerY;
-                var textDist = Math.sqrt(textDx * textDx + textDy * textDy);
+                var textDistSq = textDx * textDx + textDy * textDy;
+                var influenceRangeSq = text.influenceRange * text.influenceRange;
 
-                // Influence range around text
-                var influenceRange = Math.max(text.width, text.height) / 2 + 50;
+                if (textDistSq < influenceRangeSq) {
+                    var textDist = Math.sqrt(textDistSq);
 
-                if (textDist < influenceRange) {
                     // Check if inside text bounds
                     if (particle.x >= text.x && particle.x <= text.x + text.width &&
                         particle.y >= text.y && particle.y <= text.y + text.height) {
@@ -628,7 +651,7 @@ function initSmokeEffect() {
                     } else {
                         // Create curling effect around text
                         var angle = Math.atan2(textDy, textDx);
-                        var curlStrength = (influenceRange - textDist) / influenceRange * 0.15;
+                        var curlStrength = (text.influenceRange - textDist) / text.influenceRange * 0.15;
 
                         // Perpendicular curl
                         particle.velocityX += Math.cos(angle + Math.PI / 2) * curlStrength;
@@ -653,6 +676,38 @@ function initSmokeEffect() {
         particle.y += particle.velocityY;
         particle.x += particle.velocityX;
 
+        // Boundary collision detection with bounce and energy loss
+        var damping = 0.6; // Energy loss on bounce
+        var margin = particle.size;
+
+        // Left boundary
+        if (particle.x - margin < 0) {
+            particle.x = margin;
+            particle.velocityX = Math.abs(particle.velocityX) * damping;
+            particle.life -= 0.05; // Slight life reduction on bounce
+        }
+
+        // Right boundary
+        if (particle.x + margin > smokeCanvas.width) {
+            particle.x = smokeCanvas.width - margin;
+            particle.velocityX = -Math.abs(particle.velocityX) * damping;
+            particle.life -= 0.05;
+        }
+
+        // Top boundary
+        if (particle.y - margin < 0) {
+            particle.y = margin;
+            particle.velocityY = Math.abs(particle.velocityY) * damping;
+            particle.life -= 0.05;
+        }
+
+        // Bottom boundary
+        if (particle.y + margin > smokeCanvas.height) {
+            particle.y = smokeCanvas.height - margin;
+            particle.velocityY = -Math.abs(particle.velocityY) * damping;
+            particle.life -= 0.05;
+        }
+
         // Grow and fade
         if (particle.size < particle.maxSize) {
             particle.size += particle.growRate;
@@ -661,12 +716,6 @@ function initSmokeEffect() {
         particle.life -= particle.decayRate;
         particle.alpha = particle.life * 0.7;
         particle.rotation += particle.rotationSpeed;
-
-        // Cull offscreen particles
-        if (particle.x < -100 || particle.x > smokeCanvas.width + 100 ||
-            particle.y < -100 || particle.y > smokeCanvas.height + 100) {
-            return false;
-        }
 
         return particle.life > 0;
     }
@@ -798,14 +847,39 @@ function initSmokeEffect() {
 
         this.alpha *= 0.98;
 
-        // Check collision with screen edges
-        if (this.x - this.size < 0 || this.x + this.size > smokeCanvas.width ||
-            this.y - this.size < 0 || this.y + this.size > smokeCanvas.height) {
-            this.explode();
-            return false;
+        var bounceDamping = 0.7; // Energy retention on bounce
+        var hasCollision = false;
+
+        // Check collision with screen edges - bounce instead of explode
+        // Left boundary
+        if (this.x - this.size < 0) {
+            this.x = this.size;
+            this.velocityX = Math.abs(this.velocityX) * bounceDamping;
+            hasCollision = true;
         }
 
-        // Check collision with text elements
+        // Right boundary
+        if (this.x + this.size > smokeCanvas.width) {
+            this.x = smokeCanvas.width - this.size;
+            this.velocityX = -Math.abs(this.velocityX) * bounceDamping;
+            hasCollision = true;
+        }
+
+        // Top boundary
+        if (this.y - this.size < 0) {
+            this.y = this.size;
+            this.velocityY = Math.abs(this.velocityY) * bounceDamping;
+            hasCollision = true;
+        }
+
+        // Bottom boundary
+        if (this.y + this.size > smokeCanvas.height) {
+            this.y = smokeCanvas.height - this.size;
+            this.velocityY = -Math.abs(this.velocityY) * bounceDamping;
+            hasCollision = true;
+        }
+
+        // Check collision with text elements - explode on hit
         for (var i = 0; i < textElements.length; i++) {
             var text = textElements[i];
 
@@ -815,6 +889,26 @@ function initSmokeEffect() {
                 this.explode();
                 return false;
             }
+        }
+
+        // Spawn trailing smoke particles
+        if (Math.random() < 0.4 && particles.length < MAX_PARTICLES) {
+            var p = getParticle(
+                this.x + (Math.random() - 0.5) * this.size * 0.5,
+                this.y + (Math.random() - 0.5) * this.size * 0.5,
+                this.velocityX * 0.3 + (Math.random() - 0.5) * 0.5,
+                this.velocityY * 0.3 + (Math.random() - 0.5) * 0.5,
+                Math.random() * 10 + 5,
+                'wisp'
+            );
+            particles.push(p);
+        }
+
+        // Check if energy too low after bouncing - explode
+        var speed = Math.sqrt(this.velocityX * this.velocityX + this.velocityY * this.velocityY);
+        if (speed < 0.5 && hasCollision) {
+            this.explode();
+            return false;
         }
 
         // Check if faded
