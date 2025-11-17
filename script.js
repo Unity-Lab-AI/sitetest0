@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initParallax();
     initFormValidation();
     initHoverEffects();
-    initCursorEffect();
+    initSmokeEffect();
     initMobileMenu();
 });
 
@@ -437,52 +437,288 @@ function initHoverEffects() {
 }
 
 // ===================================
-// Custom Cursor Effect (Desktop only, cross-browser)
+// Smoke Effect System (Desktop & Mobile)
 // ===================================
-function initCursorEffect() {
-    // Only show custom cursor on desktop (non-touch) devices
-    if (window.innerWidth > 768 && !isTouchDevice()) {
-        var cursor = document.createElement('div');
-        cursor.className = 'custom-cursor';
-        cursor.style.cssText = 'width:20px;height:20px;border:2px solid #dc143c;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:all 0.1s ease;display:block;';
-        document.body.appendChild(cursor);
+function initSmokeEffect() {
+    // Create canvas for smoke
+    var smokeCanvas = document.createElement('canvas');
+    smokeCanvas.id = 'smoke-canvas';
+    smokeCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(smokeCanvas);
 
-        var cursorDot = document.createElement('div');
-        cursorDot.className = 'custom-cursor-dot';
-        cursorDot.style.cssText = 'width:4px;height:4px;background:#dc143c;border-radius:50%;position:fixed;pointer-events:none;z-index:10000;display:block;';
-        document.body.appendChild(cursorDot);
+    var ctx = smokeCanvas.getContext('2d');
+    var particles = [];
+    var mouseX = 0;
+    var mouseY = 0;
+    var lastMouseX = 0;
+    var lastMouseY = 0;
+    var mouseVelocityX = 0;
+    var mouseVelocityY = 0;
+    var lastMoveTime = Date.now();
+    var isMoving = false;
 
-        document.addEventListener('mousemove', function(e) {
-            cursor.style.left = (e.clientX - 10) + 'px';
-            cursor.style.top = (e.clientY - 10) + 'px';
-
-            cursorDot.style.left = (e.clientX - 2) + 'px';
-            cursorDot.style.top = (e.clientY - 2) + 'px';
-        });
-
-        // Expand cursor on hover over clickable elements
-        var clickables = document.querySelectorAll('a, button, .feature-card, .gallery-item, .service-card');
-
-        clickables.forEach(function(el) {
-            el.addEventListener('mouseenter', function() {
-                cursor.style.webkitTransform = 'scale(2)';
-                cursor.style.mozTransform = 'scale(2)';
-                cursor.style.msTransform = 'scale(2)';
-                cursor.style.oTransform = 'scale(2)';
-                cursor.style.transform = 'scale(2)';
-                cursor.style.borderColor = '#ff0033';
-            });
-
-            el.addEventListener('mouseleave', function() {
-                cursor.style.webkitTransform = 'scale(1)';
-                cursor.style.mozTransform = 'scale(1)';
-                cursor.style.msTransform = 'scale(1)';
-                cursor.style.oTransform = 'scale(1)';
-                cursor.style.transform = 'scale(1)';
-                cursor.style.borderColor = '#dc143c';
-            });
-        });
+    // Set canvas size
+    function resizeCanvas() {
+        smokeCanvas.width = window.innerWidth;
+        smokeCanvas.height = window.innerHeight;
     }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Smoke particle class
+    function SmokeParticle(x, y, velocityX, velocityY, size, type) {
+        this.x = x;
+        this.y = y;
+        this.velocityX = velocityX || (Math.random() - 0.5) * 0.5;
+        this.velocityY = velocityY || -Math.random() * 1.5 - 0.5; // Always rises
+        this.size = size || Math.random() * 20 + 10;
+        this.maxSize = this.size * 3;
+        this.alpha = 0.6;
+        this.life = 1.0;
+        this.decayRate = type === 'puff' ? 0.008 : 0.012;
+        this.growRate = type === 'puff' ? 0.8 : 0.3;
+        this.type = type || 'normal';
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+    }
+
+    SmokeParticle.prototype.update = function() {
+        // Rise and drift
+        this.y += this.velocityY;
+        this.x += this.velocityX;
+
+        // Slow down horizontal movement
+        this.velocityX *= 0.99;
+
+        // Increase upward movement slightly
+        this.velocityY -= 0.02;
+
+        // Grow and fade
+        if (this.size < this.maxSize) {
+            this.size += this.growRate;
+        }
+
+        this.life -= this.decayRate;
+        this.alpha = this.life * 0.6;
+        this.rotation += this.rotationSpeed;
+
+        return this.life > 0;
+    };
+
+    SmokeParticle.prototype.draw = function() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+
+        var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+        gradient.addColorStop(0, 'rgba(100, 100, 100, ' + this.alpha + ')');
+        gradient.addColorStop(0.5, 'rgba(70, 70, 70, ' + (this.alpha * 0.5) + ')');
+        gradient.addColorStop(1, 'rgba(40, 40, 40, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(-this.size, -this.size, this.size * 2, this.size * 2);
+
+        ctx.restore();
+    };
+
+    // Smoke ball for fling effect
+    function SmokeBall(x, y, velocityX, velocityY) {
+        this.x = x;
+        this.y = y;
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.size = 30;
+        this.alpha = 0.8;
+        this.life = 1.0;
+        this.active = true;
+    }
+
+    SmokeBall.prototype.update = function() {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+
+        // Check if hit edge
+        if (this.x < 0 || this.x > smokeCanvas.width || this.y < 0 || this.y > smokeCanvas.height) {
+            this.explode();
+            return false;
+        }
+
+        return this.active;
+    };
+
+    SmokeBall.prototype.draw = function() {
+        ctx.save();
+
+        var gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        gradient.addColorStop(0, 'rgba(120, 120, 120, ' + this.alpha + ')');
+        gradient.addColorStop(0.6, 'rgba(80, 80, 80, ' + (this.alpha * 0.5) + ')');
+        gradient.addColorStop(1, 'rgba(50, 50, 50, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    };
+
+    SmokeBall.prototype.explode = function() {
+        // Create explosion puff
+        for (var i = 0; i < 15; i++) {
+            var angle = (Math.PI * 2 * i) / 15;
+            var speed = Math.random() * 3 + 2;
+            particles.push(new SmokeParticle(
+                this.x,
+                this.y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                Math.random() * 15 + 10,
+                'puff'
+            ));
+        }
+        this.active = false;
+    };
+
+    var smokeBalls = [];
+
+    // Mouse movement tracking
+    function updateMousePosition(x, y) {
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+        mouseX = x;
+        mouseY = y;
+
+        var currentTime = Date.now();
+        var deltaTime = currentTime - lastMoveTime;
+
+        if (deltaTime > 0) {
+            mouseVelocityX = (mouseX - lastMouseX) / deltaTime * 16;
+            mouseVelocityY = (mouseY - lastMouseY) / deltaTime * 16;
+        }
+
+        lastMoveTime = currentTime;
+        isMoving = true;
+
+        // Create trail particles
+        if (Math.random() < 0.3) {
+            particles.push(new SmokeParticle(
+                mouseX + (Math.random() - 0.5) * 10,
+                mouseY + (Math.random() - 0.5) * 10,
+                mouseVelocityX * 0.1,
+                -Math.random() * 1 - 1
+            ));
+        }
+    }
+
+    // Desktop mouse events
+    document.addEventListener('mousemove', function(e) {
+        updateMousePosition(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('click', function(e) {
+        // Create big puff on click
+        for (var i = 0; i < 30; i++) {
+            var angle = (Math.PI * 2 * i) / 30;
+            var speed = Math.random() * 2 + 1;
+            particles.push(new SmokeParticle(
+                e.clientX,
+                e.clientY,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed - 1,
+                Math.random() * 25 + 15,
+                'puff'
+            ));
+        }
+    });
+
+    // Track mouse stop for fling effect
+    var moveCheckInterval = setInterval(function() {
+        if (isMoving) {
+            var timeSinceMove = Date.now() - lastMoveTime;
+
+            // If mouse stopped abruptly with velocity
+            if (timeSinceMove > 50) {
+                var speed = Math.sqrt(mouseVelocityX * mouseVelocityX + mouseVelocityY * mouseVelocityY);
+
+                if (speed > 5) {
+                    // Fling smoke ball
+                    smokeBalls.push(new SmokeBall(
+                        mouseX,
+                        mouseY,
+                        mouseVelocityX * 0.5,
+                        mouseVelocityY * 0.5
+                    ));
+                }
+
+                isMoving = false;
+                mouseVelocityX = 0;
+                mouseVelocityY = 0;
+            }
+        }
+    }, 50);
+
+    // Mobile touch events
+    var lastTouchX = 0;
+    var lastTouchY = 0;
+
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 0) {
+            var touch = e.touches[0];
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+            updateMousePosition(touch.clientX, touch.clientY);
+
+            // Small puff on touch start
+            for (var i = 0; i < 10; i++) {
+                particles.push(new SmokeParticle(
+                    touch.clientX,
+                    touch.clientY,
+                    (Math.random() - 0.5) * 2,
+                    -Math.random() * 2 - 1,
+                    Math.random() * 15 + 8,
+                    'puff'
+                ));
+            }
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+        if (e.touches.length > 0) {
+            var touch = e.touches[0];
+            updateMousePosition(touch.clientX, touch.clientY);
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        isMoving = false;
+    }, { passive: true });
+
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+
+        // Update and draw particles
+        particles = particles.filter(function(particle) {
+            var alive = particle.update();
+            if (alive) {
+                particle.draw();
+            }
+            return alive;
+        });
+
+        // Update and draw smoke balls
+        smokeBalls = smokeBalls.filter(function(ball) {
+            var active = ball.update();
+            if (active) {
+                ball.draw();
+            }
+            return active;
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
 }
 
 // ===================================
@@ -599,5 +835,5 @@ function prefersReducedMotion() {
 // ===================================
 // Console Message
 // ===================================
-console.log('%c⚔️ Gothic Realm ⚔️', 'color: #dc143c; font-size: 24px; font-weight: bold;');
-console.log('%cWelcome to the darkness...', 'color: #cccccc; font-size: 14px;');
+console.log('%c🧠 UnityAILab 🧠', 'color: #dc143c; font-size: 24px; font-weight: bold;');
+console.log('%cPushing AI to its limits...', 'color: #cccccc; font-size: 14px;');
