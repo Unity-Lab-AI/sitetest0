@@ -2,6 +2,21 @@
    Gothic Theme - Dark with Red Accents
    =================================== */
 
+/* Trajan Pro Font Face */
+@font-face {
+    font-family: 'Trajan Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Trajan Pro Regular'), url('fonts/trajan-pro/TrajanPro-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Trajan Pro';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Trajan Pro Bold'), url('fonts/trajan-pro/TrajanPro-Bold.woff') format('woff');
+}
+
 /* Root Variables */
 :root {
     --primary-black: #0a0a0a;
