@@ -106,8 +106,16 @@ if (!Element.prototype.closest) {
     }
 })();
 
-// Initialize AOS (Animate On Scroll) - Check if AOS exists
-document.addEventListener('DOMContentLoaded', function() {
+// Flag to track if templates are loaded
+let templatesReady = false;
+let domReady = false;
+
+// Function to initialize all features once both DOM and templates are ready
+function initializeAllFeatures() {
+    if (!templatesReady || !domReady) {
+        return; // Wait until both are ready
+    }
+
     // Initialize AOS if available
     if (typeof AOS !== 'undefined') {
         AOS.init({
@@ -131,6 +139,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initHoverEffects();
     initSmokeEffect();
     initMobileMenu();
+}
+
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', function() {
+    domReady = true;
+    initializeAllFeatures();
+});
+
+// Wait for templates to be loaded
+document.addEventListener('templatesLoaded', function() {
+    templatesReady = true;
+    initializeAllFeatures();
 });
 
 // ===================================
@@ -139,6 +159,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function initNavbar() {
     const navbar = document.querySelector('.navbar');
     const navLinks = document.querySelectorAll('.nav-link');
+
+    // Check if navbar exists before initializing
+    if (!navbar) {
+        console.warn('Navbar not found, skipping navbar initialization');
+        return;
+    }
 
     window.addEventListener('scroll', function() {
         if (window.scrollY > 100) {
