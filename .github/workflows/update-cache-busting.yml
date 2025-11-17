@@ -1,0 +1,47 @@
+name: Update Cache Busting
+
+# Run this workflow on push to ensure assets always have fresh versions
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'script.js'
+      - 'styles.css'
+      - '.github/workflows/update-cache-busting.yml'
+
+jobs:
+  update-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Update asset versions
+        run: |
+          # Get the short commit hash
+          VERSION=$(git rev-parse --short HEAD)
+          echo "Updating to version: $VERSION"
+
+          # Update index.html with new version numbers
+          sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" index.html
+          sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" index.html
+
+          echo "✓ Updated asset versions"
+
+      - name: Commit changes if needed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          if git diff --quiet index.html; then
+            echo "No changes to commit"
+          else
+            git add index.html
+            git commit -m "chore: update asset cache-busting versions [skip ci]"
+            git push
+          fi
