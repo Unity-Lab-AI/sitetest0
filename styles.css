@@ -32,7 +32,7 @@ html {
 }
 
 body {
-    font-family: 'Crimson Text', serif;
+    font-family: 'Trajan Pro', serif;
     background: var(--primary-black);
     background: #0a0a0a; /* Fallback for older browsers */
     color: var(--light-grey);
@@ -121,7 +121,7 @@ body {
 
 /* Typography */
 .gothic-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-weight: 700;
     color: var(--white);
     text-shadow: 0 0 20px rgba(220, 20, 60, 0.5),
@@ -130,13 +130,13 @@ body {
 }
 
 .gothic-subtitle {
-    font-family: 'Crimson Text', serif;
+    font-family: 'Trajan Pro', serif;
     color: var(--light-grey);
     font-weight: 400;
 }
 
 .section-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 2.5rem;
     color: var(--white);
     margin-bottom: 1rem;
@@ -186,7 +186,7 @@ body {
 }
 
 .gothic-logo {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--white) !important;
@@ -212,7 +212,7 @@ body {
 }
 
 .nav-link {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     color: var(--light-grey) !important;
     font-weight: 600;
     margin: 0 15px;
@@ -382,7 +382,7 @@ body {
 /* Buttons */
 .btn-gothic-primary,
 .btn-gothic-secondary {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     padding: 12px 35px;
     font-size: 1rem;
     font-weight: 600;
@@ -592,7 +592,7 @@ body {
 }
 
 .feature-card h3 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     color: var(--white);
     margin-bottom: 15px;
     font-size: 1.5rem;
@@ -703,7 +703,7 @@ body {
 }
 
 .service-card h3 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     color: var(--white);
     margin-bottom: 20px;
     font-size: 1.8rem;
@@ -726,7 +726,7 @@ body {
     color: var(--light-grey);
     padding: 15px 20px;
     border-radius: 0;
-    font-family: 'Crimson Text', serif;
+    font-family: 'Trajan Pro', serif;
     transition: all 0.3s ease;
 }
 
@@ -750,7 +750,7 @@ body {
 }
 
 .footer-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     color: var(--white);
     margin-bottom: 20px;
     text-transform: uppercase;
@@ -1306,7 +1306,7 @@ body {
 }
 
 .stat-number {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 3rem;
     font-weight: 700;
     color: var(--white);
@@ -1360,7 +1360,7 @@ body {
 }
 
 .expertise-card h4 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--white);
@@ -1512,7 +1512,7 @@ body {
 }
 
 .timeline-date {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--crimson-red);
@@ -1522,7 +1522,7 @@ body {
 }
 
 .timeline-content h4 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--white);
@@ -1609,7 +1609,7 @@ body {
 }
 
 .team-name {
-    font-family: 'Cinzel', serif;
+    font-family: 'Trajan Pro', serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--white);
