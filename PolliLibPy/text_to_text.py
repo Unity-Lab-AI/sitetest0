@@ -102,7 +102,9 @@ class TextToText(PollinationsAPI):
         stream: bool = False,
         stop_sequences: Optional[List[str]] = None,
         top_p: Optional[float] = None,
-        conversation_id: Optional[str] = None
+        conversation_id: Optional[str] = None,
+        reasoning_effort: Optional[str] = None,
+        safe: bool = False
     ) -> dict:
         """
         Multi-turn conversation with advanced controls (OpenAI compatible endpoint).
@@ -116,6 +118,8 @@ class TextToText(PollinationsAPI):
             stop_sequences: List of sequences that will stop generation
             top_p: Nucleus sampling parameter (0.0-1.0)
             conversation_id: Optional ID to track and retrieve conversation
+            reasoning_effort: How deeply the AI thinks ('minimal', 'low', 'medium', 'high')
+            safe: Enable strict NSFW filtering
 
         Returns:
             Dictionary with response and metadata
@@ -136,6 +140,10 @@ class TextToText(PollinationsAPI):
             payload["stop"] = stop_sequences
         if top_p is not None:
             payload["top_p"] = top_p
+        if reasoning_effort is not None:
+            payload["reasoning_effort"] = reasoning_effort
+        if safe:
+            payload["safe"] = True
 
         try:
             # Make request

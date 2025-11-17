@@ -108,6 +108,8 @@ class TextToText extends PollinationsAPI {
      * @param {Array<string>} options.stopSequences - List of sequences that will stop generation
      * @param {number} options.topP - Nucleus sampling parameter (0.0-1.0)
      * @param {string} options.conversationId - Optional ID to track and retrieve conversation
+     * @param {string} options.reasoningEffort - How deeply the AI thinks ('minimal', 'low', 'medium', 'high')
+     * @param {boolean} options.safe - Enable strict NSFW filtering
      * @returns {Promise<Object>} Dictionary with response and metadata
      */
     async chat(options = {}) {
@@ -119,7 +121,9 @@ class TextToText extends PollinationsAPI {
             stream = false,
             stopSequences = null,
             topP = null,
-            conversationId = null
+            conversationId = null,
+            reasoningEffort = null,
+            safe = false
         } = options;
 
         const url = `${PollinationsAPI.TEXT_API}/openai`;
@@ -140,6 +144,12 @@ class TextToText extends PollinationsAPI {
         }
         if (topP !== null) {
             payload.top_p = topP;
+        }
+        if (reasoningEffort !== null) {
+            payload.reasoning_effort = reasoningEffort;
+        }
+        if (safe) {
+            payload.safe = true;
         }
 
         try {
