@@ -439,11 +439,11 @@ def main():
     ✓ Choose retry strategy based on operation criticality
     """)
 
-    # Example 10: Integration with PolliLib
-    print("\n10. Integration with PolliLib:")
+    # Example 10: Integration with PolliLibPy
+    print("\n10. Integration with PolliLibPy:")
     print("-" * 60)
     print("""
-    PolliLib's retry_request() already implements exponential backoff:
+    PolliLibPy's retry_request() already implements exponential backoff:
 
     response = api.retry_request(
         "GET",
@@ -459,7 +459,7 @@ def main():
     - Rate limit handling (429 responses)
     - Network error recovery
 
-    The retry logic is built into all PolliLib methods!
+    The retry logic is built into all PolliLibPy methods!
     """)
 
     print("\n" + "=" * 60)
@@ -472,7 +472,7 @@ def main():
     print("   - Respect Retry-After headers from server")
     print("   - Idempotency keys ensure safe retries")
     print("   - Logging helps debug retry patterns")
-    print("   - Built into PolliLib's retry_request() method")
+    print("   - Built into PolliLibPy's retry_request() method")
 
 
 if __name__ == "__main__":

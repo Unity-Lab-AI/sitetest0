@@ -1,5 +1,5 @@
 """
-PolliLib - Python Library for Pollinations.AI API
+PolliLibPy - Python Library for Pollinations.AI API
 Base library with common utilities and authentication handling.
 """
 
@@ -42,7 +42,7 @@ class PollinationsAPI:
             Dictionary of headers
         """
         headers = {
-            "User-Agent": "PolliLib/1.0 Python Client",
+            "User-Agent": "PolliLibPy/1.0 Python Client",
             "Referer": self.referrer
         }
 
@@ -158,7 +158,7 @@ class PollinationsAPI:
 def test_connection():
     """Test basic connection to Pollinations.AI"""
     api = PollinationsAPI()
-    print("PolliLib initialized successfully!")
+    print("PolliLibPy initialized successfully!")
     print(f"Using referrer: {api.referrer}")
     print(f"Image API endpoint: {api.IMAGE_API}")
     print(f"Text API endpoint: {api.TEXT_API}")
@@ -168,7 +168,7 @@ def test_connection():
 if __name__ == "__main__":
     # Test the library
     print("=" * 50)
-    print("PolliLib - Pollinations.AI Python Library")
+    print("PolliLibPy - Pollinations.AI Python Library")
     print("=" * 50)
     test_connection()
     print("\nLibrary ready to use!")

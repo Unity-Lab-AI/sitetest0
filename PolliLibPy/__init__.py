@@ -1,11 +1,11 @@
 """
-PolliLib - Python Library for Pollinations.AI
+PolliLibPy - Python Library for Pollinations.AI
 ==============================================
 
 A comprehensive Python library for interacting with the Pollinations.AI API.
 
 Basic Usage:
-    from PolliLib.text_to_text import TextToText
+    from PolliLibPy.text_to_text import TextToText
 
     generator = TextToText()
     result = generator.generate_text("Hello, AI!")
