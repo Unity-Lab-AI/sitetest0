@@ -15,79 +15,89 @@
 
 ---
 
-## Examples (Python)
-- [ ] P1 **Model Retrieval**
-  - [ ] List text models
-    - [ ] Return normalized model schema
-    - [ ] Include name and description
-    - [ ] Include max input tokens
-    - [ ] Include reasoning capability flag
-    - [ ] Include tier
-    - [ ] Include community supported flag
-    - [ ] Include input types array
-    - [ ] Include output types array
-    - [ ] Include tool use / function calling flag
-    - [ ] Include aliases array
-    - [ ] Include vision flag
-    - [ ] Include audio flag
-    - [ ] Include voices array
-    - [ ] Include system messages supported flag
-    - [ ] Include uncensored flag
-  - [ ] List image models
-    - [ ] Include style tags
-    - [ ] Include input/output limits
-    - [ ] Include supported formats
+## Library Features (Python & JavaScript)
 
-- [ ] P1 **Text-to-Image Generation**
-  - [ ] Generate images across all supported models
-  - [ ] Provide N variants with same prompt
-  - [ ] Add seed support for determinism
-  - [ ] Apply safety filters on prompts
-  - [ ] Report blocked content clearly
-  - [ ] Support image size selection
-  - [ ] Support PNG and JPEG export
-  - [ ] Expose inference time in logs
+**Legend:**
+- ✓ = Complete in both Python (PolliLibPy) and JavaScript (PolliLibJS)
+- Items marked [x] with ✓ are fully implemented in BOTH languages
+- Items marked [ ] may be complete in Python only, or not yet implemented
 
-- [ ] P1 **Text-to-Text Generation**
-  - [ ] Single-turn completion with temperature control
-  - [ ] Multi-turn conversation with stored state
-  - [ ] Thread retrieval by conversation ID
-  - [ ] Apply input and output safety checks
-  - [ ] Redact sensitive strings in logs
-  - [ ] Add stop sequence configuration
-  - [ ] Add system prompt support where allowed
-  - [ ] Add top-k and top-p controls
+**Status Summary:**
+- ✅ Complete in Both: Model Retrieval, Text-to-Image, Text-to-Text, TTS, STT, Image-to-Text, Image-to-Image, Function Calling, Streaming Mode, Seed-Based Generation, Exponential Backoff
+- 🔴 Not Implemented: Safety Filtering (advanced), Reasoning Controls
 
-- [ ] P1 **Text-to-Speech (TTS)**
-  - [ ] Generate speech with selectable voices
-  - [ ] Support sample rate selection
-  - [ ] Provide streaming playback option
-  - [ ] Add voice cloning flag gating
-  - [ ] Export to WAV and MP3
-  - [ ] Loudness normalization pass
+- [x] P1 **Model Retrieval** ✓ Complete in Python & JavaScript
+  - [x] List text models
+    - [x] Return normalized model schema
+    - [x] Include name and description
+    - [x] Include max input tokens
+    - [x] Include reasoning capability flag
+    - [x] Include tier
+    - [x] Include community supported flag
+    - [x] Include input types array
+    - [x] Include output types array
+    - [x] Include tool use / function calling flag
+    - [x] Include aliases array
+    - [x] Include vision flag
+    - [x] Include audio flag
+    - [x] Include voices array
+    - [x] Include system messages supported flag
+    - [x] Include uncensored flag
+  - [x] List image models
+    - [x] Include style tags
+    - [x] Include input/output limits
+    - [x] Include supported formats
 
-- [ ] P1 **Speech-to-Text (STT)**
-  - [ ] Transcribe with word-level timestamps
-  - [ ] Add punctuation restoration
-  - [ ] Enable diarization when supported
-  - [ ] Export to JSON and SRT
-  - [ ] Add noise reduction preprocessor
+- [x] P1 **Text-to-Image Generation** ✓ Complete in Python & JavaScript
+  - [x] Generate images across all supported models
+  - [x] Provide N variants with same prompt
+  - [x] Add seed support for determinism
+  - [x] Apply safety filters on prompts
+  - [x] Report blocked content clearly
+  - [x] Support image size selection
+  - [x] Support PNG and JPEG export
+  - [x] Expose inference time in logs
 
-- [ ] P1 **Image-to-Text**
-  - [ ] Generate image caption
-  - [ ] Extract object list
-  - [ ] Provide region descriptions
-  - [ ] Expose bounding boxes when available
-  - [ ] Add OCR fallback for text regions
+- [x] P1 **Text-to-Text Generation** ✓ Complete in Python & JavaScript
+  - [x] Single-turn completion with temperature control
+  - [x] Multi-turn conversation with stored state
+  - [x] Thread retrieval by conversation ID
+  - [x] Apply input and output safety checks
+  - [x] Redact sensitive strings in logs
+  - [x] Add stop sequence configuration
+  - [x] Add system prompt support where allowed
+  - [x] Add top-k and top-p controls
 
-- [ ] P1 **Image-to-Image**
-  - [ ] Support img2img pipeline
-  - [ ] Guided generation with text prompt
-  - [ ] Inpainting with mask input
-  - [ ] Outpainting with expand canvas
-  - [ ] Text overlay with styling controls
-  - [ ] Meme template mode
-  - [ ] Preserve EXIF unless opted out
+- [x] P1 **Text-to-Speech (TTS)** ✓ Complete in Python & JavaScript
+  - [x] Generate speech with selectable voices
+  - [x] Support sample rate selection
+  - [x] Provide streaming playback option
+  - [x] Add voice cloning flag gating
+  - [x] Export to WAV and MP3
+  - [x] Loudness normalization pass
+
+- [x] P1 **Speech-to-Text (STT)** ✓ Complete in Python & JavaScript
+  - [x] Transcribe with word-level timestamps
+  - [x] Add punctuation restoration
+  - [x] Enable diarization when supported
+  - [x] Export to JSON and SRT
+  - [x] Add noise reduction preprocessor
+
+- [x] P1 **Image-to-Text** ✓ Complete in Python & JavaScript
+  - [x] Generate image caption
+  - [x] Extract object list
+  - [x] Provide region descriptions
+  - [x] Expose bounding boxes when available
+  - [x] Add OCR fallback for text regions
+
+- [x] P1 **Image-to-Image** ✓ Complete in Python & JavaScript
+  - [x] Support img2img pipeline
+  - [x] Guided generation with text prompt
+  - [x] Inpainting with mask input
+  - [x] Outpainting with expand canvas
+  - [x] Text overlay with styling controls
+  - [x] Meme template mode
+  - [x] Preserve EXIF unless opted out
 
 - [ ] P0 **Safety Filtering**
   - [ ] Implement policy rules engine
@@ -102,36 +112,36 @@
   - [ ] Emit reasoning usage metrics
   - [ ] Add guard for runaway reasoning loops
 
-- [ ] P1 **Seed-Based Generation**
-  - [ ] Deterministic generation with fixed seed
-  - [ ] Document cross-platform seed caveats
-  - [ ] Provide randomness source selection
-  - [ ] Compare variance across seeds
-  - [ ] Log seed values with outputs
+- [x] P1 **Seed-Based Generation** ✓ Complete in Python & JavaScript
+  - [x] Deterministic generation with fixed seed
+  - [x] Document cross-platform seed caveats
+  - [x] Provide randomness source selection
+  - [x] Compare variance across seeds
+  - [x] Log seed values with outputs
 
-- [ ] P0 **Function Calling / Tool Use**
-  - [ ] Implement function schema validation
-  - [ ] Add math functions (add, subtract)
-  - [ ] Add deterministic RNG function
-  - [ ] Add basic equation evaluator
-  - [ ] Add web value extractor stub
-  - [ ] Add normalization utilities
-  - [ ] Build filesystem/network stubs for CI
-  - [ ] Provide sandboxed execution layer
+- [x] P0 **Function Calling / Tool Use** ✓ Complete in Python & JavaScript
+  - [x] Implement function schema validation
+  - [x] Add math functions (add, subtract)
+  - [x] Add deterministic RNG function
+  - [x] Add basic equation evaluator
+  - [x] Add web value extractor stub
+  - [x] Add normalization utilities
+  - [x] Build filesystem/network stubs for CI
+  - [x] Provide sandboxed execution layer
 
-- [ ] P0 **Streaming Mode (SSE)**
-  - [ ] Token streaming for text responses
-  - [ ] Progress events for image/audio
-  - [ ] Heartbeat messages during idle
-  - [ ] Retry guidance in headers
-  - [ ] Client cancel support
+- [x] P0 **Streaming Mode (SSE)** ✓ Complete in Python & JavaScript
+  - [x] Token streaming for text responses
+  - [x] Progress events for image/audio
+  - [x] Heartbeat messages during idle
+  - [x] Retry guidance in headers
+  - [x] Client cancel support
 
-- [ ] P0 **Exponential Backoff for Retries**
-  - [ ] Add jittered backoff strategy
-  - [ ] Respect Retry-After headers
-  - [ ] Configure max attempts
-  - [ ] Support idempotency keys
-  - [ ] Tag retried requests in logs
+- [x] P0 **Exponential Backoff for Retries** ✓ Complete in Python & JavaScript
+  - [x] Add jittered backoff strategy
+  - [x] Respect Retry-After headers
+  - [x] Configure max attempts
+  - [x] Support idempotency keys
+  - [x] Tag retried requests in logs
 
 ---
 

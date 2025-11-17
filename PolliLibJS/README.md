@@ -6,6 +6,13 @@ A comprehensive JavaScript/Node.js library for interacting with the Pollinations
 
 - **Text-to-Image Generation**: Create stunning images from text prompts
 - **Text-to-Text Generation**: Chat with AI models, generate content
+- **Text-to-Speech (TTS)**: Convert text to natural-sounding speech
+- **Speech-to-Text (STT)**: Transcribe audio to text
+- **Image-to-Text (Vision)**: Analyze images and extract information
+- **Image-to-Image**: Transform and style existing images
+- **Function Calling**: Enable AI to use external tools
+- **Streaming Mode**: Real-time token-by-token responses
+- **Model Retrieval**: List and query available models
 - **Exponential Backoff**: Robust retry logic built-in
 - **Promise-based API**: Modern async/await support
 - **TypeScript Ready**: Works with TypeScript projects
@@ -188,12 +195,22 @@ variants();
 ### Core Modules
 
 - **pollylib.js**: Base library with common utilities
+- **model-retrieval.js**: List and query available models
 - **index.js**: Main entry point with all exports
 
 ### Generation Modules
 
 - **text-to-image.js**: Image generation from text
 - **text-to-text.js**: Text generation and chat
+- **text-to-speech.js**: Speech synthesis
+- **speech-to-text.js**: Audio transcription
+- **image-to-text.js**: Vision and image analysis
+- **image-to-image.js**: Image transformation
+
+### Advanced Modules
+
+- **function-calling.js**: Tool use and function calling
+- **streaming-mode.js**: Real-time streaming responses
 
 ## Running Examples
 
