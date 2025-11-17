@@ -1,0 +1,245 @@
+name: Build and Deploy
+
+# Run on push to main/master branch
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Allow manual triggering
+
+# Grant necessary permissions
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  issues: write
+  pull-requests: write
+
+# Ensure only one deployment runs at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job 1: Cache Busting - Updates all asset versions
+  cache-busting:
+    name: Update Cache Busting
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check_changes.outputs.has_changes }}
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Get version hash
+        id: get_version
+        run: |
+          VERSION=$(git rev-parse --short HEAD)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Using version: $VERSION"
+
+      - name: Update all asset versions
+        env:
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          echo "🔄 Updating asset versions to: $VERSION"
+
+          # Update index.html
+          sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" index.html
+          sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" index.html
+          sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" index.html || true
+
+          # Update about/index.html
+          if [ -f about/index.html ]; then
+            sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" about/index.html
+            sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" about/index.html
+            sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" about/index.html || true
+            sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" about/index.html || true
+          fi
+
+          echo "✅ Asset versions updated successfully"
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✨ Changes detected"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add index.html about/index.html || true
+          git commit -m "chore: update asset cache-busting versions to ${{ steps.get_version.outputs.version }} [skip ci]"
+
+          # Push with retry logic for network resilience
+          max_retries=4
+          retry_count=0
+          retry_delay=2
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "📤 Attempting to push (attempt $((retry_count + 1))/$max_retries)..."
+            if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
+              echo "✅ Successfully pushed cache-busting updates"
+              exit 0
+            else
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "⚠️  Push failed, retrying in ${retry_delay}s..."
+                sleep $retry_delay
+                retry_delay=$((retry_delay * 2))
+              fi
+            fi
+          done
+
+          echo "❌ Failed to push after $max_retries attempts"
+          exit 1
+
+  # Job 2: Build - Validate and prepare for deployment
+  build:
+    name: Build and Validate
+    needs: cache-busting
+    runs-on: ubuntu-latest
+    outputs:
+      build_status: ${{ steps.build_check.outputs.status }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Validate HTML structure
+        id: build_check
+        run: |
+          echo "🔍 Validating HTML files..."
+
+          # Check if required HTML files exist
+          if [ ! -f "index.html" ]; then
+            echo "❌ index.html not found!"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          if [ ! -f "about/index.html" ]; then
+            echo "❌ about/index.html not found!"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Validate that cache-busting versions are present
+          if ! grep -q "styles.css?v=" index.html; then
+            echo "❌ Cache-busting version missing in index.html"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Check for broken internal links (basic check)
+          echo "🔗 Checking for basic file references..."
+          if [ ! -f "styles.css" ] || [ ! -f "script.js" ]; then
+            echo "❌ Required assets missing!"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          echo "✅ Build validation passed"
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  # Job 3a: Report Build Status
+  report-status:
+    name: Report Build Status
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Report success
+        if: needs.build.outputs.build_status == 'success'
+        run: |
+          echo "✅ BUILD SUCCESSFUL"
+          echo "================================"
+          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "Status: SUCCESS"
+          echo "Ready for deployment"
+          echo "================================"
+
+      - name: Report failure
+        if: needs.build.outputs.build_status == 'failed'
+        run: |
+          echo "❌ BUILD FAILED"
+          echo "================================"
+          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "Status: FAILED"
+          echo "Check build logs for details"
+          echo "================================"
+          exit 1
+
+      - name: Create status comment (if PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ needs.build.outputs.build_status }}';
+            const version = '${{ needs.cache-busting.outputs.version }}';
+            const icon = status === 'success' ? '✅' : '❌';
+            const message = status === 'success' ? 'Build successful!' : 'Build failed!';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${icon} **${message}**\n\n**Version:** \`${version}\`\n**Status:** ${status.toUpperCase()}`
+            });
+
+  # Job 3b: Deploy to GitHub Pages
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.build_status == 'success'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Report deployment success
+        run: |
+          echo "🚀 DEPLOYMENT SUCCESSFUL"
+          echo "================================"
+          echo "URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "================================"
+          echo ""
+          echo "✨ Your site is now live with the latest updates!"
+          echo "🔄 Dynamic content (like GitHub stats) will update automatically"
