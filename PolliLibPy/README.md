@@ -1,4 +1,4 @@
-# PolliLib - Python Library for Pollinations.AI
+# PolliLibPy - Python Library for Pollinations.AI
 
 A comprehensive Python library for interacting with the Pollinations.AI API, providing easy-to-use interfaces for text generation, image generation, speech synthesis, vision, and more.
 
@@ -38,7 +38,7 @@ pip install sseclient-py
 ## Quick Start
 
 ```python
-from PolliLib.text_to_text import TextToText
+from PolliLibPy.text_to_text import TextToText
 
 # Initialize the client
 generator = TextToText()
@@ -56,12 +56,12 @@ if result['success']:
 
 ## Authentication
 
-PolliLib uses referrer-based authentication by default with the referrer `s-test-sk37AGI` (seed tier).
+PolliLibPy uses referrer-based authentication by default with the referrer `s-test-sk37AGI` (seed tier).
 
 You can customize the referrer:
 
 ```python
-from PolliLib.pollylib import PollinationsAPI
+from PolliLibPy.pollylib import PollinationsAPI
 
 api = PollinationsAPI(referrer="your-referrer-here")
 ```
@@ -77,7 +77,7 @@ api = PollinationsAPI(bearer_token="your-token-here")
 ### Text-to-Image
 
 ```python
-from PolliLib.text_to_image import TextToImage
+from PolliLibPy.text_to_image import TextToImage
 
 generator = TextToImage()
 
@@ -97,7 +97,7 @@ if result['success']:
 ### Text-to-Speech
 
 ```python
-from PolliLib.text_to_speech import TextToSpeech
+from PolliLibPy.text_to_speech import TextToSpeech
 
 tts = TextToSpeech()
 
@@ -114,7 +114,7 @@ if result['success']:
 ### Vision (Image Analysis)
 
 ```python
-from PolliLib.image_to_text import ImageToText
+from PolliLibPy.image_to_text import ImageToText
 
 vision = ImageToText()
 
@@ -131,7 +131,7 @@ if result['success']:
 ### Function Calling
 
 ```python
-from PolliLib.function_calling import FunctionCalling
+from PolliLibPy.function_calling import FunctionCalling
 
 fc = FunctionCalling()
 
@@ -147,7 +147,7 @@ if result['success']:
 ### Streaming Mode
 
 ```python
-from PolliLib.streaming_mode import StreamingMode
+from PolliLibPy.streaming_mode import StreamingMode
 
 streaming = StreamingMode()
 
@@ -188,13 +188,13 @@ Each module can be run as a standalone script to see examples:
 
 ```bash
 # Model retrieval examples
-python PolliLib/model_retrieval.py
+python PolliLibPy/model_retrieval.py
 
 # Text-to-image examples
-python PolliLib/text_to_image.py
+python PolliLibPy/text_to_image.py
 
 # Text-to-text examples
-python PolliLib/text_to_text.py
+python PolliLibPy/text_to_text.py
 
 # And so on...
 ```
