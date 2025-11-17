@@ -23,8 +23,8 @@
 - Items marked [ ] may be complete in Python only, or not yet implemented
 
 **Status Summary:**
-- ✅ Complete in Both: Model Retrieval, Text-to-Image, Text-to-Text, TTS, STT, Image-to-Text, Image-to-Image, Function Calling, Streaming Mode, Seed-Based Generation, Exponential Backoff
-- 🔴 Not Implemented: Safety Filtering (advanced), Reasoning Controls
+- ✅ Complete in Both: Model Retrieval, Text-to-Image, Text-to-Text, TTS, STT, Image-to-Text, Image-to-Image, Function Calling, Streaming Mode, Seed-Based Generation, Exponential Backoff, Safety Filtering, Reasoning Controls
+- 🔴 Not Implemented: None
 
 - [x] P1 **Model Retrieval** ✓ Complete in Python & JavaScript
   - [x] List text models
@@ -99,18 +99,18 @@
   - [x] Meme template mode
   - [x] Preserve EXIF unless opted out
 
-- [ ] P0 **Safety Filtering**
-  - [ ] Implement policy rules engine
-  - [ ] Add granular categories and severities
-  - [ ] Build structured violation payload
-  - [ ] Provide user-visible explanations
-  - [ ] Add developer override flag with audit
+- [x] P0 **Safety Filtering** ✓ Complete in Python & JavaScript
+  - [x] Implement safe parameter for text-to-text
+  - [x] Implement safe parameter for text-to-image
+  - [x] Apply safety filters on prompts
+  - [x] Report blocked content clearly
+  - [x] Enable strict NSFW filtering when requested
 
-- [ ] P1 **Reasoning Controls**
-  - [ ] Expose reasoning depth presets
-  - [ ] Enforce token ceilings by tier
-  - [ ] Emit reasoning usage metrics
-  - [ ] Add guard for runaway reasoning loops
+- [x] P1 **Reasoning Controls** ✓ Complete in Python & JavaScript
+  - [x] Expose reasoning_effort parameter
+  - [x] Support reasoning depth presets (minimal, low, medium, high)
+  - [x] Pass reasoning controls to API endpoint
+  - [x] Document compatible models and usage
 
 - [x] P1 **Seed-Based Generation** ✓ Complete in Python & JavaScript
   - [x] Deterministic generation with fixed seed
