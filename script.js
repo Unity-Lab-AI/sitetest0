@@ -439,6 +439,7 @@ function initHoverEffects() {
 // ===================================
 // Enhanced Smoke Effect System (Desktop & Mobile)
 // Optimized with particle pooling, accumulation, and mouse interaction
+// Now with growing smoke balls, throwing, and collision detection
 // ===================================
 function initSmokeEffect() {
     // Create canvas for smoke
@@ -465,23 +466,50 @@ function initSmokeEffect() {
     var lastMoveTime = Date.now();
     var isMoving = false;
 
-    // Smoke accumulation system
-    var accumulatedSmoke = [];
-    var isAccumulating = false;
-    var accumulationStartTime = 0;
-    var ACCUMULATION_DELAY = 150; // 0.15 seconds
+    // Mouse button state for charging
+    var isMouseDown = false;
+    var mouseDownTime = 0;
+    var mouseDownX = 0;
+    var mouseDownY = 0;
+    var chargingBall = null;
 
-    // Click throttling
-    var lastClickTime = 0;
-    var CLICK_THROTTLE = 100; // Minimum ms between clicks
+    // Text elements cache for collision detection
+    var textElements = [];
 
     // Set canvas size
     function resizeCanvas() {
         smokeCanvas.width = window.innerWidth;
         smokeCanvas.height = window.innerHeight;
+        cacheTextElements(); // Recache on resize
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+
+    // Cache text element positions for collision detection
+    function cacheTextElements() {
+        textElements = [];
+        var elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, span, li, button, .nav-link, .section-title, .gothic-title');
+
+        elements.forEach(function(el) {
+            var rect = el.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                textElements.push({
+                    x: rect.left,
+                    y: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                    centerX: rect.left + rect.width / 2,
+                    centerY: rect.top + rect.height / 2
+                });
+            }
+        });
+    }
+
+    // Initial cache
+    cacheTextElements();
+
+    // Re-cache periodically to account for dynamic content
+    setInterval(cacheTextElements, 2000);
 
     // Initialize particle pool
     for (var i = 0; i < PARTICLE_POOL_SIZE; i++) {
@@ -573,17 +601,52 @@ function initSmokeEffect() {
             var dy = mouseY - particle.y;
             var distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 150 && isMoving) {
+            if (distance < 150 && isMoving && !isMouseDown) {
                 var force = (150 - distance) / 150 * 0.3;
                 particle.velocityX += (dx / distance) * force * mouseVelocityX * 0.01;
                 particle.velocityY += (dy / distance) * force * mouseVelocityY * 0.01;
             }
 
+            // Text collision and curling behavior
+            for (var i = 0; i < textElements.length; i++) {
+                var text = textElements[i];
+                var textDx = particle.x - text.centerX;
+                var textDy = particle.y - text.centerY;
+                var textDist = Math.sqrt(textDx * textDx + textDy * textDy);
+
+                // Influence range around text
+                var influenceRange = Math.max(text.width, text.height) / 2 + 50;
+
+                if (textDist < influenceRange) {
+                    // Check if inside text bounds
+                    if (particle.x >= text.x && particle.x <= text.x + text.width &&
+                        particle.y >= text.y && particle.y <= text.y + text.height) {
+                        // Push away from center
+                        var pushForce = 0.8;
+                        particle.velocityX += (textDx / textDist) * pushForce;
+                        particle.velocityY += (textDy / textDist) * pushForce;
+                    } else {
+                        // Create curling effect around text
+                        var angle = Math.atan2(textDy, textDx);
+                        var curlStrength = (influenceRange - textDist) / influenceRange * 0.15;
+
+                        // Perpendicular curl
+                        particle.velocityX += Math.cos(angle + Math.PI / 2) * curlStrength;
+                        particle.velocityY += Math.sin(angle + Math.PI / 2) * curlStrength;
+
+                        // Slight push away
+                        particle.velocityX += (textDx / textDist) * curlStrength * 0.5;
+                        particle.velocityY += (textDy / textDist) * curlStrength * 0.5;
+                    }
+                }
+            }
+
             // Slow down horizontal movement
             particle.velocityX *= 0.98;
 
-            // Gentle upward drift
-            particle.velocityY -= 0.015;
+            // Enhanced upward drift with slight turbulence
+            particle.velocityY -= 0.02;
+            particle.velocityX += (Math.random() - 0.5) * 0.02; // Turbulence
         }
 
         // Update position
@@ -641,18 +704,88 @@ function initSmokeEffect() {
         ctx.restore();
     }
 
-    // Smoke ball for release effect
-    function SmokeBall(x, y, velocityX, velocityY, accumulated) {
+    // Charging ball that grows while holding mouse
+    function ChargingBall(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 15;
+        this.maxSize = 100;
+        this.alpha = 0.8;
+        this.growthRate = 0.8;
+        this.particles = []; // Particles attracted to the ball
+    }
+
+    ChargingBall.prototype.update = function(currentX, currentY) {
+        this.x = currentX;
+        this.y = currentY;
+
+        // Grow the ball
+        if (this.size < this.maxSize) {
+            this.size += this.growthRate;
+            this.growthRate *= 0.99; // Slow down growth over time
+        }
+
+        // Spawn particles around the charging ball
+        if (Math.random() < 0.3 && particles.length < MAX_PARTICLES) {
+            var angle = Math.random() * Math.PI * 2;
+            var distance = this.size * 0.7;
+            var p = getParticle(
+                this.x + Math.cos(angle) * distance,
+                this.y + Math.sin(angle) * distance,
+                (Math.random() - 0.5) * 0.5,
+                -Math.random() * 0.5,
+                Math.random() * 8 + 5,
+                'wisp'
+            );
+            this.particles.push(p);
+            particles.push(p);
+        }
+    };
+
+    ChargingBall.prototype.draw = function() {
+        ctx.save();
+
+        // Pulsing effect
+        var pulse = Math.sin(Date.now() * 0.005) * 0.1 + 0.9;
+        var drawSize = this.size * pulse;
+
+        // Outer glow
+        var outerGlow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, drawSize * 1.5);
+        outerGlow.addColorStop(0, 'rgba(150, 150, 150, ' + (this.alpha * 0.3) + ')');
+        outerGlow.addColorStop(0.5, 'rgba(120, 120, 120, ' + (this.alpha * 0.2) + ')');
+        outerGlow.addColorStop(1, 'rgba(80, 80, 80, 0)');
+
+        ctx.fillStyle = outerGlow;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, drawSize * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Main ball
+        var gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, drawSize);
+        gradient.addColorStop(0, 'rgba(160, 160, 160, ' + this.alpha + ')');
+        gradient.addColorStop(0.5, 'rgba(120, 120, 120, ' + (this.alpha * 0.7) + ')');
+        gradient.addColorStop(1, 'rgba(80, 80, 80, ' + (this.alpha * 0.3) + ')');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, drawSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    };
+
+    // Smoke ball for release effect with collision detection
+    function SmokeBall(x, y, velocityX, velocityY, size) {
         this.x = x;
         this.y = y;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
-        this.size = accumulated ? Math.min(accumulated.length * 3 + 20, 60) : 35;
+        this.size = size || 35;
         this.alpha = 0.9;
         this.active = true;
-        this.gravity = 0.05;
-        this.drag = 0.99;
-        this.smokeAmount = accumulated ? accumulated.length : 0;
+        this.gravity = 0.15;
+        this.drag = 0.98;
+        this.smokeAmount = Math.floor(size / 5);
     }
 
     SmokeBall.prototype.update = function() {
@@ -665,10 +798,27 @@ function initSmokeEffect() {
 
         this.alpha *= 0.98;
 
-        // Check if hit edge or faded
-        if (this.x < -50 || this.x > smokeCanvas.width + 50 ||
-            this.y < -50 || this.y > smokeCanvas.height + 50 ||
-            this.alpha < 0.1) {
+        // Check collision with screen edges
+        if (this.x - this.size < 0 || this.x + this.size > smokeCanvas.width ||
+            this.y - this.size < 0 || this.y + this.size > smokeCanvas.height) {
+            this.explode();
+            return false;
+        }
+
+        // Check collision with text elements
+        for (var i = 0; i < textElements.length; i++) {
+            var text = textElements[i];
+
+            // Check if ball intersects with text bounding box
+            if (this.x + this.size > text.x && this.x - this.size < text.x + text.width &&
+                this.y + this.size > text.y && this.y - this.size < text.y + text.height) {
+                this.explode();
+                return false;
+            }
+        }
+
+        // Check if faded
+        if (this.alpha < 0.1) {
             this.explode();
             return false;
         }
@@ -699,19 +849,19 @@ function initSmokeEffect() {
     };
 
     SmokeBall.prototype.explode = function() {
-        var explosionParticles = Math.min(20 + this.smokeAmount * 2, 40);
+        var explosionParticles = Math.min(30 + this.smokeAmount * 2, 50);
 
         for (var i = 0; i < explosionParticles; i++) {
             if (particles.length >= MAX_PARTICLES) break;
 
             var angle = (Math.PI * 2 * i) / explosionParticles;
-            var speed = Math.random() * 4 + 2;
+            var speed = Math.random() * 5 + 3;
             var p = getParticle(
                 this.x,
                 this.y,
                 Math.cos(angle) * speed + this.velocityX * 0.3,
                 Math.sin(angle) * speed + this.velocityY * 0.3,
-                Math.random() * 20 + 12,
+                Math.random() * 25 + 15,
                 'puff'
             );
             particles.push(p);
@@ -721,7 +871,7 @@ function initSmokeEffect() {
 
     var smokeBalls = [];
 
-    // Mouse movement tracking with accumulation
+    // Mouse movement tracking
     function updateMousePosition(x, y) {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
@@ -738,99 +888,75 @@ function initSmokeEffect() {
 
         lastMoveTime = currentTime;
         isMoving = true;
-
-        // Start accumulation
-        if (!isAccumulating) {
-            isAccumulating = true;
-            accumulationStartTime = currentTime;
-            accumulatedSmoke = [];
-        }
-
-        // Update accumulated particle targets
-        for (var i = 0; i < accumulatedSmoke.length; i++) {
-            accumulatedSmoke[i].targetX = mouseX;
-            accumulatedSmoke[i].targetY = mouseY;
-        }
-
-        // Create wispy trail particles (optimized spawn rate)
-        if (Math.random() < 0.25 && particles.length < MAX_PARTICLES) {
-            var p = getParticle(
-                mouseX + (Math.random() - 0.5) * 15,
-                mouseY + (Math.random() - 0.5) * 15,
-                mouseVelocityX * 0.05,
-                -Math.random() * 0.8 - 0.5,
-                Math.random() * 12 + 6,
-                'wisp'
-            );
-            p.accumulated = true;
-            accumulatedSmoke.push(p);
-            particles.push(p);
-        }
     }
-
-    // Check for smoke release
-    var releaseCheckInterval = setInterval(function() {
-        if (isMoving) {
-            var timeSinceMove = Date.now() - lastMoveTime;
-            var timeSinceAccumulation = Date.now() - accumulationStartTime;
-
-            // Release accumulated smoke after delay
-            if (timeSinceMove > ACCUMULATION_DELAY && timeSinceAccumulation > ACCUMULATION_DELAY) {
-                var speed = Math.sqrt(mouseVelocityX * mouseVelocityX + mouseVelocityY * mouseVelocityY);
-
-                if (speed > 3 && accumulatedSmoke.length > 3) {
-                    // Release smoke ball with accumulated particles
-                    smokeBalls.push(new SmokeBall(
-                        mouseX,
-                        mouseY,
-                        mouseVelocityX * 0.6,
-                        mouseVelocityY * 0.6,
-                        accumulatedSmoke
-                    ));
-
-                    // Release accumulated particles
-                    for (var i = 0; i < accumulatedSmoke.length; i++) {
-                        accumulatedSmoke[i].accumulated = false;
-                        var angle = Math.random() * Math.PI * 2;
-                        var releaseSpeed = Math.random() * 2 + 1;
-                        accumulatedSmoke[i].velocityX = Math.cos(angle) * releaseSpeed + mouseVelocityX * 0.2;
-                        accumulatedSmoke[i].velocityY = Math.sin(angle) * releaseSpeed + mouseVelocityY * 0.2;
-                    }
-                }
-
-                isMoving = false;
-                isAccumulating = false;
-                accumulatedSmoke = [];
-                mouseVelocityX = 0;
-                mouseVelocityY = 0;
-            }
-        }
-    }, 20);
 
     // Desktop mouse events
     document.addEventListener('mousemove', function(e) {
         updateMousePosition(e.clientX, e.clientY);
     });
 
-    document.addEventListener('click', function(e) {
-        var now = Date.now();
-        if (now - lastClickTime < CLICK_THROTTLE) return;
-        lastClickTime = now;
+    document.addEventListener('mousedown', function(e) {
+        isMouseDown = true;
+        mouseDownTime = Date.now();
+        mouseDownX = e.clientX;
+        mouseDownY = e.clientY;
 
-        // Create optimized puff (reduced particle count)
-        var puffCount = Math.min(20, MAX_PARTICLES - particles.length);
-        for (var i = 0; i < puffCount; i++) {
-            var angle = (Math.PI * 2 * i) / puffCount;
-            var speed = Math.random() * 2.5 + 1;
-            var p = getParticle(
-                e.clientX + (Math.random() - 0.5) * 10,
-                e.clientY + (Math.random() - 0.5) * 10,
-                Math.cos(angle) * speed,
-                Math.sin(angle) * speed - 0.8,
-                Math.random() * 18 + 10,
-                'puff'
-            );
-            particles.push(p);
+        // Create charging ball
+        chargingBall = new ChargingBall(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('mouseup', function(e) {
+        if (!isMouseDown) return;
+
+        isMouseDown = false;
+        var holdTime = Date.now() - mouseDownTime;
+        var moveDist = Math.sqrt(
+            Math.pow(e.clientX - mouseDownX, 2) +
+            Math.pow(e.clientY - mouseDownY, 2)
+        );
+
+        if (chargingBall) {
+            // Calculate velocity based on mouse movement
+            var speed = Math.sqrt(mouseVelocityX * mouseVelocityX + mouseVelocityY * mouseVelocityY);
+
+            if (holdTime < 200 && moveDist < 10) {
+                // Quick click - create puff
+                var puffCount = Math.min(20, MAX_PARTICLES - particles.length);
+                for (var i = 0; i < puffCount; i++) {
+                    var angle = (Math.PI * 2 * i) / puffCount;
+                    var puffSpeed = Math.random() * 2.5 + 1;
+                    var p = getParticle(
+                        e.clientX + (Math.random() - 0.5) * 10,
+                        e.clientY + (Math.random() - 0.5) * 10,
+                        Math.cos(angle) * puffSpeed,
+                        Math.sin(angle) * puffSpeed - 0.8,
+                        Math.random() * 18 + 10,
+                        'puff'
+                    );
+                    particles.push(p);
+                }
+            } else if (moveDist > 30 && speed > 2) {
+                // Throw the smoke ball
+                smokeBalls.push(new SmokeBall(
+                    chargingBall.x,
+                    chargingBall.y,
+                    mouseVelocityX * 0.8,
+                    mouseVelocityY * 0.8,
+                    chargingBall.size
+                ));
+            } else {
+                // Release without throwing - explode in place
+                var tempBall = new SmokeBall(
+                    chargingBall.x,
+                    chargingBall.y,
+                    0,
+                    0,
+                    chargingBall.size
+                );
+                tempBall.explode();
+            }
+
+            chargingBall = null;
         }
     });
 
@@ -838,7 +964,14 @@ function initSmokeEffect() {
     document.addEventListener('touchstart', function(e) {
         if (e.touches.length > 0) {
             var touch = e.touches[0];
+            isMouseDown = true;
+            mouseDownTime = Date.now();
+            mouseDownX = touch.clientX;
+            mouseDownY = touch.clientY;
             updateMousePosition(touch.clientX, touch.clientY);
+
+            // Create charging ball
+            chargingBall = new ChargingBall(touch.clientX, touch.clientY);
         }
     }, { passive: true });
 
@@ -850,12 +983,68 @@ function initSmokeEffect() {
     }, { passive: true });
 
     document.addEventListener('touchend', function(e) {
+        if (isMouseDown && chargingBall) {
+            var holdTime = Date.now() - mouseDownTime;
+            var moveDist = Math.sqrt(
+                Math.pow(mouseX - mouseDownX, 2) +
+                Math.pow(mouseY - mouseDownY, 2)
+            );
+
+            var speed = Math.sqrt(mouseVelocityX * mouseVelocityX + mouseVelocityY * mouseVelocityY);
+
+            if (holdTime < 200 && moveDist < 10) {
+                // Quick tap - create puff
+                var puffCount = Math.min(20, MAX_PARTICLES - particles.length);
+                for (var i = 0; i < puffCount; i++) {
+                    var angle = (Math.PI * 2 * i) / puffCount;
+                    var puffSpeed = Math.random() * 2.5 + 1;
+                    var p = getParticle(
+                        mouseX + (Math.random() - 0.5) * 10,
+                        mouseY + (Math.random() - 0.5) * 10,
+                        Math.cos(angle) * puffSpeed,
+                        Math.sin(angle) * puffSpeed - 0.8,
+                        Math.random() * 18 + 10,
+                        'puff'
+                    );
+                    particles.push(p);
+                }
+            } else if (moveDist > 30 && speed > 2) {
+                // Throw the smoke ball
+                smokeBalls.push(new SmokeBall(
+                    chargingBall.x,
+                    chargingBall.y,
+                    mouseVelocityX * 0.8,
+                    mouseVelocityY * 0.8,
+                    chargingBall.size
+                ));
+            } else {
+                // Release without throwing - explode in place
+                var tempBall = new SmokeBall(
+                    chargingBall.x,
+                    chargingBall.y,
+                    0,
+                    0,
+                    chargingBall.size
+                );
+                tempBall.explode();
+            }
+
+            chargingBall = null;
+        }
+
+        isMouseDown = false;
         isMoving = false;
     }, { passive: true });
 
     // Optimized animation loop
     function animate() {
         ctx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+
+        // Update and draw charging ball
+        if (chargingBall && isMouseDown) {
+            chargingBall.update(mouseX, mouseY);
+            chargingBall.draw();
+        }
 
         // Update and draw particles (optimized)
         var activeParticles = [];
