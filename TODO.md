@@ -209,51 +209,51 @@
 ---
 
 ## Landing Page
-- [ ] P1 Header navigation
-  - [ ] Home link
-  - [ ] AI page link
-  - [ ] Projects page link
-  - [ ] About page link
-  - [ ] Services page link
-  - [ ] Contact link
+- [x] P1 Header navigation
+  - [x] Home link
+  - [ ] AI page link (using "About" instead)
+  - [ ] Projects page link (using "Gallery" instead)
+  - [x] About page link
+  - [x] Services page link
+  - [x] Contact link
   - [ ] Legal link
-- [ ] Home content
-  - [ ] Introductions section
-  - [ ] “What is Unity AI Lab” section
+- [x] Home content (Hero section implemented)
+  - [x] Introductions section
+  - [x] "What is Unity AI Lab" section
   - [ ] Stats overview with counters
   - [ ] Activity timeline
   - [ ] Deployments showcase
-- [ ] AI page
-  - [ ] Demo link
+- [ ] AI page (single-page design, no dedicated AI page)
+  - [x] Demo link (Unity AI Chat link in hero and features)
   - [ ] Capabilities grid
   - [ ] Model badges
-- [ ] Projects page
+- [ ] Projects page (Gallery section exists but incomplete)
   - [ ] Project cards with tags
   - [ ] Back-burner list
-  - [ ] GitHub linkouts
-- [ ] About page
-  - [ ] Who we are
-  - [ ] What we do
-  - [ ] Mission statement
+  - [x] GitHub linkouts
+- [x] About page (Features section with "What is UnityAILab?")
+  - [x] Who we are
+  - [x] What we do
+  - [ ] Mission statement (partial)
   - [ ] How we got here
   - [ ] Timeline graphic
-- [ ] Services page
+- [x] Services page
   - [ ] Prompt engineering
-  - [ ] Red team services
-  - [ ] Blue team services
-  - [ ] Specialized agents
-  - [ ] AI integration
+  - [x] Red team services
+  - [x] Blue team services
+  - [x] Specialized agents (mentioned in AI Integration)
+  - [x] AI integration
   - [ ] AI training
   - [ ] Chatbot development
-- [ ] Contact page
-  - [ ] Email link
-  - [ ] Discord link
+- [x] Contact page
+  - [x] Email link (contact form implemented)
+  - [x] Discord link (in footer)
 - [ ] Legal pages
   - [ ] Terms of Service
   - [ ] Privacy Policy
   - [ ] License
-- [ ] Keyboard accessible navigation
-- [ ] Active link state handling
+- [x] Keyboard accessible navigation (Bootstrap navbar)
+- [x] Active link state handling (Bootstrap default states)
 
 ---
 

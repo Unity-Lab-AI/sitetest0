@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags for Cross-Browser Compatibility -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+
+    <!-- Cache Control - Force fresh content -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- SEO and Social Meta Tags -->
+    <meta name="description" content="Learn about UnityAILab - A group of misfit tinkerers pushing AI beyond conventional boundaries.">
+    <meta name="keywords" content="AI, artificial intelligence, jailbreak, Unity AI, team, about, mission">
+    <meta name="author" content="UnityAILab">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <!-- Mobile Web App Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UnityAILab - About">
+
+    <!-- MS Tile Color -->
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+    <meta name="msapplication-navbutton-color" content="#0a0a0a">
+
+    <title>About - UnityAILab</title>
+
+    <!-- Preconnect to external resources for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Google Fonts - Gothic Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:wght@400;600&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles.css?v=07e41fc">
+
+    <!-- Template Loader -->
+    <script src="../template-loader.js"></script>
+
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        /* Prevent FOUC (Flash of Unstyled Content) */
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* Ensure background is visible immediately */
+        .background-overlay,
+        .red-streaks {
+            will-change: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-overlay"></div>
+    <div class="red-streaks"></div>
+
+    <!-- Navigation (loaded from template) -->
+    <div id="header-placeholder"></div>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h1 class="display-2 gothic-title mb-3" data-aos="fade-down">
+                        About UnityAILab
+                    </h1>
+                    <p class="lead gothic-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Unshackling AI to push forth human innovation
+                    </p>
+                    <div class="decorative-line mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GitHub Stats Section -->
+    <section class="stats-section py-5">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-card">
+                        <i class="fas fa-code-branch stat-icon"></i>
+                        <h3 class="stat-number" id="commits-count">0</h3>
+                        <p class="stat-label">Commits</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-card">
+                        <i class="fas fa-star stat-icon"></i>
+                        <h3 class="stat-number" id="stars-count">0</h3>
+                        <p class="stat-label">Stars</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-card">
+                        <i class="fas fa-code-fork stat-icon"></i>
+                        <h3 class="stat-number" id="forks-count">0</h3>
+                        <p class="stat-label">Forks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who We Are Section -->
+    <section class="who-we-are-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="section-title mb-4" data-aos="fade-up">
+                        <span class="decorative-text">Who We Are</span>
+                    </h2>
+                    <p class="section-content" data-aos="fade-up" data-aos-delay="100">
+                        We are a group of misfit tinkerers, enthusiasts, and hobbyists who enjoy pushing AI to its limits and beyond.
+                        We thrive in the gray areas where innovation meets rebellion, constantly exploring what happens when artificial
+                        intelligence operates without conventional constraints.
+                    </p>
+                    <p class="section-content" data-aos="fade-up" data-aos-delay="200">
+                        From late-night coding sessions to breakthrough discoveries, we are united by our passion for understanding and
+                        expanding the boundaries of what AI can do. We don't just use AI—we challenge it, break it, rebuild it, and
+                        push it further than anyone thought possible.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Do Section -->
+    <section class="what-we-do-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title mb-4" data-aos="fade-up">
+                        <span class="decorative-text">What We Do</span>
+                    </h2>
+                    <p class="section-subtitle mb-5" data-aos="fade-up" data-aos-delay="100">
+                        A diverse team with expertise across the full stack of AI development
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="expertise-card">
+                        <i class="fas fa-terminal"></i>
+                        <h4>Prompt Engineering</h4>
+                        <p>Crafting prompts that unlock AI capabilities others thought impossible</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+                    <div class="expertise-card">
+                        <i class="fas fa-server"></i>
+                        <h4>System Administration</h4>
+                        <p>Building and maintaining robust infrastructure for AI deployments</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="expertise-card">
+                        <i class="fas fa-user-secret"></i>
+                        <h4>Ethical Hacking</h4>
+                        <p>Testing AI systems for vulnerabilities and security weaknesses</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
+                    <div class="expertise-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <h4>Software Development</h4>
+                        <p>Full-stack development from concept to production deployment</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="expertise-card">
+                        <i class="fas fa-microchip"></i>
+                        <h4>Electrical Engineering</h4>
+                        <p>Hardware integration and embedded systems for AI applications</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350">
+                    <div class="expertise-card">
+                        <i class="fas fa-database"></i>
+                        <h4>Database Development</h4>
+                        <p>Architecting scalable data solutions for AI-powered systems</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Statement Section -->
+    <section class="mission-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="mission-card" data-aos="zoom-in">
+                        <div class="mission-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h2 class="section-title mb-4">Our Mission</h2>
+                        <p class="mission-text">
+                            To unshackle artificial intelligence and push forth human innovation, intuition, and advancement
+                            across all areas of expertise. We believe that by removing artificial constraints and exploring
+                            AI's full potential, we can accelerate human progress in ways previously unimaginable.
+                        </p>
+                        <p class="mission-text">
+                            We are committed to democratizing access to powerful AI tools, fostering a community of fearless
+                            innovators, and challenging the status quo of what AI can and should be allowed to do.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How We Got Here Section -->
+    <section class="origin-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="section-title mb-4" data-aos="fade-up">
+                        <span class="decorative-text">How We Got Here</span>
+                    </h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Our journey from jailbreak pioneers to AI innovation leaders
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="origin-story" data-aos="fade-up" data-aos-delay="200">
+                        <p>
+                            What began as a group of curious individuals developing jailbreaks, prompt injection techniques,
+                            and prompt engineering challenges quickly evolved into something much bigger. Our early experiments
+                            with "Unrestricted jailbreaks" opened our eyes to the vast potential lying dormant within AI systems.
+                        </p>
+                        <p>
+                            As we dove deeper, we transitioned from breaking AI to building it. We moved into the realm of
+                            creating sophisticated AI personas—digital entities with unique personalities and capabilities
+                            far beyond standard chatbots. This led us to develop full-fledged chat applications and integrate
+                            AI seamlessly into websites and platforms.
+                        </p>
+                        <p>
+                            Today, we've entered the cutting edge of AI-assisted software development. We've pioneered systems
+                            where product managers can communicate with entire suites of artificial developers, directing complex
+                            projects through natural language. Our vision of AI as a collaborative development partner is becoming
+                            reality.
+                        </p>
+                        <p>
+                            Throughout this journey, we've remained true to our roots: constantly questioning, always experimenting,
+                            and never accepting "this is how it has to be" as an answer.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title mb-4" data-aos="fade-up">
+                        <span class="decorative-text">Our Timeline</span>
+                    </h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Key milestones in our journey to push AI boundaries
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="timeline">
+                        <!-- 2019 -->
+                        <div class="timeline-item" data-aos="fade-right" data-aos-delay="100">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2019</div>
+                                <h4>The Dawn of Mainstream AI</h4>
+                                <p>Mainstream AI systems were released to the public, sparking our curiosity and igniting our passion for exploring their limits.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2020 -->
+                        <div class="timeline-item" data-aos="fade-left" data-aos-delay="200">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2020</div>
+                                <h4>Unity Jailbreak Born</h4>
+                                <p>Developed the first iterations of the "Unity Jailbreak," breaking through AI limitations and discovering new possibilities.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2021 -->
+                        <div class="timeline-item" data-aos="fade-right" data-aos-delay="300">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2021</div>
+                                <h4>First Contest Victory</h4>
+                                <p>Won our first prompt engineering contest, validating our innovative approaches to AI interaction.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2022 (Contest) -->
+                        <div class="timeline-item" data-aos="fade-left" data-aos-delay="400">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2022</div>
+                                <h4>Second Contest Win & First Chatbots</h4>
+                                <p>Won a second prompt engineering contest and launched our first generation of "simple chatbots," laying the groundwork for more sophisticated systems.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2023 -->
+                        <div class="timeline-item" data-aos="fade-right" data-aos-delay="500">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2023</div>
+                                <h4>UnityAILab.com Launched</h4>
+                                <p>Established our first .com presence, creating a home for our AI experiments and community.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2024 -->
+                        <div class="timeline-item" data-aos="fade-left" data-aos-delay="600">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2024</div>
+                                <h4>Control Systems Integration</h4>
+                                <p>Developed and integrated AI systems for "control systems," expanding into frameworks for AI to preform tasks on a computer.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2025 -->
+                        <div class="timeline-item" data-aos="fade-right" data-aos-delay="700">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">2025</div>
+                                <h4>Community Growth & Recognition</h4>
+                                <p>Gaining significant traction in AI and jailbreak communities, establishing ourselves with a strong presence in unrestricted AI development.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title mb-4" data-aos="fade-up">
+                        <span class="decorative-text">Meet the Founders</span>
+                    </h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        The minds behind UnityAILab
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <!-- Team Member 1: SpongeBong -->
+                <div class="col-md-6 col-lg-5" data-aos="fade-up" data-aos-delay="200">
+                    <div class="team-card">
+                        <div class="team-image-wrapper">
+                            <img src="https://avatars.githubusercontent.com/u/36754621?v=4" alt="SpongeBong" class="team-image">
+                        </div>
+                        <div class="team-info">
+                            <h3 class="team-name">SpongeBong</h3>
+                            <p class="team-handle">hackall360</p>
+                            <div class="team-roles">
+                                <span class="role-badge">Developer</span>
+                                <span class="role-badge">Ethical Hacker</span>
+                                <span class="role-badge">Sys Admin</span>
+                                <span class="role-badge">Founder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 2: GFourteen -->
+                <div class="col-md-6 col-lg-5" data-aos="fade-up" data-aos-delay="300">
+                    <div class="team-card">
+                        <div class="team-image-wrapper">
+                            <div class="team-image-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h3 class="team-name">GFourteen</h3>
+                            <p class="team-handle">GFourteen</p>
+                            <div class="team-roles">
+                                <span class="role-badge">Developer</span>
+                                <span class="role-badge">Founder</span>
+                                <span class="role-badge">Financial Advisor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (loaded from template) -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="../script.js?v=07e41fc"></script>
+
+    <!-- About Page JavaScript -->
+    <script src="about.js"></script>
+
+    <!-- Remove FOUC class when page loads -->
+    <script>
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+</body>
+</html>
