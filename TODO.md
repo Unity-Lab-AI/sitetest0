@@ -4,6 +4,60 @@
 
 ---
 
+## Project Vision & Goals
+
+**Overview:**
+This project is a comprehensive AI-powered website showcasing the Pollinations API through a landing page, demo environment, and full-featured chat application.
+
+**Key Components:**
+
+1. **Landing Page (index.html)** - ~90% complete
+   - Professional showcase of UnityAILab
+   - Navigation to Demo and AI pages
+   - Clean links to in-repo projects only (no external project links)
+   - Responsive design across all devices
+   - External links ONLY for libraries, services, and platforms
+
+2. **Demo Page (/demo)** - Not yet implemented
+   - Showcase 50-75% of Pollinations API functionality
+   - Simple, focused demo environment
+   - Text-to-Text, Text-to-Image, TTS, STT, Image-to-Text
+   - Minimal UI for testing features
+   - Links to full /ai app for complete experience
+
+3. **AI Chat App (/ai)** - Not yet implemented
+   - Full-featured chat app (like ChatGPT, Gemini, DeepSeek)
+   - 100% Pollinations API coverage
+   - Advanced features: sessions, folders, agents, memory
+   - Custom features: live voice chat, page control, system connector (future)
+   - Professional layout with sidebar navigation
+
+**Architecture:**
+- **PolliLibPy**: Python reference implementation (direct from Pollinations docs)
+- **PolliLibJS**: JavaScript browser-based version (mirrors Python functionality)
+- **Development Flow**: Python files as reference, JavaScript for serverless browser execution
+
+**Standards:**
+- **Responsiveness**: Seamless experience from extra small to extra large screens
+- **Cross-Browser**: Works across Chrome, Firefox, Safari, Edge with proper fallbacks
+- **Accessibility**: WCAG AA compliance, keyboard navigation, screen reader support
+- **Performance**: Optimized loading, minimal layout shifts, responsive images
+
+**Link Policy:**
+- In-repo projects: Link freely (pages in this repo)
+- External projects: Do NOT link to other projects (like unity.unityailab.com, CodeWringer)
+- External services: OK to link (libraries, platforms, Discord, GitHub org, npm packages, CDNs)
+
+**Current Priorities:**
+1. Update landing page navigation (add Demo and AI links)
+2. Clean up external project links on landing page
+3. Plan and structure /demo page
+4. Plan and structure /ai page
+5. Establish and implement responsiveness standards
+6. Ensure cross-browser compatibility
+
+---
+
 ## Conventions
 - [ ] Use `- [ ]` for open, `- [x]` for done.
 - [ ] Prefix priority: **P0** (urgent), **P1** (next), **P2** (nice-to-have).
