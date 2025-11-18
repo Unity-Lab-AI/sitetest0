@@ -4,6 +4,60 @@
 
 ---
 
+## Project Vision & Goals
+
+**Overview:**
+This project is a comprehensive AI-powered website showcasing the Pollinations API through a landing page, demo environment, and full-featured chat application.
+
+**Key Components:**
+
+1. **Landing Page (index.html)** - ~90% complete
+   - Professional showcase of UnityAILab
+   - Navigation to Demo and AI pages
+   - Clean links to in-repo projects only (no external project links)
+   - Responsive design across all devices
+   - External links ONLY for libraries, services, and platforms
+
+2. **Demo Page (/demo)** - Not yet implemented
+   - Showcase 50-75% of Pollinations API functionality
+   - Simple, focused demo environment
+   - Text-to-Text, Text-to-Image, TTS, STT, Image-to-Text
+   - Minimal UI for testing features
+   - Links to full /ai app for complete experience
+
+3. **AI Chat App (/ai)** - Not yet implemented
+   - Full-featured chat app (like ChatGPT, Gemini, DeepSeek)
+   - 100% Pollinations API coverage
+   - Advanced features: sessions, folders, agents, memory
+   - Custom features: live voice chat, page control, system connector (future)
+   - Professional layout with sidebar navigation
+
+**Architecture:**
+- **PolliLibPy**: Python reference implementation (direct from Pollinations docs)
+- **PolliLibJS**: JavaScript browser-based version (mirrors Python functionality)
+- **Development Flow**: Python files as reference, JavaScript for serverless browser execution
+
+**Standards:**
+- **Responsiveness**: Seamless experience from extra small to extra large screens
+- **Cross-Browser**: Works across Chrome, Firefox, Safari, Edge with proper fallbacks
+- **Accessibility**: WCAG AA compliance, keyboard navigation, screen reader support
+- **Performance**: Optimized loading, minimal layout shifts, responsive images
+
+**Link Policy:**
+- In-repo projects: Link freely (pages in this repo)
+- External projects: Do NOT link to other projects (like unity.unityailab.com, CodeWringer)
+- External services: OK to link (libraries, platforms, Discord, GitHub org, npm packages, CDNs)
+
+**Current Priorities:**
+1. Update landing page navigation (add Demo and AI links)
+2. Clean up external project links on landing page
+3. Plan and structure /demo page
+4. Plan and structure /ai page
+5. Establish and implement responsiveness standards
+6. Ensure cross-browser compatibility
+
+---
+
 ## Conventions
 - [ ] Use `- [ ]` for open, `- [x]` for done.
 - [ ] Prefix priority: **P0** (urgent), **P1** (next), **P2** (nice-to-have).
@@ -16,6 +70,11 @@
 ---
 
 ## Library Features (Python & JavaScript)
+
+**Architecture Overview:**
+- **PolliLibPy**: Direct copies from Pollinations documentation (Python reference implementation)
+- **PolliLibJS**: JavaScript versions of Python files, designed to run serverless in the browser
+- **Development Flow**: Python files serve as reference; JavaScript implementations mirror Python functionality for browser use
 
 **Legend:**
 - ✓ = Complete in both Python (PolliLibPy) and JavaScript (PolliLibJS)
@@ -209,34 +268,48 @@
 ---
 
 ## Landing Page
-- [x] P1 Header navigation
+
+**Current Status:** ~90% complete, needs navigation updates and external link cleanup
+
+**Priority Tasks:**
+- [ ] P0 **Add navigation links**
+  - [ ] Add Demo link to navbar (points to /demo)
+  - [ ] Add AI link to navbar (points to /ai)
   - [x] Home link
-  - [ ] AI page link (using "About" instead)
-  - [ ] Projects page link (using "Gallery" instead)
-  - [x] About page link
-  - [x] Services page link
+  - [x] About link
+  - [x] Gallery link
+  - [x] Services link
   - [x] Contact link
-  - [ ] Legal link
+  - [ ] Legal link (low priority)
+
+- [ ] P0 **Clean up external links**
+  - [ ] Remove or relocate Unity AI Chat links (https://unity.unityailab.com) - external site not in repo
+  - [ ] Remove or relocate CodeWringer links (https://github.com/Unity-Lab-AI/CodeWringer) - external repo
+  - [ ] Keep GitHub org link (https://github.com/Unity-Lab-AI) - acceptable external library/service
+  - [ ] Keep Discord link (https://discord.gg/unityailab) - acceptable external service
+  - [ ] Replace external project links with links to pages in current repo only (/demo, /ai, /about, etc.)
+  - [ ] External links allowed ONLY for: libraries, services, and platforms (not other projects)
+
+**Content Sections:**
 - [x] Home content (Hero section implemented)
   - [x] Introductions section
   - [x] "What is Unity AI Lab" section
   - [ ] Stats overview with counters
   - [ ] Activity timeline
   - [ ] Deployments showcase
-- [ ] AI page (single-page design, no dedicated AI page)
-  - [x] Demo link (Unity AI Chat link in hero and features)
-  - [ ] Capabilities grid
-  - [ ] Model badges
+
 - [ ] Projects page (Gallery section exists but incomplete)
-  - [ ] Project cards with tags
+  - [ ] Project cards for in-repo projects only
   - [ ] Back-burner list
-  - [x] GitHub linkouts
+  - [ ] Only link to projects whose code exists in this repo
+
 - [x] About page (Features section with "What is UnityAILab?")
   - [x] Who we are
   - [x] What we do
   - [ ] Mission statement (partial)
   - [ ] How we got here
   - [ ] Timeline graphic
+
 - [x] Services page
   - [ ] Prompt engineering
   - [x] Red team services
@@ -245,74 +318,241 @@
   - [x] AI integration
   - [ ] AI training
   - [ ] Chatbot development
+
 - [x] Contact page
   - [x] Email link (contact form implemented)
   - [x] Discord link (in footer)
-- [ ] Legal pages
+
+- [ ] Legal pages (low priority)
   - [ ] Terms of Service
   - [ ] Privacy Policy
   - [ ] License
+
 - [x] Keyboard accessible navigation (Bootstrap navbar)
 - [x] Active link state handling (Bootstrap default states)
 
 ---
 
 ## /demo Page (Demo AI Chat App)
-- [ ] P1 Text input box
+
+**Goal:** Showcase 50-75% of Pollinations functionality in a demo environment
+
+**Core Chat Interface:**
+- [ ] P0 Text input box
 - [ ] Send button
 - [ ] Enter submits message
 - [ ] Shift+Enter inserts newline
 - [ ] User messages on the right
 - [ ] AI messages on the left
 - [ ] Chat bubble style
-- [ ] Voice recognition toggle
-- [ ] Voice-to-voice toggle
-- [ ] Separate image panel
-- [ ] Local chat history save
-- [ ] Max history transmitted
-- [ ] Automatic context compression
-- [ ] Image actions
-  - [ ] Save image
-  - [ ] Copy image
-  - [ ] Re-generate image with new seed
-  - [ ] Open image in new tab
-- [ ] Text actions
-  - [ ] Copy text
-  - [ ] Edit text inline
-  - [ ] Regenerate response
-- [ ] Stop generation button
-- [ ] Reset demo button
 - [ ] Markdown rendering
 - [ ] Code block highlighting
+- [ ] Stop generation button
+- [ ] Reset demo button
+
+**Pollinations Feature Showcase (50-75% of full API):**
+
+- [ ] P0 **Text-to-Text Generation**
+  - [ ] Single-turn completion
+  - [ ] Multi-turn conversation
+  - [ ] Model selector drop-down
+  - [ ] Temperature control
+  - [ ] Safety filter toggle
+
+- [ ] P0 **Text-to-Image Generation**
+  - [ ] Generate images from prompts
+  - [ ] Separate image panel/display
+  - [ ] Model selector for image models
+  - [ ] Seed support for determinism
+  - [ ] Image size selection
+  - [ ] Number of variants selector
+
+- [ ] P1 **Text-to-Speech (TTS)**
+  - [ ] Voice selection dropdown
+  - [ ] Auto-play toggle
+  - [ ] Sample rate selection
+  - [ ] Play/pause controls
+
+- [ ] P1 **Speech-to-Text (STT)**
+  - [ ] Voice recognition toggle
+  - [ ] Microphone input
+  - [ ] Voice-to-voice mode toggle
+  - [ ] Real-time transcription display
+
+- [ ] P1 **Image-to-Text**
+  - [ ] Image upload for captioning
+  - [ ] OCR functionality
+  - [ ] Region descriptions
+
+- [ ] P2 **Image-to-Image** (optional, lower priority for demo)
+  - [ ] Image upload for transformation
+  - [ ] Text-guided generation
+  - [ ] Style transfer
+
+**Image Actions:**
+- [ ] Save image
+- [ ] Copy image
+- [ ] Re-generate image with new seed
+- [ ] Open image in new tab
+- [ ] Download image
+
+**Text Actions:**
+- [ ] Copy text
+- [ ] Edit text inline
+- [ ] Regenerate response
+- [ ] Copy code blocks
+
+**Demo-Specific Features:**
+- [ ] Local chat history save (browser storage)
+- [ ] Max history transmitted
+- [ ] Automatic context compression
 - [ ] Token usage display
 - [ ] Latency display
-- [ ] Model selector drop-down
+- [ ] Demo limitations notice
+- [ ] Link to full /ai app for complete experience
+
+**UI/UX:**
+- [ ] Clean, minimal interface
+- [ ] Feature toggle panel (show/hide available features)
+- [ ] Help tooltips for Pollinations features
+- [ ] Example prompts for each feature type
+- [ ] Feature status indicators (loading, error, success)
 
 ---
 
-## Establish Responsiveness
-- [ ] P0 Responsive layout for phone
-- [ ] Responsive layout for tablet
-- [ ] Responsive layout for laptop
-- [ ] Responsive layout for desktop
-- [ ] Hamburger menu on small screens
-- [ ] Scalable typography
-- [ ] Scalable buttons
-- [ ] Scalable hero and cards
-- [ ] Lighthouse performance target on mobile
-- [ ] Lighthouse accessibility target on mobile
+## Responsiveness Standard
+
+**Goal:** Establish site-wide standard for seamless use on any device (extra small to extra large screens)
+
+**Core Principles:**
+- Seamless experience across all screen sizes
+- Resizing components that adapt to viewport
+- Hamburger menus when content doesn't fit
+- Goes hand-in-hand with cross-browser support
+
+**Screen Size Breakpoints:**
+- [ ] P0 Extra small devices (phones, <576px)
+  - [ ] Single column layouts
+  - [ ] Hamburger menu for navigation
+  - [ ] Touch-friendly tap targets (min 44px)
+  - [ ] Readable font sizes (min 16px for body)
+  - [ ] Full-width buttons and forms
+
+- [ ] P0 Small devices (landscape phones, tablets, 576px-768px)
+  - [ ] 1-2 column layouts
+  - [ ] Hamburger menu or condensed navigation
+  - [ ] Optimized spacing and padding
+  - [ ] Responsive images and media
+
+- [ ] P0 Medium devices (tablets, 768px-992px)
+  - [ ] 2-3 column layouts
+  - [ ] Full navigation or condensed depending on content
+  - [ ] Balanced spacing
+  - [ ] Grid-based layouts
+
+- [ ] P0 Large devices (desktops, 992px-1200px)
+  - [ ] 3-4 column layouts
+  - [ ] Full navigation visible
+  - [ ] Optimal reading width (max-width containers)
+  - [ ] Sidebar layouts where appropriate
+
+- [ ] P0 Extra large devices (large desktops, >1200px)
+  - [ ] Full multi-column layouts
+  - [ ] Maximum content width with margins
+  - [ ] Enhanced features and details
+  - [ ] Optimal use of screen real estate
+
+**Component-Level Responsiveness:**
+- [ ] P0 Scalable typography
+  - [ ] Fluid font sizes using clamp() or media queries
+  - [ ] Responsive line heights
+  - [ ] Readable text on all screen sizes
+
+- [ ] P0 Scalable buttons and interactive elements
+  - [ ] Touch-friendly sizes on mobile
+  - [ ] Proper spacing between clickable items
+  - [ ] Visible focus states
+
+- [ ] P0 Scalable hero sections and cards
+  - [ ] Background images with proper sizing
+  - [ ] Flexible card grids
+  - [ ] Responsive padding and margins
+
+- [ ] P0 Responsive navigation
+  - [ ] Hamburger menu on small screens
+  - [ ] Smooth transitions
+  - [ ] Accessible keyboard navigation
+  - [ ] Active state indicators
+
+- [ ] P0 Responsive forms and inputs
+  - [ ] Full-width inputs on mobile
+  - [ ] Proper input types for mobile keyboards
+  - [ ] Clear labels and validation
+
+- [ ] P0 Responsive images and media
+  - [ ] Properly sized images (no overflow)
+  - [ ] Art direction with picture element
+  - [ ] Lazy loading for performance
+
+**Testing & Validation:**
+- [ ] P0 Test on real devices (phone, tablet, laptop, desktop)
+- [ ] Test landscape and portrait orientations
+- [ ] Lighthouse performance target on mobile (score >90)
+- [ ] Lighthouse accessibility target on mobile (score >90)
+- [ ] Chrome DevTools device emulation testing
+- [ ] Firefox responsive design mode testing
+
+**Performance Considerations:**
+- [ ] Minimize layout shifts (CLS)
+- [ ] Optimize images for different screen sizes
+- [ ] Use responsive loading strategies
+- [ ] Minimize JavaScript for mobile devices
 
 ---
 
 ## Cross-Browser Support
-- [ ] P0 Baseline features in Chromium
-- [ ] Baseline features in WebKit
-- [ ] Speech recognition: native API when present
-- [ ] Speech recognition: fallback when missing
-- [ ] Voice-to-voice without on-device STT when hosted
-- [ ] Graceful fallback for nonstandard elements
-- [ ] Feature detection gates enabled
-- [ ] Avoid UA sniffing in code
+
+**Goal:** Ensure consistent functionality across all major browsers (works hand-in-hand with responsiveness)
+
+**Browser Targets:**
+- [ ] P0 Chrome/Chromium (latest 2 versions)
+- [ ] P0 Firefox (latest 2 versions)
+- [ ] P0 Safari/WebKit (latest 2 versions)
+- [ ] P0 Edge (latest 2 versions)
+- [ ] P1 Mobile Safari (iOS)
+- [ ] P1 Chrome Mobile (Android)
+- [ ] P2 Samsung Internet
+- [ ] P2 Opera
+
+**Core Compatibility:**
+- [ ] P0 Baseline features work in all target browsers
+- [ ] P0 Polyfills for critical missing features
+- [ ] P0 Feature detection gates (no UA sniffing)
+- [ ] P0 Graceful degradation for unsupported features
+- [ ] CSS vendor prefixes where needed
+- [ ] Transpiled JavaScript for older engines
+
+**Browser-Specific Features:**
+- [ ] P0 Speech recognition: native Web Speech API when present
+- [ ] P0 Speech recognition: fallback to Pollinations STT when missing
+- [ ] P1 Voice-to-voice without on-device STT when hosted
+- [ ] P1 Media handling across browsers
+- [ ] P1 WebRTC compatibility for voice features
+- [ ] Notification API with fallbacks
+- [ ] Local storage with fallbacks
+
+**Testing Strategy:**
+- [ ] P0 Test in Chrome, Firefox, Safari, Edge
+- [ ] P0 Test on mobile browsers (iOS Safari, Chrome Mobile)
+- [ ] Test with BrowserStack or similar service
+- [ ] Automated cross-browser testing in CI
+- [ ] Manual QA on real devices
+
+**Known Issues & Workarounds:**
+- [ ] Document browser-specific limitations
+- [ ] Maintain compatibility matrix
+- [ ] User-facing browser recommendations
+- [ ] Fallback UI for unsupported features
 
 ---
 
@@ -327,58 +567,179 @@
 
 ---
 
-## Main AI Chat App
-- [ ] P0 Parity with demo features
-- [ ] Automatic session saving
-- [ ] Session loading by ID
-- [ ] Left panel for sessions
-- [ ] SFW/NSFW modes with cookies
-- [ ] Age gate for NSFW area
-- [ ] Safe mode flag in request
-- [ ] Not-safe mode flag in request
-- [ ] New chat button
-- [ ] Agents
-  - [ ] Create new custom agents
-  - [ ] Attach custom tooling
-- [ ] Search across sessions
-- [ ] File upload
-  - [ ] Validate max file size
-  - [ ] Validate UTF-8 processable
-  - [ ] Accept common text and source files
-- [ ] Session folders
-  - [ ] Move chats into folders
-  - [ ] Rename folders
-  - [ ] Create folders
-  - [ ] Color selection for folder
-  - [ ] Emoji selection for folder
-  - [ ] Icon color matches text
-  - [ ] Preset color swatches
-- [ ] Themes
-  - [ ] Dark theme
-  - [ ] Light theme
-  - [ ] Additional themes
-- [ ] Settings modal
-  - [ ] Theme selection
-  - [ ] Delete all chats
-  - [ ] Confirm destructive actions
-  - [ ] Clear cookies option
-  - [ ] Model selector
-  - [ ] Voice selection
-  - [ ] Auto playback toggle
-  - [ ] Voice volume slider
-  - [ ] Max history selector
-  - [ ] Max memory entries selector
-  - [ ] Memory enable/disable toggle
-  - [ ] Delete memories action
-- [ ] Local storage compact representations
-- [ ] Boolean settings as toggles
-- [ ] Code highlighting for many languages
-- [ ] Memory functionality
-  - [ ] Save memory entry
-  - [ ] Retrieve memory entry
-  - [ ] Memory placement rules
-  - [ ] Delete memory entry
-  - [ ] Export/import tools
+## /ai Page (Full AI Chat Application)
+
+**Goal:** Create a full-featured AI chat application structured like ChatGPT, Gemini, DeepSeek, etc. with custom features
+
+**Layout Structure (Standard Chat App):**
+- [ ] P0 Three-panel layout (desktop)
+  - [ ] Left sidebar: Session list and folders
+  - [ ] Center panel: Active chat conversation
+  - [ ] Right sidebar (collapsible): Settings/tools/info
+- [ ] P0 Responsive mobile layout
+  - [ ] Collapsible sidebar with hamburger menu
+  - [ ] Full-screen chat on mobile
+  - [ ] Swipe gestures for sidebar
+
+**Core Chat Features (Parity with Demo + Full Pollinations):**
+- [ ] P0 All demo features included
+- [ ] P0 All Pollinations API features (100% coverage)
+  - [ ] Text-to-Text (all models)
+  - [ ] Text-to-Image (all models)
+  - [ ] Text-to-Speech (all voices)
+  - [ ] Speech-to-Text
+  - [ ] Image-to-Text
+  - [ ] Image-to-Image
+  - [ ] Function calling/tool use
+  - [ ] Streaming mode
+  - [ ] Reasoning controls
+  - [ ] Safety filtering
+
+**Session Management:**
+- [ ] P0 Automatic session saving
+- [ ] P0 Session loading by ID
+- [ ] P0 New chat button (prominent)
+- [ ] P0 Session list in left sidebar
+- [ ] P0 Session renaming
+- [ ] P0 Session deletion with confirmation
+- [ ] P0 Session search/filter
+- [ ] P1 Session export (JSON, Markdown, PDF)
+- [ ] P1 Session import
+- [ ] P1 Duplicate session
+- [ ] P1 Pin important sessions
+
+**Session Folders & Organization:**
+- [ ] P0 Create folders
+- [ ] P0 Rename folders
+- [ ] P0 Delete folders with confirmation
+- [ ] P0 Move chats into folders (drag & drop)
+- [ ] P0 Folder color selection
+- [ ] P0 Folder emoji/icon selection
+- [ ] P0 Icon color matches folder color
+- [ ] P0 Preset color swatches
+- [ ] P1 Nested folders (subfolders)
+- [ ] P1 Folder sorting options
+
+**File Upload & Processing:**
+- [ ] P0 File upload button
+- [ ] P0 Drag and drop file upload
+- [ ] P0 Validate max file size (configurable)
+- [ ] P0 Accept common text formats (.txt, .md, .json, .csv)
+- [ ] P0 Accept source code files (.py, .js, .html, .css, etc.)
+- [ ] P0 Accept images (.jpg, .png, .gif, .webp)
+- [ ] P0 Accept PDFs
+- [ ] P0 Validate UTF-8 processable
+- [ ] P1 Multiple file upload
+- [ ] P1 File preview before sending
+- [ ] P1 Attached files display in chat
+
+**Custom Agents:**
+- [ ] P1 Create new custom agents
+- [ ] P1 Agent templates (presets)
+- [ ] P1 Custom system prompts per agent
+- [ ] P1 Attach custom tooling/functions
+- [ ] P1 Agent personality settings
+- [ ] P1 Agent memory/knowledge base
+- [ ] P1 Share agents (export/import)
+- [ ] P2 Agent marketplace/gallery
+
+**Themes:**
+- [ ] P0 Dark theme (default)
+- [ ] P0 Light theme
+- [ ] P1 High contrast theme
+- [ ] P1 Custom theme creator
+- [ ] P2 Additional preset themes
+- [ ] P2 Theme sharing/import
+
+**Settings Modal:**
+- [ ] P0 Theme selection
+- [ ] P0 Model selector (default model)
+- [ ] P0 Voice selection (default voice)
+- [ ] P0 Auto playback toggle for TTS
+- [ ] P0 Voice volume slider
+- [ ] P0 Max history selector (context window)
+- [ ] P0 Max memory entries selector
+- [ ] P0 Memory enable/disable toggle
+- [ ] P0 Delete all chats (with confirmation)
+- [ ] P0 Clear cookies option
+- [ ] P0 SFW/NSFW mode toggle
+- [ ] P1 Export all data
+- [ ] P1 Import data
+- [ ] P1 Account preferences
+- [ ] P1 Keyboard shortcuts reference
+- [ ] P2 Advanced API settings
+
+**Memory System:**
+- [ ] P1 Save memory entry (manual)
+- [ ] P1 Retrieve memory entry
+- [ ] P1 Auto-save important info
+- [ ] P1 Memory placement rules (context injection)
+- [ ] P1 Edit memory entries
+- [ ] P1 Delete memory entry
+- [ ] P1 Memory search
+- [ ] P1 Memory categories/tags
+- [ ] P1 Export/import memory
+- [ ] P2 Memory analytics/insights
+
+**SFW/NSFW Content Controls:**
+- [ ] P0 SFW/NSFW modes with cookies
+- [ ] P0 Age gate for NSFW area (18+ verification)
+- [ ] P0 Safe mode flag in API requests
+- [ ] P0 Not-safe mode flag in API requests
+- [ ] P0 Content warning overlays
+- [ ] P1 Granular content filters
+- [ ] P1 Custom filter levels
+
+**Advanced Features:**
+- [ ] P0 Code highlighting for many languages
+- [ ] P0 Markdown rendering
+- [ ] P0 LaTeX/math rendering
+- [ ] P0 Mermaid diagram support
+- [ ] P1 Local storage with compact representations
+- [ ] P1 Boolean settings as toggles
+- [ ] P1 Keyboard shortcuts
+- [ ] P1 Context menu (right-click) actions
+- [ ] P2 Collaborative sessions (share with others)
+
+**Custom Features (To Be Decided - Future Roadmap):**
+
+- [ ] P1 **Live Voice Chat**
+  - [ ] Real-time voice conversation
+  - [ ] Voice activity detection
+  - [ ] Push-to-talk mode
+  - [ ] Continuous conversation mode
+  - [ ] Voice interruption handling
+  - [ ] WebRTC integration
+  - [ ] Low-latency audio streaming
+
+- [ ] P2 **Page Control Features**
+  - [ ] Press buttons via AI commands
+  - [ ] Change settings via AI commands
+  - [ ] Navigate to different sections
+  - [ ] Trigger actions (save, export, etc.)
+  - [ ] Voice-controlled navigation
+  - [ ] Macro recording/playback
+
+- [ ] P2 **Installable System Connector (Desktop App)**
+  - [ ] File system access (read/write with permissions)
+  - [ ] Local file browser
+  - [ ] Code editor integration
+  - [ ] System command execution (sandboxed)
+  - [ ] Clipboard integration
+  - [ ] Screenshot/screen sharing
+  - [ ] Native notifications
+  - [ ] Auto-update mechanism
+  - [ ] Cross-platform (Windows, macOS, Linux)
+  - [ ] Electron or Tauri based
+
+- [ ] P2 **Additional Custom Features (TBD)**
+  - [ ] Screen reader for accessibility
+  - [ ] Multi-language UI
+  - [ ] Browser extensions
+  - [ ] Mobile apps (iOS/Android)
+  - [ ] API key management for advanced users
+  - [ ] Usage analytics dashboard
+  - [ ] Cost tracking and budgets
 
 ---
 
