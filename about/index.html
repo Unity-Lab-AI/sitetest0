@@ -89,13 +89,13 @@
                     <a class="nav-link" href="./">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../#gallery">Gallery</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="../services">Services</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../#contact">Contact</a>
+                    <a class="nav-link" href="../projects">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../contact">Contact</a>
                 </li>
             </ul>
         </div>
@@ -446,6 +446,70 @@
         </div>
     </section>
 
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-lg-12">
+                    <h2 class="section-title" data-aos="fade-up">
+                        <span class="decorative-text">Get In Touch</span>
+                    </h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Interested in learning more or working with us? Let's talk.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <form class="contact-form" id="aboutContactForm" data-aos="fade-up" data-aos-delay="200">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <select id="contactReason" class="form-control gothic-input" required style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
+                                    <option value="" disabled selected>Reason for Contact</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Partnership Opportunity">Partnership Opportunity</option>
+                                    <option value="Career Inquiry">Career Inquiry</option>
+                                    <option value="Media Request">Media Request</option>
+                                    <option value="Collaboration">Collaboration</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select id="contactSource" class="form-control gothic-input" required style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
+                                    <option value="" disabled selected>How did you hear about us?</option>
+                                    <option value="GitHub">GitHub</option>
+                                    <option value="Discord">Discord</option>
+                                    <option value="Social Media">Social Media</option>
+                                    <option value="Word of Mouth">Word of Mouth</option>
+                                    <option value="Search Engine">Search Engine</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required>
+                            </div>
+                            <div class="col-12">
+                                <textarea id="contactMessage" class="form-control gothic-input" rows="5" placeholder="Your Message" required></textarea>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-gothic-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
 <footer class="footer-section py-4">
     <div class="container">
@@ -461,9 +525,9 @@
                 <ul class="footer-links">
                     <li><a href="../">Home</a></li>
                     <li><a href="./">About</a></li>
-                    <li><a href="../#gallery">Gallery</a></li>
                     <li><a href="../services">Services</a></li>
-                    <li><a href="../#contact">Contact</a></li>
+                    <li><a href="../projects">Projects</a></li>
+                    <li><a href="../contact">Contact</a></li>
                 </ul>
             </div>
             <div class="col-lg-4 mb-4">
@@ -495,6 +559,30 @@
 
     <!-- About Page JavaScript -->
     <script src="about.js?v=9a5f49c"></script>
+
+    <!-- About Contact Form Handler -->
+    <script>
+        document.getElementById('aboutContactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const reason = document.getElementById('contactReason').value;
+            const source = document.getElementById('contactSource').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // Build mailto URL
+            const recipient = 'unityailabcontact@gmail.com';
+            const mailtoSubject = `[${reason}] ${subject}`;
+            const mailtoBody = `Name: ${name}\nEmail: ${email}\nReason for Contact: ${reason}\nHow they heard about us: ${source}\n\nMessage:\n${message}`;
+
+            const mailtoURL = `mailto:${recipient}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
+
+            // Open mailto link
+            window.location.href = mailtoURL;
+        });
+    </script>
 
     <!-- Remove FOUC class when page loads -->
     <script>
