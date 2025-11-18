@@ -51,20 +51,32 @@ jobs:
         run: |
           echo "🔄 Updating asset versions to: $VERSION"
 
-          # Update index.html
-          sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" index.html
-          sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" index.html
-          sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" index.html || true
+          # List of HTML files to update
+          HTML_FILES=(
+            "index.html"
+            "about/index.html"
+            "contact/index.html"
+            "projects/index.html"
+            "services/index.html"
+          )
 
-          # Update about/index.html
-          if [ -f about/index.html ]; then
-            sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" about/index.html
-            sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" about/index.html
-            sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" about/index.html || true
-            sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" about/index.html || true
-          fi
+          # Update each HTML file
+          for file in "${HTML_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "  📝 Updating $file..."
+              sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" "$file"
+              sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" "$file"
+              sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" "$file" || true
+              sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" "$file" || true
+              sed -i "s/contact\.js?v=[^\"']*/contact.js?v=$VERSION/g" "$file" || true
+              sed -i "s/projects\.js?v=[^\"']*/projects.js?v=$VERSION/g" "$file" || true
+              sed -i "s/services\.js?v=[^\"']*/services.js?v=$VERSION/g" "$file" || true
+            else
+              echo "  ⚠️  Skipping $file (not found)"
+            fi
+          done
 
-          echo "✅ Asset versions updated successfully"
+          echo "✅ Asset versions updated successfully in all HTML files"
 
       - name: Check for changes
         id: check_changes
@@ -83,7 +95,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add index.html about/index.html || true
+          git add index.html about/index.html contact/index.html projects/index.html services/index.html || true
           git commit -m "chore: update asset cache-busting versions to ${{ steps.get_version.outputs.version }} [skip ci]"
 
           # Push with retry logic for network resilience
@@ -121,7 +133,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Pull latest cache-busting changes
+        run: |
+          echo "🔄 Pulling latest changes including cache-busting updates..."
+          git pull origin ${{ github.ref_name }}
+          echo "✅ Now working with cache-busted assets"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
