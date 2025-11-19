@@ -36,6 +36,7 @@ test.describe('Performance Tests', () => {
 
   test('No render-blocking resources in critical path', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check that CSS is in head
     const aosInHead = await page.locator('head link[href*="aos.css"]');

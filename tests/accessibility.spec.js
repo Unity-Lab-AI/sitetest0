@@ -37,6 +37,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Home page should have proper ARIA landmarks', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Check for navigation landmark
     const nav = await page.locator('nav[role="navigation"]');
@@ -71,6 +72,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Skip link should be present and functional', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     const skipLink = await page.locator('.skip-link');
     await expect(skipLink).toHaveCount(1);
@@ -134,6 +136,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Navbar toggle should have proper ARIA attributes', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     const navbarToggle = await page.locator('.navbar-toggler');
     await expect(navbarToggle).toHaveAttribute('aria-controls', 'navbarNav');
@@ -143,6 +146,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Decorative icons should have aria-hidden', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check brain icon in navbar
     const brainIcon = await page.locator('.navbar-brand .fa-brain');

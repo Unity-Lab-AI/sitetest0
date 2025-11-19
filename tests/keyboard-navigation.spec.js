@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Keyboard Navigation Tests', () => {
   test('Skip link should be first focusable element', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Tab to first element
     await page.keyboard.press('Tab');
@@ -13,6 +14,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('All navigation links should be keyboard accessible', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
     // Skip the skip-link
     await page.keyboard.press('Tab');
@@ -57,6 +59,7 @@ test.describe('Keyboard Navigation Tests', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Find and focus navbar toggle
     const toggle = await page.locator('.navbar-toggler');
@@ -158,6 +161,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('Shift+Tab should move focus backwards', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Tab forward twice
     await page.keyboard.press('Tab');
