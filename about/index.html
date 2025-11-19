@@ -6,10 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
-    <!-- Cache Control - Force fresh content -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
 
     <!-- SEO and Social Meta Tags -->
     <meta name="description" content="Learn about UnityAILab - A group of misfit tinkerers pushing AI beyond conventional boundaries.">
@@ -465,13 +461,16 @@
                     <form class="contact-form" id="aboutContactForm" data-aos="fade-up" data-aos-delay="200">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required>
+                                <label for="contactName" class="visually-hidden">Your Name</label>
+                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required aria-required="true">
                             </div>
                             <div class="col-md-6">
-                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required>
+                                <label for="contactEmail" class="visually-hidden">Your Email</label>
+                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required aria-required="true">
                             </div>
                             <div class="col-md-6">
-                                <select id="contactReason" class="form-control gothic-input" required style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
+                                <label for="contactReason" class="visually-hidden">Reason for Contact</label>
+                                <select id="contactReason" class="form-control gothic-input" required aria-required="true" style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
                                     <option value="" disabled selected>Reason for Contact</option>
                                     <option value="General Inquiry">General Inquiry</option>
                                     <option value="Partnership Opportunity">Partnership Opportunity</option>
@@ -482,7 +481,8 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <select id="contactSource" class="form-control gothic-input" required style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
+                                <label for="contactSource" class="visually-hidden">How did you hear about us?</label>
+                                <select id="contactSource" class="form-control gothic-input" required aria-required="true" style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); border: 2px solid #2a2a2a; color: #cccccc; padding: 15px; border-radius: 5px; transition: all 0.3s ease;">
                                     <option value="" disabled selected>How did you hear about us?</option>
                                     <option value="GitHub">GitHub</option>
                                     <option value="Discord">Discord</option>
@@ -493,10 +493,12 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required>
+                                <label for="contactSubject" class="visually-hidden">Subject</label>
+                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required aria-required="true">
                             </div>
                             <div class="col-12">
-                                <textarea id="contactMessage" class="form-control gothic-input" rows="5" placeholder="Your Message" required></textarea>
+                                <label for="contactMessage" class="visually-hidden">Your Message</label>
+                                <textarea id="contactMessage" class="form-control gothic-input" rows="5" placeholder="Your Message" required aria-required="true"></textarea>
                             </div>
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-gothic-primary">

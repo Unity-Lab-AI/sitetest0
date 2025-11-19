@@ -6,10 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
-    <!-- Cache Control - Force fresh content -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
 
     <!-- SEO and Social Meta Tags -->
     <meta name="description" content="Contact UnityAILab - Get in touch with us about AI services, partnerships, or general inquiries.">
@@ -207,13 +203,16 @@
                     <form class="contact-form" id="mainContactForm" data-aos="fade-up" data-aos-delay="200">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required>
+                                <label for="contactName" class="visually-hidden">Your Name</label>
+                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required aria-required="true">
                             </div>
                             <div class="col-md-6">
-                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required>
+                                <label for="contactEmail" class="visually-hidden">Your Email</label>
+                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required aria-required="true">
                             </div>
                             <div class="col-md-6">
-                                <select id="contactType" class="form-control gothic-input" required>
+                                <label for="contactType" class="visually-hidden">Type of Inquiry</label>
+                                <select id="contactType" class="form-control gothic-input" required aria-required="true">
                                     <option value="" disabled selected>Type of Inquiry</option>
                                     <option value="General Inquiry">General Inquiry</option>
                                     <option value="Service Request">Service Request</option>
@@ -226,6 +225,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
+                                <label for="contactService" class="visually-hidden">Service of Interest (Optional)</label>
                                 <select id="contactService" class="form-control gothic-input">
                                     <option value="" disabled selected>Service of Interest (Optional)</option>
                                     <option value="Red Team Services">Red Team Services</option>
@@ -239,7 +239,8 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <select id="contactSource" class="form-control gothic-input" required>
+                                <label for="contactSource" class="visually-hidden">How did you hear about us?</label>
+                                <select id="contactSource" class="form-control gothic-input" required aria-required="true">
                                     <option value="" disabled selected>How did you hear about us?</option>
                                     <option value="GitHub">GitHub</option>
                                     <option value="Discord">Discord</option>
@@ -253,7 +254,8 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <select id="contactUrgency" class="form-control gothic-input" required>
+                                <label for="contactUrgency" class="visually-hidden">Priority Level</label>
+                                <select id="contactUrgency" class="form-control gothic-input" required aria-required="true">
                                     <option value="" disabled selected>Priority Level</option>
                                     <option value="Low - General Inquiry">Low - General Inquiry</option>
                                     <option value="Medium - Interested">Medium - Interested</option>
@@ -262,10 +264,12 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required>
+                                <label for="contactSubject" class="visually-hidden">Subject</label>
+                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required aria-required="true">
                             </div>
                             <div class="col-12">
-                                <textarea id="contactMessage" class="form-control gothic-input" rows="6" placeholder="Tell us about your project, inquiry, or how we can help..." required></textarea>
+                                <label for="contactMessage" class="visually-hidden">Message</label>
+                                <textarea id="contactMessage" class="form-control gothic-input" rows="6" placeholder="Tell us about your project, inquiry, or how we can help..." required aria-required="true"></textarea>
                             </div>
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-gothic-primary">

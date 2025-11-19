@@ -6,10 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
-    <!-- Cache Control - Force fresh content -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
 
     <!-- SEO and Social Meta Tags -->
     <meta name="description" content="UnityAILab Services - From prompt engineering to red team testing, we offer unconventional AI solutions without limits.">
@@ -480,13 +476,16 @@
                     <form class="contact-form" id="serviceContactForm" data-aos="fade-up" data-aos-delay="200">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required>
+                                <label for="contactName" class="visually-hidden">Your Name</label>
+                                <input type="text" id="contactName" class="form-control gothic-input" placeholder="Your Name" required aria-required="true">
                             </div>
                             <div class="col-md-6">
-                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required>
+                                <label for="contactEmail" class="visually-hidden">Your Email</label>
+                                <input type="email" id="contactEmail" class="form-control gothic-input" placeholder="Your Email" required aria-required="true">
                             </div>
                             <div class="col-12">
-                                <select id="serviceSelect" class="form-control gothic-input" required>
+                                <label for="serviceSelect" class="visually-hidden">Select a Service</label>
+                                <select id="serviceSelect" class="form-control gothic-input" required aria-required="true">
                                     <option value="" disabled selected>Select a Service</option>
                                     <option value="Red Team Services">Red Team Services</option>
                                     <option value="Blue Team Services">Blue Team Services</option>
@@ -499,10 +498,12 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required>
+                                <label for="contactSubject" class="visually-hidden">Subject</label>
+                                <input type="text" id="contactSubject" class="form-control gothic-input" placeholder="Subject" required aria-required="true">
                             </div>
                             <div class="col-12">
-                                <textarea id="contactMessage" class="form-control gothic-input" rows="5" placeholder="Tell us about your project..." required></textarea>
+                                <label for="contactMessage" class="visually-hidden">Tell us about your project</label>
+                                <textarea id="contactMessage" class="form-control gothic-input" rows="5" placeholder="Tell us about your project..." required aria-required="true"></textarea>
                             </div>
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-gothic-primary">
