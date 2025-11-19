@@ -1,0 +1,27 @@
+{
+  "name": "sitetest0",
+  "version": "1.0.0",
+  "description": "**Test site for the latest version of the main Unity AI Lab website**",
+  "main": "script.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:accessibility": "playwright test tests/accessibility.spec.js",
+    "test:keyboard": "playwright test tests/keyboard-navigation.spec.js",
+    "test:performance": "playwright test tests/performance.spec.js",
+    "test:responsive": "playwright test tests/responsive.spec.js",
+    "test:seo": "playwright test tests/seo.spec.js",
+    "test:report": "playwright show-report test-results/html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:46313/git/Unity-Lab-AI/sitetest0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.56.1",
+    "lighthouse": "^13.0.1"
+  }
+}
