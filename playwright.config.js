@@ -2,10 +2,15 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './tests',
-  fullyParallel: true,
+  testIgnore: '**/backup/**',
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
+  timeout: 30000, // 30 seconds per test
+  expect: {
+    timeout: 10000,
+  },
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
     ['json', { outputFile: 'test-results/results.json' }],
@@ -16,7 +21,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
-    navigationTimeout: 30000,
+    navigationTimeout: 20000,
   },
   projects: [
     {
