@@ -14,7 +14,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('All navigation links should be keyboard accessible', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Skip the skip-link
     await page.keyboard.press('Tab');
@@ -36,7 +36,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('Form inputs should be keyboard accessible', async ({ page }) => {
     await page.goto('/contact/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Focus first input
     await page.locator('#contactName').focus();
@@ -74,7 +74,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('Focus should be visible on all interactive elements', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Tab through several elements and check focus visibility
     const elements = await page.locator('a, button').all();
@@ -98,7 +98,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('Escape key should close modals if present', async ({ page }) => {
     await page.goto('/services/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Try to find and open a modal (if services page has modals)
     const modalTriggers = await page.locator('[data-bs-toggle="modal"]').all();
@@ -124,7 +124,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('Submit button should be reachable via keyboard', async ({ page }) => {
     await page.goto('/contact/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Tab through form to submit button
     const submitButton = await page.locator('button[type="submit"]');
@@ -139,7 +139,7 @@ test.describe('Keyboard Navigation Tests', () => {
 
   test('No keyboard trap should exist', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Tab forward multiple times
     for (let i = 0; i < 20; i++) {

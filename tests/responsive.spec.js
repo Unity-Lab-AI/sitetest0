@@ -15,7 +15,7 @@ test.describe('Responsive Design Tests', () => {
     test(`Home page should be responsive on ${viewport.name}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
 
       // Check that content is visible
       const heroSection = await page.locator('.hero-section');
@@ -71,7 +71,7 @@ test.describe('Responsive Design Tests', () => {
   test('Touch targets should be at least 44x44px on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/contact/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check buttons and links
     const interactiveElements = await page.locator('button, a.btn, input[type="submit"]').all();
@@ -94,7 +94,7 @@ test.describe('Responsive Design Tests', () => {
     for (const viewport of viewports) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
 
       // Check font size of main content
       const bodyFontSize = await page.evaluate(() => {
@@ -117,7 +117,7 @@ test.describe('Responsive Design Tests', () => {
 
   test('Images should scale properly on different viewports', async ({ page }) => {
     await page.goto('/about/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     for (const viewport of viewports.slice(0, 3)) { // Test first 3 viewports
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -139,7 +139,7 @@ test.describe('Responsive Design Tests', () => {
   test('Forms should be usable on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/contact/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Form inputs should be visible and appropriately sized
     const inputs = await page.locator('input, select, textarea').all();
@@ -162,7 +162,7 @@ test.describe('Responsive Design Tests', () => {
     // Portrait
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const hasScrollPortrait = await page.evaluate(() => {
       return document.documentElement.scrollWidth > document.documentElement.clientWidth;
@@ -183,7 +183,7 @@ test.describe('Responsive Design Tests', () => {
   test('Content should reflow properly on window resize', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Get initial layout
     const initialH1Box = await page.locator('h1').first().boundingBox();

@@ -79,7 +79,7 @@ test.describe('SEO Tests', () => {
   test('Pages should have proper heading hierarchy', async ({ page }) => {
     for (const pageDef of pages) {
       await page.goto(pageDef.url);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
 
       // Should have exactly one h1
       const h1Count = await page.locator('h1').count();
@@ -107,7 +107,7 @@ test.describe('SEO Tests', () => {
 
   test('All links should have descriptive text', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const links = await page.locator('a').all();
 
@@ -132,7 +132,7 @@ test.describe('SEO Tests', () => {
 
   test('Images should have descriptive alt text', async ({ page }) => {
     await page.goto('/about/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const images = await page.locator('img').all();
 
@@ -172,7 +172,7 @@ test.describe('SEO Tests', () => {
 
   test('No broken internal links', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const internalLinks = await page.locator('a[href^="/"], a[href^="./"], a[href^="../"]').all();
 

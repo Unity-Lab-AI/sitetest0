@@ -10,7 +10,9 @@
     "test:performance": "playwright test tests/performance.spec.js",
     "test:responsive": "playwright test tests/responsive.spec.js",
     "test:seo": "playwright test tests/seo.spec.js",
-    "test:report": "playwright show-report test-results/html"
+    "test:report": "playwright show-report test-results/html",
+    "minify": "npx terser script.js -c -m -o script.min.js && npx cleancss -o styles.min.css styles.css",
+    "build": "npm run minify && ./update-version.sh"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
     "@playwright/test": "^1.56.1",
-    "lighthouse": "^13.0.1"
+    "clean-css-cli": "^5.6.3",
+    "lighthouse": "^13.0.1",
+    "terser": "^5.44.1"
   }
 }
