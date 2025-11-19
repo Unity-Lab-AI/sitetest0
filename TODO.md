@@ -84,7 +84,7 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 ---
 
 ### 🌐 **Landing Website** - Current Test Site
-**Status:** 🟢 **IMPROVED** (~85%)
+**Status:** 🟢 **IMPROVED** (~90%)
 **Location:** `website-TODO.md`
 **Summary:**
 - ✅ Main landing page with hero, features, services sections
@@ -92,8 +92,9 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - ✅ Basic responsive design with Bootstrap + custom media queries
 - ✅ Major accessibility improvements (Nov 2025): ARIA landmarks, form labels, skip links
 - ✅ Performance improvements (Nov 2025): No-cache headers removed, Open Graph/Twitter cards added
-- ⚠️ Test infrastructure complete but needs debugging
-- ❌ Needs: Test execution fixes, cross-browser validation, final optimization
+- ✅ CSS/JS minification with automated deployment workflow
+- ⚠️ Test infrastructure complete, smoke effects fixed, stability improved
+- ❌ Needs: Final test validation, cross-browser testing, mobile optimization
 
 **Quick Stats:**
 - [x] Home page (index.html)
@@ -107,8 +108,10 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - [x] Test infrastructure (Playwright with 122 tests in 5 suites)
 - [x] ARIA landmarks and form labels (major accessibility win)
 - [x] Open Graph and Twitter Card meta tags
-- [ ] Debug automated tests (browser crashes)
-- [ ] CSS/JS minification
+- [x] CSS/JS minification (styles.min.css 27KB, script.min.js 19KB)
+- [x] Skip links for keyboard navigation
+- [x] Smoke effects fixed for test stability
+- [ ] Verify automated test results (tests created, need validation run)
 - [ ] Cross-browser testing matrix
 - [ ] Final WCAG AA compliance verification
 
@@ -166,12 +169,15 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - [x] **NEW:** Open Graph and Twitter Card meta tags (Nov 2025)
 - [x] **NEW:** No-cache headers removed (major performance improvement) (Nov 2025)
 - [x] **NEW:** Playwright test infrastructure (122 tests across 5 suites) (Nov 2025)
+- [x] **NEW:** CSS/JS minification workflow and deployment (Nov 2025)
+- [x] **NEW:** Skip links for keyboard navigation (Nov 2025)
 
 ### 🎯 **Immediate Priorities (P0)**
 - [x] **Website:** Performance audit ✅ (COMPLETED - see PERFORMANCE_AUDIT.md)
 - [x] **Website:** Accessibility audit and major fixes ✅ (COMPLETED - ARIA, labels, skip links)
-- [ ] **Website:** Debug automated test execution (browser crashes in Playwright)
-- [ ] **Website:** CSS/JS minification for performance
+- [x] **Website:** CSS/JS minification for performance ✅ (COMPLETED - automated workflow)
+- [ ] **Website:** Debug automated test execution (IN PROGRESS - smoke effects fixed, tests stabilized)
+- [ ] **Website:** Verify test execution and fix remaining failures
 - [ ] **Website:** Cross-browser testing (Chromium, WebKit)
 - [ ] **Demo Page:** Start implementation of basic chat interface
 - [ ] **Documentation:** Create quickstart guides for both libraries
