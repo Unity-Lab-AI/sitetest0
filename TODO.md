@@ -84,13 +84,16 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 ---
 
 ### 🌐 **Landing Website** - Current Test Site
-**Status:** 🟡 **FUNCTIONAL** (~75%)
+**Status:** 🟢 **IMPROVED** (~85%)
 **Location:** `website-TODO.md`
 **Summary:**
 - ✅ Main landing page with hero, features, services sections
 - ✅ About, Services, Projects, Contact pages
 - ✅ Basic responsive design with Bootstrap + custom media queries
-- ❌ Needs: Formal responsive testing, cross-browser validation, accessibility audit
+- ✅ Major accessibility improvements (Nov 2025): ARIA landmarks, form labels, skip links
+- ✅ Performance improvements (Nov 2025): No-cache headers removed, Open Graph/Twitter cards added
+- ⚠️ Test infrastructure complete but needs debugging
+- ❌ Needs: Test execution fixes, cross-browser validation, final optimization
 
 **Quick Stats:**
 - [x] Home page (index.html)
@@ -100,9 +103,14 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - [x] Contact page (contact/index.html)
 - [x] Gothic dark theme styling (styles.css - 1742 lines)
 - [x] Interactive JavaScript (script.js - 1297 lines)
-- [ ] Lighthouse performance optimization
+- [x] Performance audit completed (PERFORMANCE_AUDIT.md)
+- [x] Test infrastructure (Playwright with 122 tests in 5 suites)
+- [x] ARIA landmarks and form labels (major accessibility win)
+- [x] Open Graph and Twitter Card meta tags
+- [ ] Debug automated tests (browser crashes)
+- [ ] CSS/JS minification
 - [ ] Cross-browser testing matrix
-- [ ] WCAG AA accessibility compliance
+- [ ] Final WCAG AA compliance verification
 
 ---
 
@@ -147,24 +155,34 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 ## Current Focus Areas
 
 ### ✅ **Recently Completed**
-- [x] PolliLibJS full implementation
-- [x] PolliLibPy full implementation
+- [x] PolliLibJS full implementation (100%)
+- [x] PolliLibPy full implementation (100%)
 - [x] Landing website pages (Home, About, Services, Projects, Contact)
 - [x] Cache-busting deployment workflow
 - [x] Basic responsive design foundation
+- [x] **NEW:** Performance and accessibility audit (Nov 2025)
+- [x] **NEW:** ARIA landmarks and semantic HTML (Nov 2025)
+- [x] **NEW:** Form labels for screen reader accessibility (Nov 2025)
+- [x] **NEW:** Open Graph and Twitter Card meta tags (Nov 2025)
+- [x] **NEW:** No-cache headers removed (major performance improvement) (Nov 2025)
+- [x] **NEW:** Playwright test infrastructure (122 tests across 5 suites) (Nov 2025)
 
 ### 🎯 **Immediate Priorities (P0)**
-- [ ] **Website:** Lighthouse performance audit and optimization
+- [x] **Website:** Performance audit ✅ (COMPLETED - see PERFORMANCE_AUDIT.md)
+- [x] **Website:** Accessibility audit and major fixes ✅ (COMPLETED - ARIA, labels, skip links)
+- [ ] **Website:** Debug automated test execution (browser crashes in Playwright)
+- [ ] **Website:** CSS/JS minification for performance
 - [ ] **Website:** Cross-browser testing (Chromium, WebKit)
-- [ ] **Website:** Accessibility compliance (WCAG AA)
 - [ ] **Demo Page:** Start implementation of basic chat interface
 - [ ] **Documentation:** Create quickstart guides for both libraries
 
 ### 📋 **Next Up (P1)**
+- [ ] **Website:** Fix Playwright test execution (see TEST_RESULTS.md for debugging info)
+- [ ] **Website:** Verify all accessibility improvements with automated tests
+- [ ] **Website:** Mobile optimization and testing
 - [ ] **Demo Page:** Complete all 28 planned features
 - [ ] **Documentation:** Model capability matrix
 - [ ] **Infrastructure:** Plan backend architecture (if needed)
-- [ ] **Website:** Mobile optimization and testing
 
 ### 💡 **Nice to Have (P2)**
 - [ ] **Main App:** Begin planning in-repo implementation
