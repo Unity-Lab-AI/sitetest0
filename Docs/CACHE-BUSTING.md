@@ -1,52 +1,126 @@
-# Automatic Cache-Busting System
+# Automatic Build, Minification & Cache-Busting System
 
-This repository uses an automated cache-busting system to ensure GitHub Pages always serves the latest versions of assets (CSS and JavaScript files).
+This repository uses an **automated build pipeline** that minifies assets and applies cache-busting to ensure GitHub Pages always serves the latest, optimized versions of CSS and JavaScript files.
 
 ## How It Works
 
-The system uses **git commit hashes** as version identifiers for assets. Each time you update `script.js` or `styles.css`, the version automatically updates to match the current git commit.
+The system uses a **two-step process**:
+1. **Minification**: Compresses CSS/JS files (38KB savings per page!)
+2. **Cache-Busting**: Uses git commit hashes as version identifiers
+
+### Build Pipeline (GitHub Actions Only)
+
+**⚠️ IMPORTANT:** The automated build pipeline **only runs on the main/master branch** during deployment. Development branches use unminified files for easier debugging.
+
+#### Deployment Flow (main/master branch)
+
+When you push to main/master, the following happens automatically:
+
+```
+Push to main/master
+    ↓
+1️⃣ MINIFY ASSETS
+   - script.js → script.min.js (46KB → 19KB, 59% smaller!)
+   - styles.css → styles.min.css (38KB → 27KB, 29% smaller!)
+   - Commits minified files to repo
+    ↓
+2️⃣ CACHE-BUSTING
+   - Updates HTML files to reference .min versions
+   - Adds version query strings (e.g., script.min.js?v=abc123)
+   - Commits updated HTML files
+    ↓
+3️⃣ BUILD & VALIDATE
+   - Checks minified files exist
+   - Validates HTML references
+   - Verifies cache-busting applied
+    ↓
+4️⃣ DEPLOY TO GITHUB PAGES
+   - Deploys optimized, versioned assets
+   - Users get 38KB less per page load!
+```
 
 ### Components
 
-1. **HTTP Meta Tags** (in `index.html`)
-   - Cache-Control headers that discourage browser caching
-   - Located in the `<head>` section
+1. **Minified Assets** (production only)
+   - `script.min.js` - Minified JavaScript (59% smaller)
+   - `styles.min.css` - Minified CSS (29% smaller)
+   - Generated automatically on deployment
+   - Total savings: **38KB per page load**
 
 2. **Version Query Parameters**
-   - Assets are loaded with `?v=HASH` query strings
-   - Example: `script.js?v=67ee1b3`
-   - These automatically update on each commit
+   - Assets loaded with `?v=HASH` query strings
+   - Example: `script.min.js?v=67ee1b3`
+   - Automatically updated on each deployment
+   - Forces browsers to download new versions
 
-3. **Manual Update Script** (`update-version.sh`)
-   - Run manually: `./update-version.sh`
-   - Updates all asset versions to current git hash
-   - Useful when you want to force an update
+3. **Manual Build Script** (`package.json`)
+   - `npm run minify` - Minify CSS and JS locally
+   - `npm run build` - Minify + update versions
+   - Useful for testing minified files locally
 
-4. **Git Pre-Commit Hook** (`.git/hooks/pre-commit`)
-   - Automatically runs when committing changes to `script.js` or `styles.css`
-   - Updates `index.html` with new version numbers
-   - Ensures versions are always in sync
-
-5. **GitHub Actions Workflow** (`.github/workflows/deploy.yml`)
-   - Runs on push to main/master branch
-   - Automatically updates versions for all assets (styles.css, script.js, template-loader.js, about.js)
-   - Updates both `index.html` and `about/index.html`
-   - Validates the build
-   - Reports build status and deploys to GitHub Pages in parallel
+4. **GitHub Actions Workflow** (`.github/workflows/deploy.yml`)
+   - **Job 1: Minify** - Creates .min files
+   - **Job 2: Cache-Bust** - Updates HTML to use .min files with versions
+   - **Job 3: Build** - Validates everything
+   - **Job 4: Deploy** - Pushes to GitHub Pages
+   - Only runs on main/master branches
 
 ## Usage
 
-### Automatic (Recommended)
+### For Development (Feature Branches)
 
-Just commit your changes normally:
+Work with unminified files for easier debugging:
 
 ```bash
+# Edit files normally
+vim script.js styles.css
+
+# Commit and push to your feature branch
 git add script.js styles.css
 git commit -m "Update smoke effects"
-git push
+git push origin feature/my-changes
+
+# HTML references non-minified files (e.g., script.js)
+# No minification happens on feature branches
 ```
 
-The pre-commit hook and GitHub Actions will handle version updates automatically.
+### For Production (main/master Branch)
+
+**The build pipeline runs automatically when merging to main/master:**
+
+```bash
+# Merge your feature branch to main
+git checkout main
+git merge feature/my-changes
+git push origin main
+
+# GitHub Actions automatically:
+# 1. Minifies script.js → script.min.js
+# 2. Minifies styles.css → styles.min.css
+# 3. Updates HTML to use .min files
+# 4. Adds cache-busting versions
+# 5. Deploys to GitHub Pages
+```
+
+**Result:** Production users get optimized, versioned assets automatically!
+
+### Manual Testing of Minified Files
+
+To test minified files locally before deployment:
+
+```bash
+# Install dependencies (first time only)
+npm install
+
+# Minify the files
+npm run minify
+
+# Check the output
+ls -lh script.min.js styles.min.css
+
+# Temporarily update HTML to test .min files
+# (Don't commit these changes - let the workflow handle it)
+```
 
 ### Manual
 
