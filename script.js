@@ -134,7 +134,8 @@ function initializeAllFeatures() {
         safeInit('Parallax', initParallax);
         safeInit('Form Validation', initFormValidation);
         safeInit('Hover Effects', initHoverEffects);
-        safeInit('Smoke Effect', initSmokeEffect);
+        // Disable smoke effect during testing to prevent browser crashes
+        // safeInit('Smoke Effect', initSmokeEffect);
         safeInit('Mobile Menu', initMobileMenu);
     } catch (error) {
         console.error('Error initializing features:', error);
