@@ -12,6 +12,7 @@ test.describe('SEO Tests', () => {
   for (const pageDef of pages) {
     test(`${pageDef.name} page should have proper meta tags`, async ({ page }) => {
       await page.goto(pageDef.url);
+      await page.waitForLoadState('domcontentloaded');
 
       // Check title
       const title = await page.title();
@@ -41,6 +42,7 @@ test.describe('SEO Tests', () => {
 
   test('Home page should have Open Graph tags', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check OG tags
     const ogType = await page.locator('meta[property="og:type"]');
@@ -62,6 +64,7 @@ test.describe('SEO Tests', () => {
 
   test('Home page should have Twitter Card tags', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     const twitterCard = await page.locator('meta[name="twitter:card"]');
     await expect(twitterCard).toHaveCount(1);
@@ -147,6 +150,7 @@ test.describe('SEO Tests', () => {
 
   test('Page should have valid language attribute', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     const html = await page.locator('html');
     await expect(html).toHaveAttribute('lang', 'en');
@@ -154,6 +158,7 @@ test.describe('SEO Tests', () => {
 
   test('Canonical URL should be set', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     // Check for canonical link (optional but good for SEO)
     const canonical = await page.locator('link[rel="canonical"]').count();
@@ -190,6 +195,7 @@ test.describe('SEO Tests', () => {
 
   test('Robots meta tag should allow indexing', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
 
     const robotsMeta = await page.locator('meta[name="robots"]').count();
 
