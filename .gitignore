@@ -1,1 +1,10 @@
 PolliLibPy/__pycache__/
+
+# Dependencies
+node_modules/
+
+# Test results
+test-results/
+playwright-report/
+playwright/.cache/
+test-output*.txt

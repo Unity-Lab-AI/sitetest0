@@ -22,9 +22,93 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Job 1: Cache Busting - Updates all asset versions
+  # Job 1: Minification - Minify CSS and JS assets
+  minify:
+    name: Minify Assets
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check_changes.outputs.has_changes }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          echo "📦 Installing minification dependencies..."
+          npm install --save-dev terser clean-css-cli
+
+      - name: Minify JavaScript
+        run: |
+          echo "🔨 Minifying JavaScript..."
+          npx terser script.js -c -m -o script.min.js
+          echo "✅ script.js → script.min.js"
+          ls -lh script.js script.min.js
+
+      - name: Minify CSS
+        run: |
+          echo "🎨 Minifying CSS..."
+          npx cleancss -o styles.min.css styles.css
+          echo "✅ styles.css → styles.min.css"
+          ls -lh styles.css styles.min.css
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No minification changes"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✨ Minified files updated"
+          fi
+
+      - name: Commit minified assets
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add script.min.js styles.min.css
+          git commit -m "chore: minify assets for deployment [skip ci]"
+
+          # Push with retry logic
+          max_retries=4
+          retry_count=0
+          retry_delay=2
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "📤 Pushing minified assets (attempt $((retry_count + 1))/$max_retries)..."
+            if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
+              echo "✅ Successfully pushed minified assets"
+              exit 0
+            else
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "⚠️  Push failed, retrying in ${retry_delay}s..."
+                sleep $retry_delay
+                retry_delay=$((retry_delay * 2))
+              fi
+            fi
+          done
+
+          echo "❌ Failed to push after $max_retries attempts"
+          exit 1
+
+  # Job 2: Cache Busting - Updates all asset versions
   cache-busting:
     name: Update Cache Busting
+    needs: minify
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.check_changes.outputs.has_changes }}
@@ -37,6 +121,12 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
+
+      - name: Pull latest minified assets
+        run: |
+          echo "🔄 Pulling latest minified assets..."
+          git pull origin ${{ github.ref_name }}
+          echo "✅ Working with minified assets"
 
       - name: Get version hash
         id: get_version
@@ -51,20 +141,37 @@ jobs:
         run: |
           echo "🔄 Updating asset versions to: $VERSION"
 
-          # Update index.html
-          sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" index.html
-          sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" index.html
-          sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" index.html || true
+          # List of HTML files to update
+          HTML_FILES=(
+            "index.html"
+            "about/index.html"
+            "contact/index.html"
+            "projects/index.html"
+            "services/index.html"
+          )
 
-          # Update about/index.html
-          if [ -f about/index.html ]; then
-            sed -i "s/styles\.css?v=[^\"']*/styles.css?v=$VERSION/g" about/index.html
-            sed -i "s/script\.js?v=[^\"']*/script.js?v=$VERSION/g" about/index.html
-            sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" about/index.html || true
-            sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" about/index.html || true
-          fi
+          # Update each HTML file to use minified assets with cache-busting
+          for file in "${HTML_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "  📝 Updating $file..."
+              # Update to use minified CSS
+              sed -i "s/styles\.css?v=[^\"']*/styles.min.css?v=$VERSION/g" "$file"
+              sed -i "s/styles\.min\.css?v=[^\"']*/styles.min.css?v=$VERSION/g" "$file"
+              # Update to use minified JS
+              sed -i "s/script\.js?v=[^\"']*/script.min.js?v=$VERSION/g" "$file"
+              sed -i "s/script\.min\.js?v=[^\"']*/script.min.js?v=$VERSION/g" "$file"
+              # Update other JS files (keep non-minified for now)
+              sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" "$file" || true
+              sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" "$file" || true
+              sed -i "s/contact\.js?v=[^\"']*/contact.js?v=$VERSION/g" "$file" || true
+              sed -i "s/projects\.js?v=[^\"']*/projects.js?v=$VERSION/g" "$file" || true
+              sed -i "s/services\.js?v=[^\"']*/services.js?v=$VERSION/g" "$file" || true
+            else
+              echo "  ⚠️  Skipping $file (not found)"
+            fi
+          done
 
-          echo "✅ Asset versions updated successfully"
+          echo "✅ Asset versions updated successfully in all HTML files"
 
       - name: Check for changes
         id: check_changes
@@ -83,7 +190,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add index.html about/index.html || true
+          git add index.html about/index.html contact/index.html projects/index.html services/index.html || true
           git commit -m "chore: update asset cache-busting versions to ${{ steps.get_version.outputs.version }} [skip ci]"
 
           # Push with retry logic for network resilience
@@ -109,7 +216,7 @@ jobs:
           echo "❌ Failed to push after $max_retries attempts"
           exit 1
 
-  # Job 2: Build - Validate and prepare for deployment
+  # Job 3: Build - Validate and prepare for deployment
   build:
     name: Build and Validate
     needs: cache-busting
@@ -121,7 +228,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Pull latest cache-busting changes
+        run: |
+          echo "🔄 Pulling latest changes including cache-busting updates..."
+          git pull origin ${{ github.ref_name }}
+          echo "✅ Now working with cache-busted assets"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -146,17 +260,23 @@ jobs:
             exit 1
           fi
 
-          # Validate that cache-busting versions are present
-          if ! grep -q "styles.css?v=" index.html; then
-            echo "❌ Cache-busting version missing in index.html"
+          # Validate that minified assets with cache-busting versions are present
+          if ! grep -q "styles.min.css?v=" index.html; then
+            echo "❌ Minified CSS with cache-busting version missing in index.html"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          if ! grep -q "script.min.js?v=" index.html; then
+            echo "❌ Minified JS with cache-busting version missing in index.html"
             echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
           fi
 
           # Check for broken internal links (basic check)
-          echo "🔗 Checking for basic file references..."
-          if [ ! -f "styles.css" ] || [ ! -f "script.js" ]; then
-            echo "❌ Required assets missing!"
+          echo "🔗 Checking for minified asset files..."
+          if [ ! -f "styles.min.css" ] || [ ! -f "script.min.js" ]; then
+            echo "❌ Required minified assets missing!"
             echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
           fi
@@ -169,7 +289,7 @@ jobs:
         with:
           path: '.'
 
-  # Job 3a: Report Build Status
+  # Job 4a: Report Build Status
   report-status:
     name: Report Build Status
     needs: build
@@ -215,7 +335,7 @@ jobs:
               body: `${icon} **${message}**\n\n**Version:** \`${version}\`\n**Status:** ${status.toUpperCase()}`
             });
 
-  # Job 3b: Deploy to GitHub Pages
+  # Job 4b: Deploy to GitHub Pages
   deploy:
     name: Deploy to GitHub Pages
     needs: build
