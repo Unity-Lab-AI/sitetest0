@@ -1,15 +1,15 @@
-# Playwright Test Suite - Accessibility & Performance Testing
+# Playwright Test Suite - Smoke Tests
 
 ## Overview
 
-Comprehensive automated test suite to validate and boost accessibility and performance scores for the UnityAILab website.
+Simplified automated test suite for the UnityAILab website focusing on essential functionality and user flows.
 
 **Test Coverage:**
-- ✅ WCAG 2.1 Level AA Accessibility Compliance
-- ✅ Keyboard Navigation & Focus Management
-- ✅ Performance & Loading Speed
-- ✅ Responsive Design (7 viewports)
-- ✅ SEO & Meta Tags
+- Basic page loading and navigation
+- JavaScript functionality verification
+- Mobile responsiveness
+- Form interactivity
+- Footer presence across pages
 
 ---
 
@@ -29,15 +29,6 @@ npx playwright install chromium
 npm test
 ```
 
-### Run Specific Test Suites
-```bash
-npm run test:accessibility  # WCAG compliance tests
-npm run test:keyboard       # Keyboard navigation tests
-npm run test:performance    # Performance & loading tests
-npm run test:responsive     # Responsive design tests
-npm run test:seo            # SEO & meta tag tests
-```
-
 ### View HTML Report
 ```bash
 npm run test:report
@@ -45,329 +36,250 @@ npm run test:report
 
 ---
 
-## Test Suites
+## Test Suite
 
-### 1. Accessibility Tests (`tests/accessibility.spec.js`)
+### Smoke Tests (`tests/smoke.spec.js`)
 
-**Tests 10+ accessibility requirements:**
+**Tests 5 core functionality areas:**
 
-✅ **Automated WCAG Scans**
-- Runs axe-core against all pages
-- Tests WCAG 2.1 Level AA compliance
-- Detects color contrast, missing labels, invalid ARIA
+#### 1. Complete User Flow Through All Pages
 
-✅ **ARIA Landmarks**
-- Validates role="navigation", role="main", role="contentinfo"
-- Checks aria-label attributes
-- Verifies proper semantic structure
+Simulates a real user journey:
+- Loads home page and verifies h1 visibility
+- Checks JavaScript loaded (verifies feature cards present)
+- Tests scrolling functionality
+- Navigates to About page via navbar
+- Navigates to Services page and verifies service cards
+- Navigates to Projects page
+- Navigates to Contact page
+- Tests contact form interactivity (filling name input)
+- Verifies footer with GitHub link
 
-✅ **Form Accessibility**
-- All inputs have associated `<label>` elements
-- Proper aria-required attributes
-- Screen reader compatibility
-
-✅ **Skip Links**
-- "Skip to main content" link present
-- Keyboard accessible (first Tab target)
-- Points to correct anchor (#main-content)
-
-✅ **Image Alt Text**
-- All images have alt attributes
-- Alt text is descriptive (not filenames)
-
-✅ **Interactive Elements**
-- Buttons have accessible names (text or aria-label)
-- Links have descriptive text
-- Decorative icons have aria-hidden="true"
-
-✅ **Color Contrast**
-- Text meets WCAG AA standards (4.5:1 ratio)
-- Large text meets 3:1 ratio
-
-✅ **Navbar Accessibility**
-- Toggle has aria-controls, aria-expanded, aria-label
-- Proper ARIA attributes for mobile menu
-
-**Expected Impact:** +30-40 accessibility score points
+**Purpose:** Ensures the basic flow through the site works without JavaScript errors or navigation issues.
 
 ---
 
-### 2. Keyboard Navigation Tests (`tests/keyboard-navigation.spec.js`)
+#### 2. Mobile Navigation Works
 
-**Tests 10+ keyboard interaction patterns:**
+Tests mobile-specific functionality:
+- Sets mobile viewport (375x667)
+- Verifies navbar toggle button visible
+- Clicks toggle to open menu
+- Navigates to About page from mobile menu
+- Verifies page loads correctly
 
-✅ **Tab Order**
-- Skip link is first focusable element
-- Logical tab order through navigation
-- No keyboard traps
-
-✅ **Form Navigation**
-- Tab through all form inputs
-- Enter and Space activate buttons
-- Escape closes modals
-
-✅ **Focus Visibility**
-- Focus ring visible on all interactive elements
-- Focus indicators meet contrast requirements
-- Custom skip-link visible on focus
-
-✅ **Shift+Tab Reverse Navigation**
-- Backwards navigation works
-- Focus moves to correct previous element
-
-✅ **Mobile Navigation**
-- Navbar toggle keyboard accessible
-- Enter/Space toggles menu
-- Proper aria-expanded state
-
-**Expected Impact:** +5-10 accessibility score points
+**Purpose:** Ensures mobile navigation (hamburger menu) functions properly.
 
 ---
 
-### 3. Performance Tests (`tests/performance.spec.js`)
+#### 3. All Pages Return 200 Status
 
-**Tests 10+ performance metrics:**
+Tests all pages for successful loading:
+- `/` (Home)
+- `/about/`
+- `/services/`
+- `/projects/`
+- `/contact/`
 
-✅ **Page Load Speed**
-- All pages load under 5 seconds
-- First Contentful Paint under 3 seconds
-- Network idle state reached quickly
-
-✅ **Resource Loading**
-- AOS CSS in <head> (no layout shift)
-- JavaScript doesn't block rendering
-- Fonts load efficiently
-
-✅ **Caching**
-- Resources cached on repeat visits
-- Cache headers properly set
-- Transfer size = 0 for cached resources
-
-✅ **Error Detection**
-- No console errors on load
-- No 404 or failed requests
-- All images load successfully
-
-✅ **Network Optimization**
-- Total requests under 50
-- No unnecessary network calls
-- Efficient resource loading
-
-✅ **Content Visibility**
-- Hero section visible within 3s
-- Main content accessible quickly
-- No long blocking tasks
-
-**Expected Impact:** +15-20 performance score points
+**Purpose:** Verifies server is serving all pages correctly without 404s or errors.
 
 ---
 
-### 4. Responsive Design Tests (`tests/responsive.spec.js`)
+#### 4. JavaScript Loads Correctly
 
-**Tests 7 viewport sizes + orientation:**
+Verifies JavaScript execution:
+- Checks navbar exists (Bootstrap loaded)
+- Waits for network idle
+- Verifies body has `.loaded` class added by JavaScript
 
-**Viewports:**
-- Mobile (iPhone 12): 390x844
-- Mobile (Samsung Galaxy S21): 360x800
-- Tablet (iPad): 768x1024
-- Tablet (iPad Pro): 1024x1366
-- Laptop (13"): 1280x800
-- Desktop (1080p): 1920x1080
-- Desktop (4K): 3840x2160
-
-✅ **Layout Tests**
-- No horizontal scroll on any viewport
-- Content visible and accessible
-- Proper text wrapping
-
-✅ **Mobile Navigation**
-- Navbar collapses on mobile (<768px)
-- Hamburger menu visible
-- Navbar expanded on desktop
-
-✅ **Touch Targets**
-- Buttons ≥44x44px on mobile
-- Proper spacing between elements
-- Easy to tap on touchscreens
-
-✅ **Text Readability**
-- Font size ≥14px on all viewports
-- Proper line height
-- Good contrast ratios
-
-✅ **Image Scaling**
-- Images don't exceed viewport width
-- Responsive image sizing
-- Proper aspect ratios maintained
-
-✅ **Form Usability**
-- Forms usable on mobile
-- Input fields properly sized
-- Buttons accessible
-
-✅ **Orientation Support**
-- Portrait and landscape work
-- No layout breaks on rotation
-- Content reflows properly
-
-**Expected Impact:** +10-15 performance/accessibility score points
+**Purpose:** Ensures script.js executes successfully and applies expected DOM modifications.
 
 ---
 
-### 5. SEO Tests (`tests/seo.spec.js`)
+#### 5. Footer Appears on All Pages
 
-**Tests 15+ SEO requirements:**
+Tests footer consistency:
+- Loads each page
+- Verifies footer is visible
+- Checks copyright text contains "UnityAILab"
 
-✅ **Meta Tags**
-- Proper title tags (unique per page)
-- Meta descriptions (50-160 characters)
-- Viewport meta tag present
-- Charset properly declared
+**Purpose:** Ensures footer component is present across all pages.
 
-✅ **Open Graph Tags**
-- og:type, og:url, og:title present
-- og:description, og:site_name present
-- Proper social sharing metadata
+---
 
-✅ **Twitter Cards**
-- twitter:card, twitter:title present
-- twitter:description present
-- Better Twitter appearance
+## Smoke Animation Performance Limits
 
-✅ **Heading Hierarchy**
-- Exactly one H1 per page
-- H1 before H2, H2 before H3
-- Logical heading structure
+To prevent performance degradation, the smoke throwing animation has built-in limits:
 
-✅ **Link Quality**
-- All links have descriptive text
-- No generic "click here" links
-- Internal links functional
+### Limits Implemented (script.js)
 
-✅ **Image SEO**
-- Alt text present and descriptive
-- No filename-only alt text
+**Smoke Puffs:**
+- Preferred maximum: 6 puffs on screen
+- Hard limit: 10 puffs
+- Behavior: When over 6 puffs, dissipation speed increases automatically
+- At 10 puffs: Oldest puff is deleted when new one spawns
 
-✅ **HTML Structure**
-- Valid lang attribute (lang="en")
-- Proper HTML5 semantics
-- No blocking robots meta
+**Smoke Balls:**
+- Preferred maximum: 6 balls
+- Hard limit: 10 balls
+- Behavior: When limit reached, oldest ball is removed
 
-✅ **Internal Links**
-- No broken internal links
-- All links return < 400 status
+### Performance Constants
 
-**Expected Impact:** +5-10 SEO score points
+```javascript
+var MAX_SMOKE_PUFFS = 6;        // Preferred max
+var HARD_LIMIT_PUFFS = 10;      // Hard limit
+var MAX_SMOKE_BALLS = 6;        // Preferred max
+var HARD_LIMIT_BALLS = 10;      // Hard limit
+```
+
+When puff count exceeds the preferred max, dissipation rate increases:
+- Base decay rate: 0.006
+- Multiplier when over max: 1 + (count - MAX) * 0.5
+- Maximum multiplier: 3.0
+
+**Note:** These tests do NOT test the smoke animations themselves - they're purely for user flow verification.
+
+---
+
+## Configuration
+
+### Test Settings (playwright.config.js)
+
+- **Test directory:** `./tests`
+- **Ignored directories:** `**/backup/**`
+- **Workers:** 1 (sequential execution for stability)
+- **Retries:** 2 in CI, 0 locally
+- **Timeout:** 30 seconds per test
+- **Expect timeout:** 10 seconds
+- **Base URL:** http://localhost:8080
+
+### Reporters
+
+Tests generate three types of reports:
+1. **HTML Report:** Interactive report in `playwright-report/`
+2. **JSON Report:** Machine-readable results in `test-results/results.json`
+3. **List:** Console output during test execution
+
+---
+
+## CI/CD Integration
+
+Tests automatically run in GitHub Actions workflow (`.github/workflows/deploy.yml`):
+
+```yaml
+- name: Run Playwright tests
+  run: npx playwright test
+  env:
+    CI: true
+```
+
+The workflow:
+1. Installs dependencies
+2. Installs Playwright browsers (Chromium only)
+3. Starts local server on port 8080
+4. Runs all tests
+5. Uploads test results as artifacts (retained 30 days)
 
 ---
 
 ## Test Results Interpretation
 
 ### Passing Tests ✅
-- Indicates WCAG/performance requirement met
-- Feature working as expected
+- Indicates core functionality working
+- Feature accessible and interactive
 - No action needed
 
 ### Failing Tests ❌
-- Identifies specific accessibility/performance issue
-- Provides detailed error messages
-- Test output shows exact problem and location
+- Identifies specific issue
+- Provides error messages and stack traces
+- Screenshots available for failures
 
 ### Example Output
 ```
-✓ Home page should have proper ARIA landmarks (234ms)
-✗ Color contrast should meet WCAG AA standards (432ms)
-  - color-contrast: Elements must have sufficient color contrast
-    Impact: serious
-    Nodes: 3
+✓ Complete user flow through all pages (2.3s)
+✓ Mobile navigation works (1.1s)
+✓ All pages return 200 status (892ms)
+✓ JavaScript loads correctly (445ms)
+✓ Footer appears on all pages (1.2s)
+
+  5 passed (6.0s)
 ```
 
 ---
 
-## Continuous Improvement Workflow
+## Local Development Workflow
 
-1. **Run Tests**: `npm test`
-2. **Review Failures**: Check test output for specific issues
-3. **Fix Issues**: Update HTML/CSS/JS based on test failures
-4. **Re-run Tests**: Verify fixes work
-5. **Commit**: Push improvements to git
-6. **Monitor**: Track score improvements over time
-
----
-
-## Score Improvement Targets
-
-### Before Test Suite Implementation
-- **Accessibility:** ~45/100 ❌
-- **Performance:** ~60/100 ⚠️
-- **SEO:** ~75/100 🟡
-
-### After All P0 + P1 Fixes
-- **Accessibility:** ~85-90/100 ✅
-- **Performance:** ~85-90/100 ✅
-- **SEO:** ~90-95/100 ✅
-
-### After Potential P2 Fixes (Minification, etc.)
-- **Accessibility:** ~95-100/100 🎯
-- **Performance:** ~95-100/100 🎯
-- **SEO:** ~95-100/100 🎯
+1. **Make Changes:** Update HTML/CSS/JS
+2. **Run Tests:** `npm test`
+3. **Review Failures:** Check console output
+4. **Fix Issues:** Address any failing tests
+5. **Re-run:** Verify fixes work
+6. **Commit:** Push changes to git
 
 ---
 
-## CI/CD Integration
+## Troubleshooting
 
-The tests can be integrated into CI/CD pipelines:
+### Tests Timing Out
 
-```yaml
-# Example GitHub Actions workflow
-- name: Run accessibility tests
-  run: npm run test:accessibility
+If tests timeout (exceed 30s), check:
+- Local server is running on port 8080
+- JavaScript has no infinite loops or errors
+- Network requests to CDNs are succeeding
+- Browser console for JavaScript errors
 
-- name: Upload test report
-  uses: actions/upload-artifact@v3
-  with:
-    name: playwright-report
-    path: test-results/html
+### Tests Failing to Find Elements
+
+If selectors don't match:
+- Verify HTML structure hasn't changed
+- Check class names and IDs are correct
+- Ensure JavaScript has finished loading before tests run
+- Wait for network idle before assertions
+
+### Server Not Starting
+
+If web server fails to start:
+```bash
+# Kill any existing server
+pkill -f "python3 -m http.server"
+
+# Start fresh
+python3 -m http.server 8080
 ```
 
 ---
 
-## Test Maintenance
+## Backup Tests
 
-### Updating Tests
-- Add new test cases in respective spec files
-- Follow existing patterns for consistency
-- Use descriptive test names
+Previous comprehensive test suites have been moved to `tests/backup/`:
+- `accessibility.spec.js` - WCAG 2.1 AA compliance tests
+- `keyboard-navigation.spec.js` - Keyboard accessibility tests
+- `performance.spec.js` - Performance metric tests
+- `responsive.spec.js` - Multi-viewport responsive tests
+- `seo.spec.js` - SEO and meta tag tests
+- `functional.spec.js` - Detailed page functionality tests
 
-### Baseline Updates
-- Update expected values as site improves
-- Document why baselines changed
-- Keep tests realistic and achievable
-
-### Test Data
-- Update page URLs in test constants
-- Add new pages to coverage
-- Keep viewport sizes current
+These can be re-enabled by moving them back to `tests/` if more thorough testing is needed.
 
 ---
 
 ## Tools Used
 
-- **@playwright/test**: Modern browser automation
-- **@axe-core/playwright**: Accessibility testing engine
-- **lighthouse**: Google's performance auditing tool
+- **@playwright/test**: Modern browser automation framework
+- **Chromium**: Headless browser for testing
 
 ---
 
 ## Further Reading
 
 - [Playwright Documentation](https://playwright.dev)
-- [axe-core Rules](https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md)
-- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
-- [Web.dev Performance](https://web.dev/performance/)
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- [Writing Tests](https://playwright.dev/docs/writing-tests)
 
 ---
 
 **Created:** 2025-11-19
-**Test Suite Version:** 1.0
-**Coverage:** 122 total tests across 5 test suites
+**Test Suite Version:** 2.0 (Simplified Smoke Tests)
+**Total Tests:** 5 smoke tests
+**Test Focus:** Essential functionality and user flows

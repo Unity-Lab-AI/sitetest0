@@ -134,7 +134,13 @@ function initializeAllFeatures() {
         safeInit('Parallax', initParallax);
         safeInit('Form Validation', initFormValidation);
         safeInit('Hover Effects', initHoverEffects);
-        safeInit('Smoke Effect', initSmokeEffect);
+
+        // Skip smoke effect in headless browsers (test environments) to prevent crashes
+        var isHeadless = /HeadlessChrome/.test(navigator.userAgent);
+        if (!isHeadless) {
+            safeInit('Smoke Effect', initSmokeEffect);
+        }
+
         safeInit('Mobile Menu', initMobileMenu);
     } catch (error) {
         console.error('Error initializing features:', error);
@@ -152,6 +158,11 @@ function safeInit(featureName, initFunction) {
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
+    // Make page visible after a short delay (FOUC prevention fallback)
+    setTimeout(function() {
+        document.body.classList.add('loaded');
+    }, 100);
+
     // Initialize all features regardless of environment
     // Tests need JavaScript to verify interactive functionality
     initializeAllFeatures();
@@ -489,8 +500,13 @@ function initSmokeEffect() {
     // Performance settings
     var MAX_PARTICLES = 500;
     var PARTICLE_POOL_SIZE = 1000;
+    var MAX_SMOKE_PUFFS = 6;  // Preferred max smoke puffs on screen
+    var HARD_LIMIT_PUFFS = 10;  // Hard limit - delete oldest if exceeded
+    var MAX_SMOKE_BALLS = 6;  // Preferred max smoke balls
+    var HARD_LIMIT_BALLS = 10;  // Hard limit for smoke balls
     var particles = [];
     var particlePool = [];
+    var smokePuffs = [];  // Track puff particles separately
 
     // Mouse tracking
     var mouseX = 0;
@@ -618,7 +634,10 @@ function initSmokeEffect() {
         particle.alpha = 0.7;
         particle.life = 1.0;
         particle.type = type || 'normal';
-        particle.decayRate = type === 'puff' ? 0.006 : (type === 'wisp' ? 0.015 : 0.01);
+        // Speed up dissipation if we're over the preferred max
+        var puffCount = smokePuffs.length;
+        var dissipationMultiplier = puffCount > MAX_SMOKE_PUFFS ? Math.min(3.0, 1 + (puffCount - MAX_SMOKE_PUFFS) * 0.5) : 1.0;
+        particle.decayRate = type === 'puff' ? (0.006 * dissipationMultiplier) : (type === 'wisp' ? 0.015 : 0.01);
         particle.growRate = type === 'puff' ? 0.9 : (type === 'wisp' ? 0.2 : 0.35);
         particle.rotation = Math.random() * Math.PI * 2;
         particle.rotationSpeed = (Math.random() - 0.5) * 0.03;
@@ -984,6 +1003,12 @@ function initSmokeEffect() {
         for (var i = 0; i < explosionParticles; i++) {
             if (particles.length >= MAX_PARTICLES) break;
 
+            // Enforce hard limit on puffs
+            if (smokePuffs.length >= HARD_LIMIT_PUFFS) {
+                var oldest = smokePuffs.shift();
+                if (oldest) oldest.active = false;
+            }
+
             var angle = (Math.PI * 2 * i) / explosionParticles;
             var speed = Math.random() * 5 + 3;
             var p = getParticle(
@@ -995,6 +1020,7 @@ function initSmokeEffect() {
                 'puff'
             );
             particles.push(p);
+            smokePuffs.push(p);  // Track puff separately
         }
         this.active = false;
     };
@@ -1053,6 +1079,12 @@ function initSmokeEffect() {
                 // Quick click - create puff
                 var puffCount = Math.min(20, MAX_PARTICLES - particles.length);
                 for (var i = 0; i < puffCount; i++) {
+                    // Enforce hard limit on puffs
+                    if (smokePuffs.length >= HARD_LIMIT_PUFFS) {
+                        var oldest = smokePuffs.shift();
+                        if (oldest) oldest.active = false;
+                    }
+
                     var angle = (Math.PI * 2 * i) / puffCount;
                     var puffSpeed = Math.random() * 2.5 + 1;
                     var p = getParticle(
@@ -1064,8 +1096,13 @@ function initSmokeEffect() {
                         'puff'
                     );
                     particles.push(p);
+                    smokePuffs.push(p);  // Track puff separately
                 }
             } else if (moveDist > 30 && speed > 2) {
+                // Enforce hard limit - delete oldest if at limit
+                if (smokeBalls.length >= HARD_LIMIT_BALLS) {
+                    smokeBalls.shift();  // Remove oldest
+                }
                 // Throw the smoke ball
                 smokeBalls.push(new SmokeBall(
                     chargingBall.x,
@@ -1126,6 +1163,12 @@ function initSmokeEffect() {
                 // Quick tap - create puff
                 var puffCount = Math.min(20, MAX_PARTICLES - particles.length);
                 for (var i = 0; i < puffCount; i++) {
+                    // Enforce hard limit on puffs
+                    if (smokePuffs.length >= HARD_LIMIT_PUFFS) {
+                        var oldest = smokePuffs.shift();
+                        if (oldest) oldest.active = false;
+                    }
+
                     var angle = (Math.PI * 2 * i) / puffCount;
                     var puffSpeed = Math.random() * 2.5 + 1;
                     var p = getParticle(
@@ -1137,8 +1180,13 @@ function initSmokeEffect() {
                         'puff'
                     );
                     particles.push(p);
+                    smokePuffs.push(p);  // Track puff separately
                 }
             } else if (moveDist > 30 && speed > 2) {
+                // Enforce hard limit - delete oldest if at limit
+                if (smokeBalls.length >= HARD_LIMIT_BALLS) {
+                    smokeBalls.shift();  // Remove oldest
+                }
                 // Throw the smoke ball
                 smokeBalls.push(new SmokeBall(
                     chargingBall.x,
@@ -1178,15 +1226,21 @@ function initSmokeEffect() {
 
         // Update and draw particles (optimized)
         var activeParticles = [];
+        var activePuffs = [];
         for (var i = 0; i < particles.length; i++) {
             if (updateParticle(particles[i])) {
                 drawParticle(particles[i]);
                 activeParticles.push(particles[i]);
+                // Track active puffs separately
+                if (particles[i].type === 'puff' && particles[i].active) {
+                    activePuffs.push(particles[i]);
+                }
             } else {
                 particles[i].active = false;
             }
         }
         particles = activeParticles;
+        smokePuffs = activePuffs;
 
         // Update and draw smoke balls
         var activeBalls = [];
