@@ -153,17 +153,8 @@ function safeInit(featureName, initFunction) {
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Detect testing environment (Playwright/headless browsers)
-    const isTesting = navigator.webdriver ||
-                      (window.navigator && window.navigator.userAgent && window.navigator.userAgent.includes('HeadlessChrome'));
-
-    if (isTesting) {
-        console.log('Testing mode detected - NO JavaScript initialization to prevent crashes');
-        // Completely skip all JavaScript initialization during testing
-        // This allows tests to verify HTML/CSS structure and accessibility
-        return;
-    }
-
+    // Initialize all features regardless of environment
+    // Tests need JavaScript to verify interactive functionality
     initializeAllFeatures();
 });
 
