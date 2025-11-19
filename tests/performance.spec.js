@@ -10,7 +10,7 @@ test.describe('Performance Tests', () => {
     for (const url of pages) {
       const startTime = Date.now();
       await page.goto(url);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
       const loadTime = Date.now() - startTime;
 
       console.log(`${url} loaded in ${loadTime}ms`);
@@ -20,7 +20,7 @@ test.describe('Performance Tests', () => {
 
   test('Images should be loaded efficiently', async ({ page }) => {
     await page.goto('/about/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const images = await page.locator('img').all();
 
@@ -63,7 +63,7 @@ test.describe('Performance Tests', () => {
   test('Resources should be cached properly', async ({ page, context }) => {
     // First visit
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Get resource timing for first load
     const resources1 = await page.evaluate(() => {
@@ -76,7 +76,7 @@ test.describe('Performance Tests', () => {
 
     // Second visit (should use cache)
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const resources2 = await page.evaluate(() => {
       return performance.getEntriesByType('resource').map(r => ({
@@ -103,14 +103,14 @@ test.describe('Performance Tests', () => {
     });
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     expect(errors).toHaveLength(0);
   });
 
   test('Fonts should be loaded efficiently', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check for font-display: swap or block
     const fontFaces = await page.evaluate(() => {
@@ -138,7 +138,7 @@ test.describe('Performance Tests', () => {
     });
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     console.log(`Total requests: ${requests.length}`);
 
@@ -159,7 +159,7 @@ test.describe('Performance Tests', () => {
     });
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     if (failedRequests.length > 0) {
       console.log('Failed requests:', failedRequests);

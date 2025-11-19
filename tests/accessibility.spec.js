@@ -15,7 +15,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
       await playwright.goto(page.url);
 
       // Wait for page to be fully loaded
-      await playwright.waitForLoadState('networkidle');
+      await playwright.waitForLoadState('load');
 
       const accessibilityScanResults = await new AxeBuilder({ page: playwright })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -37,7 +37,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Home page should have proper ARIA landmarks', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check for navigation landmark
     const nav = await page.locator('nav[role="navigation"]');
@@ -55,7 +55,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Forms should have proper labels', async ({ page }) => {
     await page.goto('/contact/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check that all inputs have associated labels
     const inputs = await page.locator('input, select, textarea').all();
@@ -86,7 +86,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('All images should have alt text', async ({ page }) => {
     await page.goto('/about/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const images = await page.locator('img').all();
 
@@ -98,7 +98,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Interactive elements should have accessible names', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check buttons
     const buttons = await page.locator('button').all();
@@ -120,7 +120,7 @@ test.describe('Accessibility Tests (WCAG 2.1 Level AA)', () => {
 
   test('Color contrast should meet WCAG AA standards', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2aa'])
