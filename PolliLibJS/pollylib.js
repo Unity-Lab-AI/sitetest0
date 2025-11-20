@@ -76,6 +76,15 @@ class PollinationsAPI {
             options.headers = this._getHeaders(options.headers);
         }
 
+        // Add referrer as URL parameter for GET requests (in addition to header)
+        // This ensures proper authentication in Node.js environments
+        let requestUrl = url;
+        if (this.referrer && !this.bearerToken) {
+            // Only add referrer param if not using bearer token auth
+            const separator = url.includes('?') ? '&' : '?';
+            requestUrl = `${url}${separator}referrer=${encodeURIComponent(this.referrer)}`;
+        }
+
         let lastError = null;
 
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -84,7 +93,7 @@ class PollinationsAPI {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-                const response = await fetch(url, {
+                const response = await fetch(requestUrl, {
                     ...options,
                     signal: controller.signal
                 });
