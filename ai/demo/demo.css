@@ -307,6 +307,31 @@ body {
     box-shadow: 0 0 10px rgba(220, 20, 60, 0.3);
 }
 
+/* Gothic Textarea */
+.gothic-textarea {
+    width: 100%;
+    background: rgba(42, 42, 42, 0.8);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    color: var(--light-grey, #cccccc);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-family: 'Trajan Pro', serif;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.gothic-textarea:focus {
+    border-color: var(--crimson-red, #dc143c);
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.3);
+}
+
+.gothic-textarea::placeholder {
+    color: rgba(204, 204, 204, 0.5);
+}
+
 .help-text {
     display: block;
     margin-top: 4px;

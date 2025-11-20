@@ -32,14 +32,19 @@ const DemoApp = {
         voiceVolume: 50,
         imageModel: 'flux',
         seed: -1,
+        safeMode: true,  // NSFW filter (applies to all: text, image, voice)
+        systemPrompt: '',  // Custom system prompt for text models
         textTemperature: 0.7,
         textMaxTokens: 2048,
-        textTopP: 0.9,
+        reasoningEffort: '',  // Auto by default
         imageWidth: 1024,
         imageHeight: 1024,
-        imageEnhance: false,
-        voiceSpeed: 1.0
+        imageEnhance: false
     },
+
+    // Voice playback queue
+    voiceQueue: [],
+    isPlayingVoice: false,
 
     // Initialize the app
     async init() {
@@ -317,6 +322,10 @@ const DemoApp = {
         const voicePlaybackCheckbox = document.getElementById('voicePlayback');
         voicePlaybackCheckbox.addEventListener('change', (e) => {
             this.settings.voicePlayback = e.target.checked;
+            // If toggling off while playing, stop talking
+            if (!e.target.checked && this.isPlayingVoice) {
+                this.stopVoicePlayback();
+            }
         });
 
         // Make the toggle slider clickable (fix for toggle not responding to clicks)
@@ -343,6 +352,26 @@ const DemoApp = {
             this.settings.seed = parseInt(e.target.value);
         });
 
+        // Safe mode toggle
+        const safeModeCheckbox = document.getElementById('safeMode');
+        safeModeCheckbox.addEventListener('change', (e) => {
+            this.settings.safeMode = e.target.checked;
+        });
+
+        // Make safe mode toggle slider clickable
+        const safeModeSlider = safeModeCheckbox.nextElementSibling;
+        if (safeModeSlider && safeModeSlider.classList.contains('toggle-slider')) {
+            safeModeSlider.addEventListener('click', () => {
+                safeModeCheckbox.checked = !safeModeCheckbox.checked;
+                safeModeCheckbox.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // System prompt
+        document.getElementById('systemPrompt').addEventListener('input', (e) => {
+            this.settings.systemPrompt = e.target.value.trim();
+        });
+
         // Text temperature
         const textTempSlider = document.getElementById('textTemperature');
         const textTempValue = document.getElementById('textTempValue');
@@ -356,12 +385,9 @@ const DemoApp = {
             this.settings.textMaxTokens = parseInt(e.target.value);
         });
 
-        // Top P
-        const topPSlider = document.getElementById('textTopP');
-        const topPValue = document.getElementById('textTopPValue');
-        topPSlider.addEventListener('input', (e) => {
-            this.settings.textTopP = parseFloat(e.target.value);
-            topPValue.textContent = e.target.value;
+        // Reasoning effort
+        document.getElementById('reasoningEffort').addEventListener('change', (e) => {
+            this.settings.reasoningEffort = e.target.value;
         });
 
         // Image dimensions
@@ -387,14 +413,6 @@ const DemoApp = {
                 imageEnhanceCheckbox.dispatchEvent(new Event('change'));
             });
         }
-
-        // Voice speed
-        const voiceSpeedSlider = document.getElementById('voiceSpeed');
-        const voiceSpeedValue = document.getElementById('voiceSpeedValue');
-        voiceSpeedSlider.addEventListener('input', (e) => {
-            this.settings.voiceSpeed = parseFloat(e.target.value);
-            voiceSpeedValue.textContent = e.target.value + 'x';
-        });
     },
 
     // Auto-resize textarea based on content
@@ -516,6 +534,37 @@ const DemoApp = {
             url += `seed=${this.settings.seed}`;
         }
 
+        // Add temperature
+        url += url.includes('?') ? '&' : '?';
+        url += `temperature=${this.settings.textTemperature}`;
+
+        // Add max_tokens (not part of simple GET API, but we can try)
+        // Note: max_tokens works better with POST /openai endpoint
+        // For GET endpoint, response length is naturally limited
+
+        // Add safe mode (NSFW filter)
+        url += url.includes('?') ? '&' : '?';
+        url += `safe=${this.settings.safeMode}`;
+
+        // Add private mode (always true - hide from public feeds)
+        url += url.includes('?') ? '&' : '?';
+        url += 'private=true';
+
+        // Add system prompt if specified and not a community model
+        const currentModel = this.getCurrentModelMetadata();
+        const isCommunityModel = currentModel && currentModel.community === true;
+        if (this.settings.systemPrompt && !isCommunityModel) {
+            url += url.includes('?') ? '&' : '?';
+            url += `system=${encodeURIComponent(this.settings.systemPrompt)}`;
+        }
+
+        // Add reasoning effort if specified and model supports it
+        const supportsReasoning = currentModel && currentModel.reasoning === true;
+        if (this.settings.reasoningEffort && supportsReasoning) {
+            url += url.includes('?') ? '&' : '?';
+            url += `reasoning_effort=${this.settings.reasoningEffort}`;
+        }
+
         // Add referrer parameter for authentication
         url += url.includes('?') ? '&' : '?';
         url += 'referrer=s-test-sk37AGI';
@@ -536,6 +585,20 @@ const DemoApp = {
             console.error('Failed to get AI response:', error);
             throw error;
         }
+    },
+
+    // Get current model metadata
+    getCurrentModelMetadata() {
+        if (!this.settings.model || this.availableTextModels.length === 0) {
+            return null;
+        }
+
+        // Find the model in available models
+        const model = this.availableTextModels.find(m =>
+            (m.name === this.settings.model || m.id === this.settings.model || m === this.settings.model)
+        );
+
+        return typeof model === 'object' ? model : null;
     },
 
     // Add a message to the chat
@@ -641,38 +704,124 @@ const DemoApp = {
         }
     },
 
-    // Play voice using text-to-speech
+    // Play voice using text-to-speech with chunking and queue
     async playVoice(text) {
         if (!this.settings.voicePlayback) return;
 
         try {
-            // Stop any currently playing audio
-            this.stopVoicePlayback();
-
-            // Build TTS URL
-            const voice = this.settings.voice;
-            const speed = this.settings.voiceSpeed;
-
             // Clean text for TTS (remove markdown, keep only readable text)
             const cleanText = this.cleanTextForTTS(text);
 
-            // Build URL
-            const url = `https://text.pollinations.ai/tts?text=${encodeURIComponent(cleanText)}&voice=${voice}&speed=${speed}`;
+            // Split into chunks (max 1000 chars, respecting sentence boundaries)
+            const chunks = this.splitTextIntoChunks(cleanText, 1000);
+
+            // Add chunks to voice queue
+            this.voiceQueue.push(...chunks);
+
+            // Start playing if not already playing
+            if (!this.isPlayingVoice) {
+                this.playNextVoiceChunk();
+            }
+
+        } catch (error) {
+            console.error('Voice playback error:', error);
+        }
+    },
+
+    // Split text into chunks respecting sentence boundaries
+    splitTextIntoChunks(text, maxLength) {
+        const chunks = [];
+        let currentChunk = '';
+
+        // Split by sentences (period, question mark, exclamation)
+        const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+
+        for (const sentence of sentences) {
+            const trimmedSentence = sentence.trim();
+
+            // If adding this sentence would exceed max length
+            if (currentChunk.length + trimmedSentence.length + 1 > maxLength) {
+                // Save current chunk if it has content
+                if (currentChunk.trim()) {
+                    chunks.push(currentChunk.trim());
+                }
+
+                // Start new chunk with this sentence
+                currentChunk = trimmedSentence;
+
+                // If single sentence is too long, split by words
+                if (currentChunk.length > maxLength) {
+                    const words = currentChunk.split(' ');
+                    currentChunk = '';
+
+                    for (const word of words) {
+                        if (currentChunk.length + word.length + 1 > maxLength) {
+                            if (currentChunk.trim()) {
+                                chunks.push(currentChunk.trim());
+                            }
+                            currentChunk = word;
+                        } else {
+                            currentChunk += (currentChunk ? ' ' : '') + word;
+                        }
+                    }
+                }
+            } else {
+                // Add sentence to current chunk
+                currentChunk += (currentChunk ? ' ' : '') + trimmedSentence;
+            }
+        }
+
+        // Add final chunk
+        if (currentChunk.trim()) {
+            chunks.push(currentChunk.trim());
+        }
+
+        return chunks;
+    },
+
+    // Play next chunk in voice queue
+    async playNextVoiceChunk() {
+        // Check if queue is empty or playback is disabled
+        if (this.voiceQueue.length === 0 || !this.settings.voicePlayback) {
+            this.isPlayingVoice = false;
+            this.currentAudio = null;
+            return;
+        }
+
+        this.isPlayingVoice = true;
+
+        // Get next chunk
+        const chunk = this.voiceQueue.shift();
+
+        try {
+            // Build TTS URL
+            const voice = this.settings.voice;
+
+            // Build URL (removed speed parameter - not in API docs)
+            const url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}&safe=${this.settings.safeMode}&private=true&referrer=s-test-sk37AGI`;
 
             // Create audio element
             this.currentAudio = new Audio(url);
             this.currentAudio.volume = this.settings.voiceVolume / 100;
 
+            // When this chunk ends, play next chunk
+            this.currentAudio.addEventListener('ended', () => {
+                this.playNextVoiceChunk();
+            });
+
+            // When this chunk has an error, play next chunk
+            this.currentAudio.addEventListener('error', (e) => {
+                console.error('Audio playback error:', e);
+                this.playNextVoiceChunk();
+            });
+
             // Play audio
             await this.currentAudio.play();
 
-            // Clear reference when done
-            this.currentAudio.addEventListener('ended', () => {
-                this.currentAudio = null;
-            });
-
         } catch (error) {
-            console.error('Voice playback error:', error);
+            console.error('Voice chunk playback error:', error);
+            // Continue with next chunk on error
+            this.playNextVoiceChunk();
         }
     },
 
@@ -706,6 +855,11 @@ const DemoApp = {
 
     // Stop voice playback
     stopVoicePlayback() {
+        // Clear the voice queue
+        this.voiceQueue = [];
+        this.isPlayingVoice = false;
+
+        // Stop current audio
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.currentAudio.currentTime = 0;
