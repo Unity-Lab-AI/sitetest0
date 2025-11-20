@@ -19,6 +19,11 @@ const DemoApp = {
     imageAPI: null,
     voiceAPI: null,
 
+    // Available models (populated from API)
+    availableTextModels: [],
+    availableImageModels: [],
+    availableVoices: [],
+
     // Settings
     settings: {
         model: 'unity',
@@ -37,11 +42,15 @@ const DemoApp = {
     },
 
     // Initialize the app
-    init() {
+    async init() {
         this.initializePolliLib();
         this.setupEventListeners();
         this.setupControlsSync();
         this.configureMarked();
+
+        // Fetch and populate models
+        await this.fetchModels();
+
         console.log('Unity AI Lab Demo initialized');
     },
 
@@ -80,6 +89,191 @@ const DemoApp = {
                 }
             });
         }
+    },
+
+    // Fetch models from Pollinations API
+    async fetchModels() {
+        try {
+            await Promise.all([
+                this.fetchTextModels(),
+                this.fetchImageModels()
+            ]);
+        } catch (error) {
+            console.error('Error fetching models:', error);
+            // Continue with default models if fetching fails
+        }
+    },
+
+    // Fetch text models from Pollinations API
+    async fetchTextModels() {
+        try {
+            const response = await fetch('https://text.pollinations.ai/models?referrer=s-test-sk37AGI', {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
+                    'Referer': 's-test-sk37AGI'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const models = await response.json();
+            this.availableTextModels = models;
+
+            // Populate text model dropdown
+            this.populateTextModels(models);
+
+            // Extract and populate voices
+            this.extractVoices(models);
+
+            console.log('Text models loaded:', models.length);
+        } catch (error) {
+            console.error('Failed to fetch text models:', error);
+            // Keep default hardcoded models
+        }
+    },
+
+    // Fetch image models from Pollinations API
+    async fetchImageModels() {
+        try {
+            const response = await fetch('https://image.pollinations.ai/models?referrer=s-test-sk37AGI', {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
+                    'Referer': 's-test-sk37AGI'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const models = await response.json();
+            this.availableImageModels = models;
+
+            // Populate image model dropdown
+            this.populateImageModels(models);
+
+            console.log('Image models loaded:', models.length);
+        } catch (error) {
+            console.error('Failed to fetch image models:', error);
+            // Keep default hardcoded models
+        }
+    },
+
+    // Populate text model dropdown
+    populateTextModels(models) {
+        const modelSelect = document.getElementById('modelSelect');
+        if (!modelSelect || !models || models.length === 0) return;
+
+        // Clear existing options
+        modelSelect.innerHTML = '';
+
+        // Add models from API
+        models.forEach(model => {
+            const option = document.createElement('option');
+            // Use the model name or id as value
+            const modelValue = model.name || model.id || model;
+            option.value = modelValue;
+            // Use display name or name as label
+            option.textContent = model.displayName || model.name || modelValue;
+
+            // Select first model as default
+            if (models.indexOf(model) === 0) {
+                option.selected = true;
+                this.settings.model = modelValue;
+                this.updateModelInfo(modelValue);
+            }
+
+            modelSelect.appendChild(option);
+        });
+    },
+
+    // Populate image model dropdown
+    populateImageModels(models) {
+        const imageModelSelect = document.getElementById('imageModel');
+        if (!imageModelSelect || !models || models.length === 0) return;
+
+        // Clear existing options
+        imageModelSelect.innerHTML = '';
+
+        // Add models from API
+        models.forEach(model => {
+            const option = document.createElement('option');
+            // Use the model name or id as value
+            const modelValue = model.name || model.id || model;
+            option.value = modelValue;
+            // Use display name or name as label
+            option.textContent = model.displayName || model.name || modelValue;
+
+            // Select first model as default
+            if (models.indexOf(model) === 0) {
+                option.selected = true;
+                this.settings.imageModel = modelValue;
+            }
+
+            imageModelSelect.appendChild(option);
+        });
+    },
+
+    // Extract voices from text models that support TTS
+    extractVoices(models) {
+        const voiceSelect = document.getElementById('voiceSelect');
+        if (!voiceSelect || !models) return;
+
+        // Find models that support text-to-speech
+        const ttsModels = models.filter(model => {
+            // Check if model has voices or supports TTS
+            return model.voices ||
+                   (model.capabilities && model.capabilities.includes('tts')) ||
+                   (model.features && model.features.includes('text-to-speech'));
+        });
+
+        // Extract voices from TTS models
+        let voices = [];
+        ttsModels.forEach(model => {
+            if (model.voices && Array.isArray(model.voices)) {
+                voices = voices.concat(model.voices);
+            }
+        });
+
+        // If we found voices, populate the dropdown
+        if (voices.length > 0) {
+            // Remove duplicates
+            voices = [...new Set(voices)];
+
+            // Clear existing options
+            voiceSelect.innerHTML = '';
+
+            // Add voices
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = voice;
+                option.textContent = this.formatVoiceName(voice);
+
+                // Select first voice as default
+                if (index === 0) {
+                    option.selected = true;
+                    this.settings.voice = voice;
+                }
+
+                voiceSelect.appendChild(option);
+            });
+
+            this.availableVoices = voices;
+            console.log('Voices loaded:', voices.length);
+        } else {
+            // Keep default hardcoded voices if none found
+            console.log('No voices found in models, keeping defaults');
+        }
+    },
+
+    // Format voice name for display
+    formatVoiceName(voice) {
+        // Capitalize first letter
+        return voice.charAt(0).toUpperCase() + voice.slice(1);
     },
 
     // Setup all event listeners
@@ -197,15 +391,35 @@ const DemoApp = {
     },
 
     // Update model info display
-    updateModelInfo(model) {
+    updateModelInfo(modelValue) {
         const modelInfo = document.getElementById('modelInfo');
-        const infoMap = {
-            'unity': 'Unity model - Unrestricted AI',
-            'openai': 'OpenAI GPT - Advanced reasoning',
-            'mistral': 'Mistral - Fast and efficient',
-            'claude': 'Claude - Thoughtful responses'
-        };
-        modelInfo.querySelector('span').textContent = infoMap[model] || 'AI Model';
+        if (!modelInfo) return;
+
+        // Try to find the model in available models
+        const model = this.availableTextModels.find(m =>
+            (m.name === modelValue || m.id === modelValue || m === modelValue)
+        );
+
+        let infoText = 'AI Model';
+
+        if (model) {
+            // If we have model metadata, use it
+            if (typeof model === 'object') {
+                const description = model.description || model.displayName || model.name || modelValue;
+                infoText = description;
+            } else {
+                // Fallback to model value with formatting
+                infoText = `${modelValue.charAt(0).toUpperCase() + modelValue.slice(1)} model`;
+            }
+        } else {
+            // Fallback for unknown models
+            infoText = `${modelValue.charAt(0).toUpperCase() + modelValue.slice(1)} model`;
+        }
+
+        const spanElement = modelInfo.querySelector('span');
+        if (spanElement) {
+            spanElement.textContent = infoText;
+        }
     },
 
     // Send a message
@@ -277,9 +491,9 @@ const DemoApp = {
         // Build URL with parameters
         let url = `${baseUrl}/${messagesParam}`;
 
-        // Add model if specified
-        if (this.settings.model && this.settings.model !== 'unity') {
-            url += `?model=${this.settings.model}`;
+        // Add model parameter if specified
+        if (this.settings.model) {
+            url += `?model=${encodeURIComponent(this.settings.model)}`;
         }
 
         // Add seed if specified (not -1)
@@ -287,6 +501,10 @@ const DemoApp = {
             url += url.includes('?') ? '&' : '?';
             url += `seed=${this.settings.seed}`;
         }
+
+        // Add referrer parameter for authentication
+        url += url.includes('?') ? '&' : '?';
+        url += 'referrer=s-test-sk37AGI';
 
         try {
             const response = await fetch(url, {
