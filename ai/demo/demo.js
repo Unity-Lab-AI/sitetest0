@@ -32,7 +32,7 @@ const DemoApp = {
         voiceVolume: 50,
         imageModel: 'flux',
         seed: -1,
-        safeMode: true,  // NSFW filter (applies to all: text, image, voice)
+        safeMode: false,  // NSFW filter disabled by default (unrestricted content)
         systemPrompt: '',  // Custom system prompt for text models
         textTemperature: 0.7,
         reasoningEffort: '',  // Auto by default
