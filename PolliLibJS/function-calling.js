@@ -218,7 +218,31 @@ class FunctionCalling extends PollinationsAPI {
 
                         if (this.availableFunctions[functionName]) {
                             try {
-                                const functionResult = this.availableFunctions[functionName](functionArgs.a, functionArgs.b, functionArgs.seed, functionArgs.min, functionArgs.max, functionArgs.equation, functionArgs.value, functionArgs.min_val, functionArgs.max_val, functionArgs.location, functionArgs.unit);
+                                // Call function with appropriate arguments based on function name
+                                let functionResult;
+                                switch (functionName) {
+                                    case 'add':
+                                    case 'subtract':
+                                    case 'multiply':
+                                    case 'divide':
+                                        functionResult = this.availableFunctions[functionName](functionArgs.a, functionArgs.b);
+                                        break;
+                                    case 'random_number':
+                                        functionResult = this.availableFunctions[functionName](functionArgs.seed, functionArgs.min, functionArgs.max);
+                                        break;
+                                    case 'evaluate_equation':
+                                        functionResult = this.availableFunctions[functionName](functionArgs.equation);
+                                        break;
+                                    case 'normalize_value':
+                                        functionResult = this.availableFunctions[functionName](functionArgs.value, functionArgs.min_val, functionArgs.max_val);
+                                        break;
+                                    case 'get_weather':
+                                        functionResult = this.availableFunctions[functionName](functionArgs.location, functionArgs.unit);
+                                        break;
+                                    default:
+                                        // For custom functions, try calling with all args as an object
+                                        functionResult = this.availableFunctions[functionName](functionArgs);
+                                }
                                 const resultStr = JSON.stringify({ result: functionResult });
 
                                 conversation.push({

@@ -107,7 +107,7 @@ const DemoApp = {
     // Fetch text models from Pollinations API
     async fetchTextModels() {
         try {
-            const response = await fetch('https://text.pollinations.ai/models', {
+            const response = await fetch('https://text.pollinations.ai/models?referrer=s-test-sk37AGI', {
                 method: 'GET',
                 headers: {
                     'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
@@ -138,7 +138,7 @@ const DemoApp = {
     // Fetch image models from Pollinations API
     async fetchImageModels() {
         try {
-            const response = await fetch('https://image.pollinations.ai/models', {
+            const response = await fetch('https://image.pollinations.ai/models?referrer=s-test-sk37AGI', {
                 method: 'GET',
                 headers: {
                     'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
@@ -501,6 +501,10 @@ const DemoApp = {
             url += url.includes('?') ? '&' : '?';
             url += `seed=${this.settings.seed}`;
         }
+
+        // Add referrer parameter for authentication
+        url += url.includes('?') ? '&' : '?';
+        url += 'referrer=s-test-sk37AGI';
 
         try {
             const response = await fetch(url, {

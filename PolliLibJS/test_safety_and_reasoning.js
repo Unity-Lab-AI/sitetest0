@@ -3,8 +3,8 @@
  * in JavaScript implementation.
  */
 
-const { TextToText } = require('./PolliLibJS/text-to-text');
-const { TextToImage } = require('./PolliLibJS/text-to-image');
+const { TextToText } = require('./text-to-text');
+const { TextToImage } = require('./text-to-image');
 
 /**
  * Test reasoning_effort parameter with different levels
