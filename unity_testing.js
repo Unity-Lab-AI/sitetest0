@@ -11,7 +11,7 @@ const CONFIG = {
     POLLINATIONS_OPENAI_ENDPOINT: 'https://text.pollinations.ai/openai',
     MODEL: 'mistral',  // Using Mistral with Unity system prompt
     REFERRER: 'UA-73J7ItT-ws',
-    UNITY_PERSONA_PATH: 'ai/demo/unity-persona.txt'
+    UNITY_PERSONA_PATH: 'UnityPrompt.txt'
 };
 
 // ===================================
