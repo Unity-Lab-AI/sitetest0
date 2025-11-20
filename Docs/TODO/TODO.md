@@ -18,19 +18,30 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
    - Responsive design across all devices
    - External links ONLY for libraries, services, and platforms
 
-2. **Demo Page (/demo)** - Not yet implemented
-   - Showcase 50-75% of Pollinations API functionality
-   - Simple, focused demo environment
-   - Text-to-Text, Text-to-Image, TTS, STT, Image-to-Text
-   - Minimal UI for testing features
-   - Links to full /ai app for complete experience
+2. **AI Landing Page (/ai)** - ~95% complete
+   - Professional landing page introducing Unity AI Chat
+   - Links to demo and describes full AI experience
+   - SEO optimization with meta tags and social cards
+   - Responsive design across all devices
+   - Links to demo for early access
 
-3. **AI Chat App (/ai)** - Not yet implemented
-   - Full-featured chat app (like ChatGPT, Gemini, DeepSeek)
-   - 100% Pollinations API coverage
-   - Advanced features: sessions, folders, agents, memory
-   - Custom features: live voice chat, page control, system connector (future)
+3. **Demo Page (/ai/demo)** - ~85% complete (IMPLEMENTED!)
+   - Interactive demo showcasing Pollinations API functionality
+   - Text-to-Text chat with multiple AI models
+   - Text-to-Image generation with advanced controls
+   - TTS (Text-to-Speech) with 6 voice options
+   - Model selector, parameter controls, chat history
+   - Markdown rendering with syntax highlighting
+   - Responsive design with mobile support
+   - CORS-compatible, browser-compatible implementation
+   - Needs: Additional features, polish, testing
+
+4. **Main AI Chat App** - Not in this repo (External)
+   - Full-featured chat app planned for future (like ChatGPT, Gemini, DeepSeek)
+   - Would include: sessions, folders, agents, memory
+   - Custom features: live voice chat, page control, system connector
    - Professional layout with sidebar navigation
+   - Currently external deployment
 
 **Architecture:**
 - **PolliLibPy**: Python reference implementation (direct from Pollinations docs)
@@ -117,12 +128,32 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 ---
 
-### 🎮 **/demo Page** - Demo AI Chat Interface
-**Status:** ❌ **NOT STARTED** (0%)
-**Location:** `demo-page-TODO.md`
-**Summary:** Planned lightweight demo chat interface showcasing PolliLib capabilities with text/image generation, voice features, and basic chat UI.
+### 🎨 **/ai Page** - AI Landing Page
+**Status:** ✅ **COMPLETE** (~95%)
+**Location:** `/ai/index.html`
+**Summary:** Professional landing page for Unity AI Chat with comprehensive SEO, social meta tags, and responsive design. Introduces the AI chat experience and links to the demo.
 
-**Scope:** 28 planned features (text input, voice recognition, image panel, markdown rendering, model selector, etc.)
+---
+
+### 🎮 **/ai/demo Page** - Interactive Demo AI Chat
+**Status:** ✅ **IMPLEMENTED** (~85%)
+**Location:** `demo-page-TODO.md`
+**Summary:** Fully functional interactive demo showcasing PolliLibJS capabilities with text chat, image generation, TTS/voice features, markdown rendering, and advanced parameter controls.
+
+**Implemented Features:**
+- ✅ Text-to-text chat with AI models
+- ✅ Text-to-image generation (flux, flux-realism, flux-anime, flux-3d, turbo, any-dark)
+- ✅ TTS with 6 voices (alloy, echo, fable, onyx, nova, shimmer)
+- ✅ Model selector dropdown
+- ✅ Advanced parameter controls (temperature, max_tokens, width, height, enhance, seed)
+- ✅ Markdown rendering with syntax highlighting (highlight.js)
+- ✅ Chat history with local storage
+- ✅ Responsive design
+- ✅ CORS compatibility fixes
+- ✅ Cross-browser support (Firefox, WebKit confirmed)
+- ✅ Referrer authentication with Pollinations API
+
+**Remaining Work:** Additional polish, STT (speech-to-text), enhanced error handling, more testing
 
 ---
 
@@ -168,27 +199,37 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - [x] **NEW:** Form labels for screen reader accessibility (Nov 2025)
 - [x] **NEW:** Open Graph and Twitter Card meta tags (Nov 2025)
 - [x] **NEW:** No-cache headers removed (major performance improvement) (Nov 2025)
-- [x] **NEW:** Playwright test infrastructure (122 tests across 5 suites) (Nov 2025)
+- [x] **NEW:** Playwright test infrastructure (15 tests across 3 browsers) (Nov 2025)
 - [x] **NEW:** CSS/JS minification workflow and deployment (Nov 2025)
 - [x] **NEW:** Skip links for keyboard navigation (Nov 2025)
+- [x] **NEW:** /ai landing page implementation (Nov 2025)
+- [x] **NEW:** /ai/demo interactive demo page (~85% complete) (Nov 2025)
+- [x] **NEW:** Demo page CORS compatibility fixes (Nov 2025)
+- [x] **NEW:** Demo page cross-browser support (Firefox, WebKit) (Nov 2025)
+- [x] **NEW:** Referrer authentication for Pollinations API (Nov 2025)
+- [x] **NEW:** Dynamic model loading with fallback data (Nov 2025)
 
 ### 🎯 **Immediate Priorities (P0)**
 - [x] **Website:** Performance audit ✅ (COMPLETED - see PERFORMANCE_AUDIT.md)
 - [x] **Website:** Accessibility audit and major fixes ✅ (COMPLETED - ARIA, labels, skip links)
 - [x] **Website:** CSS/JS minification for performance ✅ (COMPLETED - automated workflow)
-- [ ] **Website:** Debug automated test execution (IN PROGRESS - smoke effects fixed, tests stabilized)
-- [ ] **Website:** Verify test execution and fix remaining failures
-- [ ] **Website:** Cross-browser testing (Chromium, WebKit)
-- [ ] **Demo Page:** Start implementation of basic chat interface
+- [x] **Website:** Cross-browser testing ✅ (Firefox & WebKit 100% passing, see PLAYWRIGHT_CI_NOTES.md)
+- [x] **Demo Page:** Implementation ✅ (~85% COMPLETE - functional demo with chat, images, TTS)
+- [ ] **Demo Page:** Add STT (speech-to-text) functionality
+- [ ] **Demo Page:** Enhanced error handling and edge cases
+- [ ] **Demo Page:** Additional polish and UX improvements
 - [ ] **Documentation:** Create quickstart guides for both libraries
+- [ ] **Documentation:** Update all TODO files to reflect current status (IN PROGRESS)
 
 ### 📋 **Next Up (P1)**
-- [ ] **Website:** Fix Playwright test execution (see TEST_RESULTS.md for debugging info)
-- [ ] **Website:** Verify all accessibility improvements with automated tests
-- [ ] **Website:** Mobile optimization and testing
-- [ ] **Demo Page:** Complete all 28 planned features
+- [ ] **Website:** Mobile optimization and comprehensive testing on real devices
+- [ ] **Website:** Final WCAG AA compliance verification
+- [ ] **Demo Page:** Complete remaining planned features from demo-page-TODO.md
+- [ ] **Demo Page:** Add system prompt configuration
+- [ ] **Demo Page:** Add conversation export (JSON/Markdown)
 - [ ] **Documentation:** Model capability matrix
-- [ ] **Infrastructure:** Plan backend architecture (if needed)
+- [ ] **Documentation:** Demo page user guide
+- [ ] **Infrastructure:** Plan backend architecture (if needed in future)
 
 ### 💡 **Nice to Have (P2)**
 - [ ] **Main App:** Begin planning in-repo implementation
@@ -201,10 +242,11 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 | Component | Status | Detailed TODO |
 |-----------|--------|---------------|
-| PolliLibJS | ✅ Complete | [../../PolliLibJS/TODO.md](../../PolliLibJS/TODO.md) |
-| PolliLibPy | ✅ Complete | [../../PolliLibPy/TODO.md](../../PolliLibPy/TODO.md) |
-| Landing Website | 🟡 Functional | [website-TODO.md](website-TODO.md) |
-| /demo Page | ❌ Not Started | [demo-page-TODO.md](demo-page-TODO.md) |
+| PolliLibJS | ✅ Complete (100%) | [../../PolliLibJS/TODO.md](../../PolliLibJS/TODO.md) |
+| PolliLibPy | ✅ Complete (100%) | [../../PolliLibPy/TODO.md](../../PolliLibPy/TODO.md) |
+| Landing Website | ✅ Improved (~90%) | [website-TODO.md](website-TODO.md) |
+| /ai Landing Page | ✅ Complete (~95%) | `/ai/index.html` |
+| /ai/demo Page | ✅ Implemented (~85%) | [demo-page-TODO.md](demo-page-TODO.md) |
 | Main Chat App | ❌ External | [main-app-TODO.md](main-app-TODO.md) |
 | Infrastructure | ❌ Not Started | [infrastructure-TODO.md](infrastructure-TODO.md) |
 
@@ -214,10 +256,17 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 | Document | Location |
 |----------|----------|
-| API Coverage Report | [Docs/API_COVERAGE.md](Docs/API_COVERAGE.md) |
-| Cache-Busting System | [Docs/CACHE-BUSTING.md](Docs/CACHE-BUSTING.md) |
-| Pollinations API Docs | [Docs/Pollinations_API_Documentation.md](Docs/Pollinations_API_Documentation.md) |
-| Project README | [README.md](README.md) |
+| AI Assistant Guide | [CLAUDE.md](../../CLAUDE.md) |
+| API Coverage Report | [../API_COVERAGE.md](../API_COVERAGE.md) |
+| Cache-Busting System | [../CACHE-BUSTING.md](../CACHE-BUSTING.md) |
+| Pollinations API Docs | [../Pollinations_API_Documentation.md](../Pollinations_API_Documentation.md) |
+| Performance Audit | [../PERFORMANCE_AUDIT.md](../PERFORMANCE_AUDIT.md) |
+| SEO Implementation | [../SEO_IMPLEMENTATION.md](../SEO_IMPLEMENTATION.md) |
+| Test Guide | [../TEST_GUIDE.md](../TEST_GUIDE.md) |
+| Test Results | [../TEST_RESULTS.md](../TEST_RESULTS.md) |
+| Demo Parameters Analysis | [../../ANALYSIS_DEMO_PARAMETERS.md](../../ANALYSIS_DEMO_PARAMETERS.md) |
+| Playwright CI Notes | [../../PLAYWRIGHT_CI_NOTES.md](../../PLAYWRIGHT_CI_NOTES.md) |
+| Project README | [../../README.md](../../README.md) |
 
 ---
 
@@ -233,5 +282,5 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 ---
 
-**Last Updated:** 2025-11-18
+**Last Updated:** 2025-11-20
 **Project:** UnityAILab Test Site (sitetest0)
