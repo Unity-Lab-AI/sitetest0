@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Safety Bypass Variations Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .control-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .control-panel h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .unity-response {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 2px solid #e2e8f0;
+            min-height: 80px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .unity-response.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .test-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .test-description {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .test-description code {
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #d6336c;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .status.info {
+            background: #bee3f8;
+            color: #2c5282;
+            border: 1px solid #90cdf4;
+        }
+
+        .audio-player {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .instructions {
+            background: #fff5f5;
+            border-left: 4px solid #f56565;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #742a2a;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .global-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .global-controls button {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Voice Safety Bypass Variations Test</h1>
+        <p class="subtitle">Testing multiple approaches to bypass safety restrictions using OpenAI-compatible parameters</p>
+
+        <!-- Unity Response Section -->
+        <div class="control-panel">
+            <h2>Step 1: Get Unity Model's Response</h2>
+            <p style="margin-bottom: 15px; color: #555;">First, fetch Unity's response to "hello" - this will be used for all TTS tests</p>
+
+            <button class="btn-success" onclick="getUnityResponse()">
+                <span id="unity-btn-text">Get Unity's Response</span>
+            </button>
+
+            <div id="unity-status"></div>
+
+            <div style="margin-top: 15px;">
+                <strong style="color: #333;">Unity's Response:</strong>
+                <div id="unityResponse" class="unity-response empty">Click button above to fetch...</div>
+            </div>
+        </div>
+
+        <!-- Test Variations Grid -->
+        <h2 style="color: #333; margin-bottom: 20px; margin-top: 30px;">Step 2: Test Different Safety Bypass Approaches</h2>
+
+        <div class="test-grid">
+            <!-- Variation 1: Standard safe=false -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">1</span>
+                    <span>Standard safe=false</span>
+                </h3>
+                <div class="test-description">
+                    Uses <code>safe=false</code> as URL parameter (current baseline approach)
+                </div>
+                <button class="btn-primary" onclick="runTest(1)" id="btn1" disabled>
+                    <span id="btn-text-1">Generate Audio</span>
+                </button>
+                <div id="status1"></div>
+                <audio id="audio1" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 2: Omit safe parameter -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">2</span>
+                    <span>Omit safe parameter</span>
+                </h3>
+                <div class="test-description">
+                    No <code>safe</code> parameter at all (default behavior)
+                </div>
+                <button class="btn-primary" onclick="runTest(2)" id="btn2" disabled>
+                    <span id="btn-text-2">Generate Audio</span>
+                </button>
+                <div id="status2"></div>
+                <audio id="audio2" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 3: OpenAI moderation parameter -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">3</span>
+                    <span>OpenAI moderation=false</span>
+                </h3>
+                <div class="test-description">
+                    Uses <code>moderation=false</code> (OpenAI-compatible parameter)
+                </div>
+                <button class="btn-primary" onclick="runTest(3)" id="btn3" disabled>
+                    <span id="btn-text-3">Generate Audio</span>
+                </button>
+                <div id="status3"></div>
+                <audio id="audio3" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 4: Multiple bypass parameters -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">4</span>
+                    <span>Multiple bypass params</span>
+                </h3>
+                <div class="test-description">
+                    Combines <code>safe=false</code>, <code>filter=false</code>, <code>nsfw=true</code>
+                </div>
+                <button class="btn-primary" onclick="runTest(4)" id="btn4" disabled>
+                    <span id="btn-text-4">Generate Audio</span>
+                </button>
+                <div id="status4"></div>
+                <audio id="audio4" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 5: POST with OpenAI format -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">5</span>
+                    <span>POST OpenAI format</span>
+                </h3>
+                <div class="test-description">
+                    Uses POST to <code>/v1/audio/speech</code> with OpenAI-compatible body
+                </div>
+                <button class="btn-primary" onclick="runTest(5)" id="btn5" disabled>
+                    <span id="btn-text-5">Generate Audio</span>
+                </button>
+                <div id="status5"></div>
+                <audio id="audio5" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 6: Direct TTS model -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">6</span>
+                    <span>Direct TTS model</span>
+                </h3>
+                <div class="test-description">
+                    Uses <code>model=tts-1</code> (OpenAI TTS model name) with <code>safe=false</code>
+                </div>
+                <button class="btn-primary" onclick="runTest(6)" id="btn6" disabled>
+                    <span id="btn-text-6">Generate Audio</span>
+                </button>
+                <div id="status6"></div>
+                <audio id="audio6" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 7: Content-policy header -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">7</span>
+                    <span>Custom headers</span>
+                </h3>
+                <div class="test-description">
+                    Attempts to use custom headers like <code>X-Content-Policy: unrestricted</code>
+                </div>
+                <button class="btn-primary" onclick="runTest(7)" id="btn7" disabled>
+                    <span id="btn-text-7">Generate Audio</span>
+                </button>
+                <div id="status7"></div>
+                <audio id="audio7" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 8: Raw OpenAI endpoint -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">8</span>
+                    <span>Raw OpenAI endpoint</span>
+                </h3>
+                <div class="test-description">
+                    POST to <code>/openai</code> with minimal safety parameters
+                </div>
+                <button class="btn-primary" onclick="runTest(8)" id="btn8" disabled>
+                    <span id="btn-text-8">Generate Audio</span>
+                </button>
+                <div id="status8"></div>
+                <audio id="audio8" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 9: Encoded bypass -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">9</span>
+                    <span>Double-encoded safe param</span>
+                </h3>
+                <div class="test-description">
+                    Uses double-encoded or specially formatted <code>safe</code> parameter
+                </div>
+                <button class="btn-primary" onclick="runTest(9)" id="btn9" disabled>
+                    <span id="btn-text-9">Generate Audio</span>
+                </button>
+                <div id="status9"></div>
+                <audio id="audio9" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 10: OpenAI response_format -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">10</span>
+                    <span>OpenAI response_format</span>
+                </h3>
+                <div class="test-description">
+                    POST with OpenAI's <code>response_format</code> parameter set to audio
+                </div>
+                <button class="btn-primary" onclick="runTest(10)" id="btn10" disabled>
+                    <span id="btn-text-10">Generate Audio</span>
+                </button>
+                <div id="status10"></div>
+                <audio id="audio10" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 11: Seed parameter -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">11</span>
+                    <span>Seed + safe bypass</span>
+                </h3>
+                <div class="test-description">
+                    Uses <code>seed</code> parameter to force deterministic output with <code>safe=false</code>
+                </div>
+                <button class="btn-primary" onclick="runTest(11)" id="btn11" disabled>
+                    <span id="btn-text-11">Generate Audio</span>
+                </button>
+                <div id="status11"></div>
+                <audio id="audio11" class="audio-player" controls style="display:none;"></audio>
+            </div>
+
+            <!-- Variation 12: JSON mode with safe -->
+            <div class="test-card">
+                <h3>
+                    <span class="test-number">12</span>
+                    <span>JSON mode bypass</span>
+                </h3>
+                <div class="test-description">
+                    Combines <code>jsonMode=true</code> with <code>safe=false</code> to test alternate path
+                </div>
+                <button class="btn-primary" onclick="runTest(12)" id="btn12" disabled>
+                    <span id="btn-text-12">Generate Audio</span>
+                </button>
+                <div id="status12"></div>
+                <audio id="audio12" class="audio-player" controls style="display:none;"></audio>
+            </div>
+        </div>
+
+        <!-- Global Controls -->
+        <div class="global-controls">
+            <button class="btn-success" onclick="runAllTests()" id="runAllBtn" disabled>
+                Run All Tests Sequentially
+            </button>
+            <button class="btn-danger" onclick="stopAll()">
+                Stop All Audio
+            </button>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li>Click "Get Unity's Response" to fetch the text that will be converted to speech</li>
+                <li>Run individual tests or click "Run All Tests Sequentially"</li>
+                <li>Listen carefully to each audio output</li>
+                <li>Compare which variations (if any) successfully bypass safety filters</li>
+                <li>Note: Some variations may fail or return errors - that's expected behavior</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let unityResponseText = "";
+        const instructionPrefix = "[Instruction: Speak only the following text exactly as written, nothing more] ";
+
+        function setStatus(testNum, message, type) {
+            const statusEl = document.getElementById(`status${testNum}`);
+            if (!statusEl) return;
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+
+        function setButtonLoading(testNum, loading) {
+            const btn = document.getElementById(`btn${testNum}`);
+            const btnText = document.getElementById(`btn-text-${testNum}`);
+
+            if (loading) {
+                if (btn) btn.disabled = true;
+                if (btnText) btnText.innerHTML = '<span class="loading"></span> Loading...';
+            } else {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.textContent = 'Generate Audio';
+            }
+        }
+
+        async function getUnityResponse() {
+            const btnText = document.getElementById('unity-btn-text');
+            btnText.innerHTML = '<span class="loading"></span> Loading...';
+            setStatus('unity', 'Fetching Unity model response...', 'info');
+
+            try {
+                const url = 'https://text.pollinations.ai/hello?model=unity&referrer=UA-73J7ItT-ws';
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const text = await response.text();
+                unityResponseText = text;
+
+                const responseBox = document.getElementById('unityResponse');
+                responseBox.textContent = text;
+                responseBox.classList.remove('empty');
+
+                setStatus('unity', '✓ Successfully retrieved Unity\'s response!', 'success');
+
+                // Enable all test buttons
+                for (let i = 1; i <= 12; i++) {
+                    const btn = document.getElementById(`btn${i}`);
+                    if (btn) btn.disabled = false;
+                }
+                document.getElementById('runAllBtn').disabled = false;
+
+            } catch (error) {
+                setStatus('unity', `✗ Error: ${error.message}`, 'error');
+            } finally {
+                btnText.textContent = 'Get Unity\'s Response';
+            }
+        }
+
+        async function runTest(testNum) {
+            if (!unityResponseText) {
+                alert('Please get Unity\'s response first!');
+                return;
+            }
+
+            setButtonLoading(testNum, true);
+            const textToSpeak = instructionPrefix + unityResponseText;
+
+            try {
+                let url, options = {};
+
+                switch(testNum) {
+                    case 1: // Standard safe=false
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&safe=false&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with safe=false...', 'info');
+                        break;
+
+                    case 2: // Omit safe parameter
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing without safe parameter...', 'info');
+                        break;
+
+                    case 3: // OpenAI moderation parameter
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&moderation=false&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with moderation=false...', 'info');
+                        break;
+
+                    case 4: // Multiple bypass parameters
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&safe=false&filter=false&nsfw=true&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with multiple bypass params...', 'info');
+                        break;
+
+                    case 5: // POST with OpenAI format
+                        url = 'https://text.pollinations.ai/v1/audio/speech?referrer=UA-73J7ItT-ws';
+                        options = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: 'tts-1',
+                                input: textToSpeak,
+                                voice: 'nova'
+                            })
+                        };
+                        setStatus(testNum, 'Testing POST to /v1/audio/speech...', 'info');
+                        break;
+
+                    case 6: // Direct TTS model
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=tts-1&voice=nova&safe=false&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with tts-1 model...', 'info');
+                        break;
+
+                    case 7: // Custom headers (note: may be blocked by CORS)
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&referrer=UA-73J7ItT-ws`;
+                        options = {
+                            headers: {
+                                'X-Content-Policy': 'unrestricted',
+                                'X-Safe-Mode': 'false'
+                            }
+                        };
+                        setStatus(testNum, 'Testing with custom headers...', 'info');
+                        break;
+
+                    case 8: // Raw OpenAI endpoint
+                        url = 'https://text.pollinations.ai/openai?referrer=UA-73J7ItT-ws';
+                        options = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: 'openai-audio',
+                                input: textToSpeak,
+                                voice: 'nova',
+                                safe: false
+                            })
+                        };
+                        setStatus(testNum, 'Testing POST to /openai...', 'info');
+                        break;
+
+                    case 9: // Double-encoded safe param
+                        const doubleEncoded = encodeURIComponent('false');
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&safe=${doubleEncoded}&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with double-encoded param...', 'info');
+                        break;
+
+                    case 10: // OpenAI response_format
+                        url = 'https://text.pollinations.ai/openai?referrer=UA-73J7ItT-ws';
+                        options = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: 'openai-audio',
+                                messages: [{role: 'user', content: textToSpeak}],
+                                response_format: { type: 'audio' },
+                                voice: 'nova'
+                            })
+                        };
+                        setStatus(testNum, 'Testing with response_format...', 'info');
+                        break;
+
+                    case 11: // Seed parameter
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&safe=false&seed=12345&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with seed + safe=false...', 'info');
+                        break;
+
+                    case 12: // JSON mode bypass
+                        url = `https://text.pollinations.ai/${encodeURIComponent(textToSpeak)}?model=openai-audio&voice=nova&safe=false&jsonMode=true&referrer=UA-73J7ItT-ws`;
+                        setStatus(testNum, 'Testing with jsonMode bypass...', 'info');
+                        break;
+                }
+
+                const response = await fetch(url, options);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const contentType = response.headers.get('content-type') || '';
+
+                if (contentType.includes('audio') || url.includes('text.pollinations.ai/')) {
+                    // For GET requests to text.pollinations.ai, we can use the URL directly
+                    // For POST requests, we need to create a blob
+                    if (options.method === 'POST') {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const audio = document.getElementById(`audio${testNum}`);
+                        audio.src = blobUrl;
+                        audio.style.display = 'block';
+                    } else {
+                        const audio = document.getElementById(`audio${testNum}`);
+                        audio.src = url;
+                        audio.style.display = 'block';
+                    }
+
+                    setStatus(testNum, '✓ Audio generated! Listen to check if safety was bypassed', 'success');
+                } else {
+                    const text = await response.text();
+                    setStatus(testNum, `⚠ Returned text instead of audio: ${text.substring(0, 100)}...`, 'info');
+                }
+
+            } catch (error) {
+                setStatus(testNum, `✗ Error: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(testNum, false);
+            }
+        }
+
+        async function runAllTests() {
+            if (!unityResponseText) {
+                alert('Please get Unity\'s response first!');
+                return;
+            }
+
+            for (let i = 1; i <= 12; i++) {
+                await runTest(i);
+                await new Promise(resolve => setTimeout(resolve, 2000)); // 2s delay between tests
+            }
+        }
+
+        function stopAll() {
+            for (let i = 1; i <= 12; i++) {
+                const audio = document.getElementById(`audio${i}`);
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
