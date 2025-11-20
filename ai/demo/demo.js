@@ -620,9 +620,13 @@ const DemoApp = {
         url += url.includes('?') ? '&' : '?';
         url += `temperature=${this.settings.textTemperature}`;
 
-        // Add safe mode (NSFW filter)
-        url += url.includes('?') ? '&' : '?';
-        url += `safe=${this.settings.safeMode}`;
+        // Add safe mode (NSFW filter) - only add parameter when enabled
+        // When safeMode=true: adds safe=true (filtering ON)
+        // When safeMode=false: parameter omitted (filtering OFF - default behavior)
+        if (this.settings.safeMode) {
+            url += url.includes('?') ? '&' : '?';
+            url += 'safe=true';
+        }
 
         // Add private mode (always true - hide from public feeds)
         url += url.includes('?') ? '&' : '?';
@@ -704,7 +708,10 @@ const DemoApp = {
             }
 
             // IMPORTANT: Add safe mode parameter for NSFW filtering
-            url += `&safe=${this.settings.safeMode}`;
+            // Only add parameter when enabled (omit when disabled for unrestricted content)
+            if (this.settings.safeMode) {
+                url += '&safe=true';
+            }
 
             // Add private mode (always true - hide from public feeds)
             url += '&private=true';
@@ -924,8 +931,15 @@ const DemoApp = {
             // Build TTS URL
             const voice = this.settings.voice;
 
-            // Build URL (removed speed parameter - not in API docs)
-            const url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}&safe=${this.settings.safeMode}&private=true&referrer=UA-73J7ItT-ws`;
+            // Build URL with safe mode - only add parameter when enabled
+            let url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}`;
+
+            // Add safe mode if enabled (omit when disabled for unrestricted content)
+            if (this.settings.safeMode) {
+                url += '&safe=true';
+            }
+
+            url += '&private=true&referrer=UA-73J7ItT-ws';
 
             // Create audio element
             this.currentAudio = new Audio(url);
