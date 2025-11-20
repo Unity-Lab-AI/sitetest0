@@ -537,6 +537,10 @@ function initSmokeEffect() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
+    // Temporary canvas for text measurement
+    var measureCanvas = document.createElement('canvas');
+    var measureCtx = measureCanvas.getContext('2d');
+
     // Cache text element positions for collision detection
     function cacheTextElements() {
         textElements = [];
@@ -549,14 +553,43 @@ function initSmokeEffect() {
             if (rect.width > 0 && rect.height > 0 &&
                 rect.bottom > -buffer && rect.top < window.innerHeight + buffer &&
                 rect.right > -buffer && rect.left < window.innerWidth + buffer) {
+
+                // Get computed styles for accurate text measurement
+                var style = window.getComputedStyle(el);
+                var text = el.textContent.trim();
+
+                // Skip empty elements
+                if (!text) return;
+
+                // Set font for measurement
+                measureCtx.font = style.fontSize + ' ' + style.fontFamily;
+                var metrics = measureCtx.measureText(text);
+
+                // Calculate actual text bounds (tighter than element bounds)
+                var fontSize = parseFloat(style.fontSize);
+                var textWidth = metrics.width;
+                var textHeight = fontSize * 1.2; // Approximation including descent
+
+                // Calculate padding to center text within element
+                var paddingLeft = parseFloat(style.paddingLeft) || 0;
+                var paddingTop = parseFloat(style.paddingTop) || 0;
+
+                // Actual text position (trimmed to text geometry)
+                var textX = rect.left + paddingLeft;
+                var textY = rect.top + paddingTop;
+
+                // Use tighter bounds based on actual text
+                var actualWidth = Math.min(textWidth, rect.width - paddingLeft);
+                var actualHeight = Math.min(textHeight, rect.height - paddingTop);
+
                 textElements.push({
-                    x: rect.left,
-                    y: rect.top,
-                    width: rect.width,
-                    height: rect.height,
-                    centerX: rect.left + rect.width / 2,
-                    centerY: rect.top + rect.height / 2,
-                    influenceRange: Math.max(rect.width, rect.height) / 2 + 50
+                    x: textX,
+                    y: textY,
+                    width: actualWidth,
+                    height: actualHeight,
+                    centerX: textX + actualWidth / 2,
+                    centerY: textY + actualHeight / 2,
+                    influenceRange: Math.max(actualWidth, actualHeight) / 2 + 30  // Reduced buffer
                 });
             }
         });
@@ -1011,7 +1044,7 @@ function initSmokeEffect() {
             }
 
             var angle = (Math.PI * 2 * i) / explosionParticles;
-            var speed = Math.random() * 5 + 3;
+            var speed = Math.random() * 2 + 1;  // Reduced from (5 + 3) to (2 + 1)
             var p = getParticle(
                 this.x,
                 this.y,
