@@ -113,14 +113,31 @@ const DemoApp = {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
             const response = await fetch('https://text.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
-                method: 'GET'
+                method: 'GET',
+                mode: 'cors',
+                cache: 'default',
+                headers: {
+                    'Accept': 'application/json'
+                }
             });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn('Response is not JSON, using fallback models');
+                throw new Error('Invalid response type');
+            }
+
             const models = await response.json();
+
+            // Validate that we got an array
+            if (!Array.isArray(models) || models.length === 0) {
+                throw new Error('Invalid models data received');
+            }
+
             this.availableTextModels = models;
 
             // Populate text model dropdown
@@ -132,7 +149,12 @@ const DemoApp = {
             console.log('Text models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch text models:', error);
-            // Keep default hardcoded models
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
+            this.useFallbackTextModels();
         }
     },
 
@@ -140,15 +162,30 @@ const DemoApp = {
     async fetchImageModels() {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
+            // Note: No custom headers to avoid CORS preflight (image endpoint only allows Content-Type)
             const response = await fetch('https://image.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
-                method: 'GET'
+                method: 'GET',
+                mode: 'cors',
+                cache: 'default'
             });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn('Response is not JSON, using fallback models');
+                throw new Error('Invalid response type');
+            }
+
             const models = await response.json();
+
+            // Validate that we got an array
+            if (!Array.isArray(models) || models.length === 0) {
+                throw new Error('Invalid models data received');
+            }
+
             this.availableImageModels = models;
 
             // Populate image model dropdown
@@ -157,7 +194,12 @@ const DemoApp = {
             console.log('Image models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch image models:', error);
-            // Keep default hardcoded models
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
+            this.useFallbackImageModels();
         }
     },
 
@@ -274,6 +316,42 @@ const DemoApp = {
         return voice.charAt(0).toUpperCase() + voice.slice(1);
     },
 
+    // Fallback text models when API fails (Firefox/browser compatibility)
+    useFallbackTextModels() {
+        console.log('Using fallback text models');
+        const fallbackModels = [{"name":"deepseek","description":"DeepSeek V3.1","maxInputChars":10000,"reasoning":true,"tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["deepseek-v3","deepseek-v3.1","deepseek-reasoning","deepseek-r1-0528"],"vision":false,"audio":false},{"name":"gemini","description":"Gemini 2.5 Flash Lite","tier":"seed","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["gemini-2.5-flash-lite"],"vision":true,"audio":false},{"name":"gemini-search","description":"Gemini 2.5 Flash Lite with Google Search","tier":"seed","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["searchgpt","geminisearch"],"vision":true,"audio":false},{"name":"mistral","description":"Mistral Small 3.2 24B","tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["mistral-small-3.1-24b-instruct","mistral-small-3.1-24b-instruct-2503","mistral-small-3.2-24b-instruct-2506"],"vision":false,"audio":false},{"name":"openai","description":"OpenAI GPT-5 Nano","tier":"anonymous","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"maxInputChars":7000,"aliases":["gpt-5-mini"],"vision":true,"audio":false},{"name":"openai-audio","description":"OpenAI GPT-4o Mini Audio Preview","maxInputChars":5000,"voices":["alloy","echo","fable","onyx","nova","shimmer","coral","verse","ballad","ash","sage","amuch","dan"],"tier":"seed","community":false,"input_modalities":["text","image","audio"],"output_modalities":["audio","text"],"tools":true,"aliases":["gpt-4o-mini-audio-preview"],"vision":true,"audio":true},{"name":"openai-fast","description":"OpenAI GPT-4.1 Nano","tier":"anonymous","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"maxInputChars":5000,"aliases":["gpt-5-nano"],"vision":true,"audio":false},{"name":"openai-reasoning","description":"OpenAI o4 Mini","tier":"seed","community":false,"reasoning":true,"supportsSystemMessages":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["o4-mini"],"vision":true,"audio":false},{"name":"qwen-coder","description":"Qwen 2.5 Coder 32B","tier":"flower","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["qwen2.5-coder-32b-instruct"],"vision":false,"audio":false},{"name":"roblox-rp","description":"Llama 3.1 8B Instruct","tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["llama-roblox","llama-fast-roblox"],"vision":false,"audio":false},{"name":"bidara","description":"BIDARA (Biomimetic Designer and Research Assistant by NASA)","tier":"anonymous","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false},{"name":"chickytutor","description":"ChickyTutor AI Language Tutor - (chickytutor.com)","tier":"anonymous","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"evil","description":"Evil","uncensored":true,"tier":"seed","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false},{"name":"midijourney","description":"MIDIjourney","tier":"anonymous","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"rtist","description":"Rtist","tier":"seed","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"unity","description":"Unity Unrestricted Agent","uncensored":true,"tier":"seed","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false}];
+
+        this.availableTextModels = fallbackModels;
+        this.populateTextModels(fallbackModels);
+
+        // Also populate fallback voices (extracted from openai-audio model)
+        const fallbackVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral', 'verse', 'ballad', 'ash', 'sage', 'amuch', 'dan'];
+        const voiceSelect = document.getElementById('voiceSelect');
+        if (voiceSelect) {
+            voiceSelect.innerHTML = '';
+            fallbackVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = voice;
+                option.textContent = this.formatVoiceName(voice);
+                if (index === 0) {
+                    option.selected = true;
+                    this.settings.voice = voice;
+                }
+                voiceSelect.appendChild(option);
+            });
+            this.availableVoices = fallbackVoices;
+        }
+    },
+
+    // Fallback image models when API fails (Firefox/browser compatibility)
+    useFallbackImageModels() {
+        console.log('Using fallback image models');
+        const fallbackModels = ['flux', 'turbo', 'gptimage'];
+
+        this.availableImageModels = fallbackModels;
+        this.populateImageModels(fallbackModels);
+    },
+
     // Setup all event listeners
     setupEventListeners() {
         // Send button
@@ -327,12 +405,15 @@ const DemoApp = {
             }
         });
 
-        // Make the toggle slider clickable (fix for toggle not responding to clicks)
-        const toggleSlider = voicePlaybackCheckbox.nextElementSibling;
-        if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
-            toggleSlider.addEventListener('click', () => {
+        // Make the entire toggle switch clickable (Firefox compatibility)
+        const voicePlaybackToggle = voicePlaybackCheckbox.closest('.toggle-switch');
+        if (voicePlaybackToggle) {
+            voicePlaybackToggle.addEventListener('click', (e) => {
+                // Prevent double-firing when clicking the checkbox itself
+                if (e.target === voicePlaybackCheckbox) return;
+                e.preventDefault();
                 voicePlaybackCheckbox.checked = !voicePlaybackCheckbox.checked;
-                voicePlaybackCheckbox.dispatchEvent(new Event('change'));
+                voicePlaybackCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
             });
         }
 
@@ -355,14 +436,18 @@ const DemoApp = {
         const safeModeCheckbox = document.getElementById('safeMode');
         safeModeCheckbox.addEventListener('change', (e) => {
             this.settings.safeMode = e.target.checked;
+            console.log(`Safe mode (NSFW filter) ${e.target.checked ? 'enabled' : 'disabled'} for all models (text, image, voice)`);
         });
 
-        // Make safe mode toggle slider clickable
-        const safeModeSlider = safeModeCheckbox.nextElementSibling;
-        if (safeModeSlider && safeModeSlider.classList.contains('toggle-slider')) {
-            safeModeSlider.addEventListener('click', () => {
+        // Make the entire toggle switch clickable (Firefox compatibility)
+        const safeModeToggle = safeModeCheckbox.closest('.toggle-switch');
+        if (safeModeToggle) {
+            safeModeToggle.addEventListener('click', (e) => {
+                // Prevent double-firing when clicking the checkbox itself
+                if (e.target === safeModeCheckbox) return;
+                e.preventDefault();
                 safeModeCheckbox.checked = !safeModeCheckbox.checked;
-                safeModeCheckbox.dispatchEvent(new Event('change'));
+                safeModeCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
             });
         }
 
@@ -399,12 +484,15 @@ const DemoApp = {
             this.settings.imageEnhance = e.target.checked;
         });
 
-        // Make the image enhance toggle slider clickable
-        const imageEnhanceSlider = imageEnhanceCheckbox.nextElementSibling;
-        if (imageEnhanceSlider && imageEnhanceSlider.classList.contains('toggle-slider')) {
-            imageEnhanceSlider.addEventListener('click', () => {
+        // Make the entire toggle switch clickable (Firefox compatibility)
+        const imageEnhanceToggle = imageEnhanceCheckbox.closest('.toggle-switch');
+        if (imageEnhanceToggle) {
+            imageEnhanceToggle.addEventListener('click', (e) => {
+                // Prevent double-firing when clicking the checkbox itself
+                if (e.target === imageEnhanceCheckbox) return;
+                e.preventDefault();
                 imageEnhanceCheckbox.checked = !imageEnhanceCheckbox.checked;
-                imageEnhanceCheckbox.dispatchEvent(new Event('change'));
+                imageEnhanceCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
             });
         }
     },
@@ -589,6 +677,55 @@ const DemoApp = {
         );
 
         return typeof model === 'object' ? model : null;
+    },
+
+    // Generate image with Pollinations API (with safe mode support)
+    async generateImage(prompt) {
+        try {
+            // Build image generation URL with all parameters
+            const baseUrl = 'https://image.pollinations.ai/prompt';
+
+            // Encode the prompt
+            const encodedPrompt = encodeURIComponent(prompt);
+
+            // Build URL with parameters
+            let url = `${baseUrl}/${encodedPrompt}`;
+
+            // Add model parameter
+            url += `?model=${encodeURIComponent(this.settings.imageModel)}`;
+
+            // Add width and height
+            url += `&width=${this.settings.imageWidth}`;
+            url += `&height=${this.settings.imageHeight}`;
+
+            // Add seed if specified (not -1)
+            if (this.settings.seed !== -1) {
+                url += `&seed=${this.settings.seed}`;
+            }
+
+            // IMPORTANT: Add safe mode parameter for NSFW filtering
+            url += `&safe=${this.settings.safeMode}`;
+
+            // Add private mode (always true - hide from public feeds)
+            url += '&private=true';
+
+            // Add enhance parameter if enabled
+            if (this.settings.imageEnhance) {
+                url += '&enhance=true';
+            }
+
+            // Add referrer parameter for authentication
+            url += '&referrer=UA-73J7ItT-ws';
+
+            console.log('Generating image with safe mode:', this.settings.safeMode);
+
+            // Return the image URL (can be used in <img> tag)
+            return url;
+
+        } catch (error) {
+            console.error('Failed to generate image:', error);
+            throw error;
+        }
     },
 
     // Add a message to the chat

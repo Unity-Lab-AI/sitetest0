@@ -22,10 +22,11 @@ This document provides comprehensive guidance for AI assistants (like Claude) wo
 This is a test site for Unity AI Lab that serves as a development and testing environment for:
 
 - **Website**: A dark-themed interactive website showcasing AI capabilities
-- **PolliLibJS**: JavaScript/Node.js library for Pollinations.AI
-- **PolliLibPy**: Python library for Pollinations.AI (mirrors PolliLibJS functionality)
+- **AI Demo Page**: Fully functional interactive demo at /ai/demo showcasing PolliLibJS (~85% complete)
+- **PolliLibJS**: JavaScript/Node.js library for Pollinations.AI (✅ 100% complete)
+- **PolliLibPy**: Python library for Pollinations.AI (✅ 100% complete)
 
-The project is production-ready with complete implementations of both libraries and a functional website.
+The project features complete implementations of both libraries, a functional marketing website, and a working AI demo.
 
 **Key Technologies:**
 - HTML5, CSS3, JavaScript (vanilla)
@@ -98,6 +99,14 @@ sitetest0/
 │   ├── smoke.spec.js                  # Current smoke tests
 │   └── backup/                        # Backup test files
 │
+├── ai/                                # AI Chat Section (NEW!)
+│   ├── index.html                     # AI landing page
+│   └── demo/                          # Interactive demo
+│       ├── index.html                 # Demo page
+│       ├── demo.css                   # Demo styles
+│       ├── demo.js                    # Demo functionality
+│       └── test-cors.html             # CORS testing page
+│
 ├── about/                             # About page
 ├── contact/                           # Contact page
 ├── services/                          # Services page
@@ -105,7 +114,13 @@ sitetest0/
 │
 ├── index.html                         # Main landing page
 ├── styles.css                         # Main stylesheet
+├── styles.min.css                     # Minified stylesheet
 ├── script.js                          # Main JavaScript
+├── script.min.js                      # Minified JavaScript
+├── sitemap.xml                        # SEO sitemap
+├── robots.txt                         # Robots directives
+├── ANALYSIS_DEMO_PARAMETERS.md        # Demo parameter analysis (NEW!)
+├── PLAYWRIGHT_CI_NOTES.md             # Playwright CI testing notes (NEW!)
 ├── README.md                          # Main project README
 ├── CLAUDE.md                          # This file
 └── ... (other config files)
@@ -125,11 +140,18 @@ All documentation is centralized in the `Docs/` folder:
 4. **[Docs/TEST_GUIDE.md](./Docs/TEST_GUIDE.md)** - Testing procedures
 5. **[Docs/PERFORMANCE_AUDIT.md](./Docs/PERFORMANCE_AUDIT.md)** - Performance metrics
 6. **[Docs/SEO_IMPLEMENTATION.md](./Docs/SEO_IMPLEMENTATION.md)** - SEO implementation details
+7. **[ANALYSIS_DEMO_PARAMETERS.md](./ANALYSIS_DEMO_PARAMETERS.md)** - Demo parameter analysis (NEW!)
+8. **[PLAYWRIGHT_CI_NOTES.md](./PLAYWRIGHT_CI_NOTES.md)** - Playwright CI testing notes (NEW!)
 
 ### Library-Specific Documentation
 
 - **[PolliLibJS/README.md](./PolliLibJS/README.md)** - JavaScript library docs
 - **[PolliLibPy/README.md](./PolliLibPy/README.md)** - Python library docs
+
+### Demo Page Documentation
+
+- **[ai/demo/index.html](./ai/demo/index.html)** - Interactive AI demo page (~85% complete)
+- **[Docs/TODO/demo-page-TODO.md](./Docs/TODO/demo-page-TODO.md)** - Demo features and status
 
 ### How to Update Documentation
 
@@ -156,16 +178,16 @@ When making changes to the codebase:
 
 Located in `Docs/TODO/`:
 
-- **website-TODO.md** - Website features and improvements
-- **demo-page-TODO.md** - Demo page planning
-- **main-app-TODO.md** - Main application planning
+- **website-TODO.md** - Website features and improvements (~90% complete)
+- **demo-page-TODO.md** - Demo page tasks (✅ ~85% complete - IMPLEMENTED!)
+- **main-app-TODO.md** - Main application planning (external/future)
 - **infrastructure-TODO.md** - Infrastructure and deployment
 - **TODO_EXTRAS.md** - Additional tasks and nice-to-haves
 
 ### Library TODO Files
 
-- **PolliLibJS/TODO.md** - JavaScript library tasks (✅ mostly complete)
-- **PolliLibPy/TODO.md** - Python library tasks (✅ mostly complete)
+- **PolliLibJS/TODO.md** - JavaScript library tasks (✅ 100% complete)
+- **PolliLibPy/TODO.md** - Python library tasks (✅ 100% complete)
 
 ### Updating TODO Files
 
@@ -462,23 +484,30 @@ git commit -m "Test: Update test results after full suite run"
 
 ### ✅ Complete
 
-- PolliLibJS - All features implemented
-- PolliLibPy - All features implemented
-- Website - Functional and deployed
+- PolliLibJS - All features implemented (100%)
+- PolliLibPy - All features implemented (100%)
+- Website - Functional and deployed (~90%)
 - SEO - Comprehensive implementation
 - Documentation - Well-documented
+- CSS/JS Minification - Automated deployment
+- Cross-browser testing - Firefox & WebKit 100% passing
 
-### 🟡 In Progress / Needs Work
+### 🟢 Mostly Complete / Polishing
 
-- Playwright tests - Some flakiness issues
-- Demo page - Planned but not started
-- Performance - Room for optimization
+- AI Demo Page - Functional with core features (~85%)
+  - ✅ Text-to-text chat
+  - ✅ Text-to-image generation
+  - ✅ Text-to-speech (TTS)
+  - ❌ Speech-to-text (STT) pending
+- Playwright tests - Working (10/15 passing, Chromium CI issues documented)
+- Performance - Optimizations applied, ongoing improvements
 
 ### ❌ Not Started
 
-- Main chat application (external project)
-- Full infrastructure automation
-- Advanced demo page features
+- Main chat application (external project, not in this repo)
+- Full infrastructure automation (backend services)
+- STT (speech-to-text) in demo page
+- Advanced demo features (conversation export, message editing)
 
 ---
 
@@ -525,6 +554,6 @@ This CLAUDE.md file should be updated when:
 
 ---
 
-**Last Updated:** 2025-11-19
-**Version:** 1.0.0
+**Last Updated:** 2025-11-20
+**Version:** 1.1.0
 **Maintained by:** Unity AI Lab Team
