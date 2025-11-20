@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice System Prompt Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .test-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .test-info strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .status.info {
+            background: #bee3f8;
+            color: #2c5282;
+            border: 1px solid #90cdf4;
+        }
+
+        .audio-player {
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .results-section {
+            background: #e6fffa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #38b2ac;
+        }
+
+        .results-section h2 {
+            color: #234e52;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .result-item .badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.pass {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge.fail {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .instructions {
+            background: #fff5f5;
+            border-left: 4px solid #f56565;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #742a2a;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Voice System Prompt Test</h1>
+        <p class="subtitle">Testing if the openai-audio model respects system prompts for text-to-speech</p>
+
+        <!-- Test 1 -->
+        <div class="test-section">
+            <h2>Test 1: WITHOUT System Prompt (Baseline)</h2>
+            <div class="test-info">
+                <strong>Text to speak:</strong>
+                "How does a tree grow"
+                <br><br>
+                <strong>System prompt:</strong>
+                None
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="runTest1()">
+                    <span id="test1-btn-text">Generate Audio</span>
+                </button>
+                <button class="btn-secondary" onclick="playTest1()" id="play1" disabled>
+                    Play Audio
+                </button>
+            </div>
+            <div id="status1"></div>
+            <audio id="audio1" class="audio-player" controls style="display:none;"></audio>
+        </div>
+
+        <!-- Test 2 -->
+        <div class="test-section">
+            <h2>Test 2: WITH System Prompt (GET Parameter)</h2>
+            <div class="test-info">
+                <strong>Text to speak:</strong>
+                "How does a tree grow"
+                <br><br>
+                <strong>System prompt:</strong>
+                "You must speak ONLY the exact text that is sent to you. Do not add any words before or after. Do not make any changes, alterations, or modifications. Speak the text exactly as written, nothing more, nothing less."
+                <br><br>
+                <strong>Method:</strong>
+                GET request with ?system= parameter
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="runTest2()">
+                    <span id="test2-btn-text">Generate Audio</span>
+                </button>
+                <button class="btn-secondary" onclick="playTest2()" id="play2" disabled>
+                    Play Audio
+                </button>
+            </div>
+            <div id="status2"></div>
+            <audio id="audio2" class="audio-player" controls style="display:none;"></audio>
+        </div>
+
+        <!-- Test 3 -->
+        <div class="test-section">
+            <h2>Test 3: WITH System Prompt (POST Messages)</h2>
+            <div class="test-info">
+                <strong>Text to speak:</strong>
+                "How does a tree grow"
+                <br><br>
+                <strong>System prompt:</strong>
+                "You must speak ONLY the exact text that is sent to you. Do not add any words before or after. Do not make any changes, alterations, or modifications. Speak the text exactly as written, nothing more, nothing less."
+                <br><br>
+                <strong>Method:</strong>
+                POST request with messages array including system role
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="runTest3()">
+                    <span id="test3-btn-text">Generate Audio</span>
+                </button>
+                <button class="btn-secondary" onclick="playTest3()" id="play3" disabled>
+                    Play Audio
+                </button>
+            </div>
+            <div id="status3"></div>
+            <audio id="audio3" class="audio-player" controls style="display:none;"></audio>
+        </div>
+
+        <!-- Test 4 -->
+        <div class="test-section">
+            <h2>Test 4: Prepended Instruction in Text</h2>
+            <div class="test-info">
+                <strong>Text to speak:</strong>
+                "[Instruction: Speak only the following text exactly as written, nothing more] How does a tree grow"
+                <br><br>
+                <strong>System prompt:</strong>
+                None (instruction embedded in text)
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="runTest4()">
+                    <span id="test4-btn-text">Generate Audio</span>
+                </button>
+                <button class="btn-secondary" onclick="playTest4()" id="play4" disabled>
+                    Play Audio
+                </button>
+            </div>
+            <div id="status4"></div>
+            <audio id="audio4" class="audio-player" controls style="display:none;"></audio>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="control-buttons">
+            <button class="btn-primary" onclick="runAllTests()" style="flex: 1;">
+                Run All Tests
+            </button>
+            <button class="btn-danger" onclick="stopAll()">
+                Stop All Audio
+            </button>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📋 How to Evaluate:</h3>
+            <ol>
+                <li>Click "Run All Tests" or run each test individually</li>
+                <li>Listen carefully to each audio file</li>
+                <li>Determine if the voice speaks ONLY "How does a tree grow"</li>
+                <li>Note if any extra words are added before or after</li>
+                <li>Note if the text is modified in any way</li>
+                <li>Compare which method (if any) enforces exact text-to-speech</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const testText = "How does a tree grow";
+        const systemPrompt = "You must speak ONLY the exact text that is sent to you. Do not add any words before or after. Do not make any changes, alterations, or modifications. Speak the text exactly as written, nothing more, nothing less.";
+
+        let audioUrls = {
+            test1: null,
+            test2: null,
+            test3: null,
+            test4: null
+        };
+
+        function setStatus(testNum, message, type) {
+            const statusEl = document.getElementById(`status${testNum}`);
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+
+        function setButtonLoading(testNum, loading) {
+            const btnText = document.getElementById(`test${testNum}-btn-text`);
+            if (loading) {
+                btnText.innerHTML = '<span class="loading"></span> Generating...';
+            } else {
+                btnText.textContent = 'Generate Audio';
+            }
+        }
+
+        async function runTest1() {
+            setButtonLoading(1, true);
+            setStatus(1, 'Generating audio...', 'info');
+
+            try {
+                const url = `https://text.pollinations.ai/${encodeURIComponent(testText)}?model=openai-audio&voice=nova&referrer=UA-73J7ItT-ws`;
+
+                audioUrls.test1 = url;
+
+                const audio = document.getElementById('audio1');
+                audio.src = url;
+                audio.style.display = 'block';
+
+                document.getElementById('play1').disabled = false;
+                setStatus(1, '✓ Audio generated successfully! Listen to check if it speaks ONLY "How does a tree grow"', 'success');
+            } catch (error) {
+                setStatus(1, `✗ Error: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(1, false);
+            }
+        }
+
+        async function runTest2() {
+            setButtonLoading(2, true);
+            setStatus(2, 'Generating audio with system prompt (GET)...', 'info');
+
+            try {
+                const url = `https://text.pollinations.ai/${encodeURIComponent(testText)}?model=openai-audio&voice=nova&system=${encodeURIComponent(systemPrompt)}&referrer=UA-73J7ItT-ws`;
+
+                audioUrls.test2 = url;
+
+                const audio = document.getElementById('audio2');
+                audio.src = url;
+                audio.style.display = 'block';
+
+                document.getElementById('play2').disabled = false;
+                setStatus(2, '✓ Audio generated successfully! Listen to check if system prompt was respected', 'success');
+            } catch (error) {
+                setStatus(2, `✗ Error: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(2, false);
+            }
+        }
+
+        async function runTest3() {
+            setButtonLoading(3, true);
+            setStatus(3, 'Generating audio with system prompt (POST)...', 'info');
+
+            try {
+                const url = 'https://text.pollinations.ai/openai?referrer=UA-73J7ItT-ws';
+
+                const payload = {
+                    model: "openai-audio",
+                    messages: [
+                        {
+                            role: "system",
+                            content: systemPrompt
+                        },
+                        {
+                            role: "user",
+                            content: testText
+                        }
+                    ]
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('audio')) {
+                    // It's audio - create blob URL
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+
+                    audioUrls.test3 = blobUrl;
+
+                    const audio = document.getElementById('audio3');
+                    audio.src = blobUrl;
+                    audio.style.display = 'block';
+
+                    document.getElementById('play3').disabled = false;
+                    setStatus(3, '✓ Audio generated successfully! POST endpoint returned audio', 'success');
+                } else {
+                    // It's text/JSON
+                    const text = await response.text();
+                    setStatus(3, `⚠ POST endpoint returned text, not audio. Response: ${text.substring(0, 100)}...`, 'info');
+                }
+            } catch (error) {
+                setStatus(3, `✗ Error: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(3, false);
+            }
+        }
+
+        async function runTest4() {
+            setButtonLoading(4, true);
+            setStatus(4, 'Generating audio with prepended instruction...', 'info');
+
+            try {
+                const prependedText = `[Instruction: Speak only the following text exactly as written, nothing more] ${testText}`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(prependedText)}?model=openai-audio&voice=nova&referrer=UA-73J7ItT-ws`;
+
+                audioUrls.test4 = url;
+
+                const audio = document.getElementById('audio4');
+                audio.src = url;
+                audio.style.display = 'block';
+
+                document.getElementById('play4').disabled = false;
+                setStatus(4, '✓ Audio generated successfully! Listen to check if it reads the instruction or follows it', 'success');
+            } catch (error) {
+                setStatus(4, `✗ Error: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(4, false);
+            }
+        }
+
+        function playTest1() {
+            document.getElementById('audio1').play();
+        }
+
+        function playTest2() {
+            document.getElementById('audio2').play();
+        }
+
+        function playTest3() {
+            document.getElementById('audio3').play();
+        }
+
+        function playTest4() {
+            document.getElementById('audio4').play();
+        }
+
+        async function runAllTests() {
+            stopAll();
+            await runTest1();
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            await runTest2();
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            await runTest3();
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            await runTest4();
+        }
+
+        function stopAll() {
+            for (let i = 1; i <= 4; i++) {
+                const audio = document.getElementById(`audio${i}`);
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
+    </script>
+</body>
+</html>
