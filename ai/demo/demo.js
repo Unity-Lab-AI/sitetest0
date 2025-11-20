@@ -55,6 +55,9 @@ const DemoApp = {
         // Fetch and populate models
         await this.fetchModels();
 
+        // Update voice availability based on initial model
+        this.updateVoiceAvailability();
+
         console.log('Unity AI Lab Demo initialized');
     },
 
@@ -534,6 +537,45 @@ const DemoApp = {
         if (spanElement) {
             spanElement.textContent = infoText;
         }
+
+        // Update voice playback availability based on community model status
+        this.updateVoiceAvailability();
+    },
+
+    // Update voice playback availability based on current model
+    updateVoiceAvailability() {
+        const currentModel = this.getCurrentModelMetadata();
+        const isCommunityModel = currentModel && currentModel.community === true;
+
+        const voicePlaybackCheckbox = document.getElementById('voicePlayback');
+        const voiceSettings = voicePlaybackCheckbox.closest('.control-group');
+
+        if (isCommunityModel) {
+            // Disable voice playback for community models
+            voicePlaybackCheckbox.disabled = true;
+            voicePlaybackCheckbox.checked = false;
+            this.settings.voicePlayback = false;
+
+            // Add visual indicator
+            if (voiceSettings) {
+                voiceSettings.style.opacity = '0.5';
+                voiceSettings.title = 'Voice playback is not available for community models';
+            }
+
+            // Stop any currently playing voice
+            this.stopVoicePlayback();
+
+            console.log('Voice playback disabled for community model:', this.settings.model);
+        } else {
+            // Enable voice playback for non-community models
+            voicePlaybackCheckbox.disabled = false;
+
+            // Remove visual indicator
+            if (voiceSettings) {
+                voiceSettings.style.opacity = '1';
+                voiceSettings.title = '';
+            }
+        }
     },
 
     // Send a message
@@ -841,6 +883,15 @@ const DemoApp = {
     // Play voice using text-to-speech with chunking and queue
     async playVoice(text) {
         if (!this.settings.voicePlayback) return;
+
+        // Check if current model is a community model - voice not supported
+        const currentModel = this.getCurrentModelMetadata();
+        const isCommunityModel = currentModel && currentModel.community === true;
+
+        if (isCommunityModel) {
+            console.log('Voice playback skipped: community models do not support voice playback');
+            return;
+        }
 
         try {
             // Clean text for TTS (remove markdown, keep only readable text)
