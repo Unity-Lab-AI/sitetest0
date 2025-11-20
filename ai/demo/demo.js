@@ -107,12 +107,9 @@ const DemoApp = {
     // Fetch text models from Pollinations API
     async fetchTextModels() {
         try {
+            // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
             const response = await fetch('https://text.pollinations.ai/models?referrer=s-test-sk37AGI', {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
-                    'Referer': 's-test-sk37AGI'
-                }
+                method: 'GET'
             });
 
             if (!response.ok) {
@@ -138,12 +135,9 @@ const DemoApp = {
     // Fetch image models from Pollinations API
     async fetchImageModels() {
         try {
+            // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
             const response = await fetch('https://image.pollinations.ai/models?referrer=s-test-sk37AGI', {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
-                    'Referer': 's-test-sk37AGI'
-                }
+                method: 'GET'
             });
 
             if (!response.ok) {
@@ -320,9 +314,19 @@ const DemoApp = {
         });
 
         // Voice playback toggle
-        document.getElementById('voicePlayback').addEventListener('change', (e) => {
+        const voicePlaybackCheckbox = document.getElementById('voicePlayback');
+        voicePlaybackCheckbox.addEventListener('change', (e) => {
             this.settings.voicePlayback = e.target.checked;
         });
+
+        // Make the toggle slider clickable (fix for toggle not responding to clicks)
+        const toggleSlider = voicePlaybackCheckbox.nextElementSibling;
+        if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
+            toggleSlider.addEventListener('click', () => {
+                voicePlaybackCheckbox.checked = !voicePlaybackCheckbox.checked;
+                voicePlaybackCheckbox.dispatchEvent(new Event('change'));
+            });
+        }
 
         // Voice selection
         document.getElementById('voiceSelect').addEventListener('change', (e) => {
@@ -369,10 +373,20 @@ const DemoApp = {
             this.settings.imageHeight = parseInt(e.target.value);
         });
 
-        // Image enhance
-        document.getElementById('imageEnhance').addEventListener('change', (e) => {
+        // Image enhance toggle
+        const imageEnhanceCheckbox = document.getElementById('imageEnhance');
+        imageEnhanceCheckbox.addEventListener('change', (e) => {
             this.settings.imageEnhance = e.target.checked;
         });
+
+        // Make the image enhance toggle slider clickable
+        const imageEnhanceSlider = imageEnhanceCheckbox.nextElementSibling;
+        if (imageEnhanceSlider && imageEnhanceSlider.classList.contains('toggle-slider')) {
+            imageEnhanceSlider.addEventListener('click', () => {
+                imageEnhanceCheckbox.checked = !imageEnhanceCheckbox.checked;
+                imageEnhanceCheckbox.dispatchEvent(new Event('change'));
+            });
+        }
 
         // Voice speed
         const voiceSpeedSlider = document.getElementById('voiceSpeed');
@@ -507,12 +521,9 @@ const DemoApp = {
         url += 'referrer=s-test-sk37AGI';
 
         try {
+            // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
             const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'PolliLibJS/1.0 Unity AI Lab',
-                    'Referer': 's-test-sk37AGI'
-                }
+                method: 'GET'
             });
 
             if (!response.ok) {
