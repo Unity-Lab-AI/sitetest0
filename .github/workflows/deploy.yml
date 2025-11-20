@@ -396,14 +396,7 @@ jobs:
       - name: Install Playwright browsers
         run: |
           echo "🌐 Installing Playwright browsers..."
-          npx playwright install --with-deps chromium
-
-      - name: Start local server
-        run: |
-          echo "🚀 Starting local server..."
-          python3 -m http.server 8080 &
-          sleep 3
-          echo "✅ Server started on port 8080"
+          npx playwright install --with-deps
 
       - name: Run Playwright tests
         run: |
