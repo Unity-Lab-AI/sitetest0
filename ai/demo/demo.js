@@ -35,7 +35,6 @@ const DemoApp = {
         safeMode: true,  // NSFW filter (applies to all: text, image, voice)
         systemPrompt: '',  // Custom system prompt for text models
         textTemperature: 0.7,
-        textMaxTokens: 2048,
         reasoningEffort: '',  // Auto by default
         imageWidth: 1024,
         imageHeight: 1024,
@@ -113,7 +112,7 @@ const DemoApp = {
     async fetchTextModels() {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
-            const response = await fetch('https://text.pollinations.ai/models?referrer=s-test-sk37AGI', {
+            const response = await fetch('https://text.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
                 method: 'GET'
             });
 
@@ -141,7 +140,7 @@ const DemoApp = {
     async fetchImageModels() {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
-            const response = await fetch('https://image.pollinations.ai/models?referrer=s-test-sk37AGI', {
+            const response = await fetch('https://image.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
                 method: 'GET'
             });
 
@@ -380,11 +379,6 @@ const DemoApp = {
             textTempValue.textContent = e.target.value;
         });
 
-        // Max tokens
-        document.getElementById('textMaxTokens').addEventListener('change', (e) => {
-            this.settings.textMaxTokens = parseInt(e.target.value);
-        });
-
         // Reasoning effort
         document.getElementById('reasoningEffort').addEventListener('change', (e) => {
             this.settings.reasoningEffort = e.target.value;
@@ -538,10 +532,6 @@ const DemoApp = {
         url += url.includes('?') ? '&' : '?';
         url += `temperature=${this.settings.textTemperature}`;
 
-        // Add max_tokens (not part of simple GET API, but we can try)
-        // Note: max_tokens works better with POST /openai endpoint
-        // For GET endpoint, response length is naturally limited
-
         // Add safe mode (NSFW filter)
         url += url.includes('?') ? '&' : '?';
         url += `safe=${this.settings.safeMode}`;
@@ -567,7 +557,7 @@ const DemoApp = {
 
         // Add referrer parameter for authentication
         url += url.includes('?') ? '&' : '?';
-        url += 'referrer=s-test-sk37AGI';
+        url += 'referrer=UA-73J7ItT-ws';
 
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
@@ -798,7 +788,7 @@ const DemoApp = {
             const voice = this.settings.voice;
 
             // Build URL (removed speed parameter - not in API docs)
-            const url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}&safe=${this.settings.safeMode}&private=true&referrer=s-test-sk37AGI`;
+            const url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}&safe=${this.settings.safeMode}&private=true&referrer=UA-73J7ItT-ws`;
 
             // Create audio element
             this.currentAudio = new Audio(url);
