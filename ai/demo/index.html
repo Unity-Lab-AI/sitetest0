@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Unity AI Lab Demo - Interactive AI chat with advanced features">
+    <meta name="keywords" content="Unity AI, AI Chat, Demo, Pollinations">
+    <meta name="author" content="Unity AI Lab">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <title>Unity AI Lab - Demo</title>
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Bootstrap CSS -->
+    <link href="../../vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../vendor/fontawesome/all.min.css">
+
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+    <!-- Main site styles -->
+    <link rel="stylesheet" href="../../styles.min.css?v=9984a87">
+
+    <!-- Demo page specific styles -->
+    <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-overlay"></div>
+    <div class="red-streaks"></div>
+
+    <!-- Main Demo Container -->
+    <div class="demo-container">
+        <!-- Left Panel: Model & Voice Controls -->
+        <aside class="left-panel">
+            <div class="panel-content">
+                <!-- Logo/Title -->
+                <a href="../../" class="demo-logo">
+                    <i class="fas fa-brain"></i>
+                    <span>UNITYAILAB</span>
+                </a>
+
+                <div class="divider"></div>
+
+                <!-- Model Selection -->
+                <div class="control-section">
+                    <label class="control-label">Model</label>
+                    <select id="modelSelect" class="gothic-select">
+                        <option value="unity" selected>Unity (Default)</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="mistral">Mistral</option>
+                        <option value="claude">Claude</option>
+                    </select>
+                    <div id="modelInfo" class="model-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Unity model - Unrestricted AI</span>
+                    </div>
+                </div>
+
+                <!-- Voice Selection -->
+                <div class="control-section">
+                    <label class="control-label">Voice Selection</label>
+                    <select id="voiceSelect" class="gothic-select">
+                        <option value="alloy">Alloy</option>
+                        <option value="echo">Echo</option>
+                        <option value="fable">Fable</option>
+                        <option value="onyx">Onyx</option>
+                        <option value="nova">Nova</option>
+                        <option value="shimmer">Shimmer</option>
+                    </select>
+                </div>
+
+                <!-- Voice Playback Toggle -->
+                <div class="control-section">
+                    <div class="toggle-control">
+                        <label for="voicePlayback">Voice Playback</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="voicePlayback">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Volume -->
+                <div class="control-section">
+                    <label class="control-label">Voice Volume</label>
+                    <div class="volume-control">
+                        <i class="fas fa-volume-down"></i>
+                        <input type="range" id="voiceVolume" min="0" max="100" value="50" class="gothic-slider">
+                        <i class="fas fa-volume-up"></i>
+                        <span id="volumeValue" class="volume-value">50%</span>
+                    </div>
+                </div>
+
+                <!-- Image Model -->
+                <div class="control-section">
+                    <label class="control-label">Image Generation</label>
+                    <select id="imageModel" class="gothic-select">
+                        <option value="flux" selected>Flux</option>
+                        <option value="flux-realism">Flux Realism</option>
+                        <option value="flux-anime">Flux Anime</option>
+                        <option value="flux-3d">Flux 3D</option>
+                        <option value="turbo">Turbo</option>
+                    </select>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Section -->
+        <main class="chat-section">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Empty state message -->
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-comments"></i>
+                    <p>Begin your journey with just a simple message</p>
+                </div>
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="message-input-container">
+                <div class="input-wrapper">
+                    <textarea
+                        id="messageInput"
+                        class="message-input"
+                        placeholder="Type your message..."
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Settings & Controls -->
+        <aside class="right-panel">
+            <div class="panel-content">
+                <h3 class="panel-title">Settings</h3>
+
+                <div class="divider"></div>
+
+                <!-- Seed -->
+                <div class="control-section">
+                    <label class="control-label">Seed</label>
+                    <input type="number" id="seedInput" class="gothic-input-small" value="-1" placeholder="-1">
+                    <small class="help-text">-1 for random</small>
+                </div>
+
+                <!-- Text Settings -->
+                <div class="settings-group">
+                    <h4 class="group-title">
+                        <i class="fas fa-font"></i> Text Settings
+                    </h4>
+
+                    <div class="control-section">
+                        <label class="control-label">Temperature</label>
+                        <input type="range" id="textTemperature" min="0" max="2" step="0.1" value="0.7" class="gothic-slider">
+                        <span class="value-display" id="textTempValue">0.7</span>
+                    </div>
+
+                    <div class="control-section">
+                        <label class="control-label">Max Tokens</label>
+                        <input type="number" id="textMaxTokens" class="gothic-input-small" value="2048" min="1" max="8192">
+                    </div>
+
+                    <div class="control-section">
+                        <label class="control-label">Top P</label>
+                        <input type="range" id="textTopP" min="0" max="1" step="0.05" value="0.9" class="gothic-slider">
+                        <span class="value-display" id="textTopPValue">0.9</span>
+                    </div>
+                </div>
+
+                <!-- Image Settings -->
+                <div class="settings-group">
+                    <h4 class="group-title">
+                        <i class="fas fa-image"></i> Image Settings
+                    </h4>
+
+                    <div class="control-section">
+                        <label class="control-label">Width</label>
+                        <input type="number" id="imageWidth" class="gothic-input-small" value="1024" step="64" min="256" max="2048">
+                    </div>
+
+                    <div class="control-section">
+                        <label class="control-label">Height</label>
+                        <input type="number" id="imageHeight" class="gothic-input-small" value="1024" step="64" min="256" max="2048">
+                    </div>
+
+                    <div class="control-section">
+                        <label class="control-label">Enhance</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="imageEnhance">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Settings -->
+                <div class="settings-group">
+                    <h4 class="group-title">
+                        <i class="fas fa-microphone"></i> Voice Settings
+                    </h4>
+
+                    <div class="control-section">
+                        <label class="control-label">Speed</label>
+                        <input type="range" id="voiceSpeed" min="0.25" max="4.0" step="0.25" value="1.0" class="gothic-slider">
+                        <span class="value-display" id="voiceSpeedValue">1.0x</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="clearSession" class="action-btn clear-btn">
+                        <i class="fas fa-trash-alt"></i>
+                        Clear Session
+                    </button>
+                    <button id="stopTalking" class="action-btn stop-btn">
+                        <i class="fas fa-stop-circle"></i>
+                        Stop Talking
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-section demo-footer" role="contentinfo" aria-label="Site footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="copyright">&copy; 2024 UnityAILab. Pushing boundaries, breaking limits.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="../../vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- DOMPurify for sanitization -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+
+    <!-- Highlight.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- PolliLibJS -->
+    <script src="../../PolliLibJS/pollylib.js"></script>
+    <script src="../../PolliLibJS/text-to-text.js"></script>
+    <script src="../../PolliLibJS/text-to-image.js"></script>
+    <script src="../../PolliLibJS/text-to-speech.js"></script>
+
+    <!-- Demo page functionality -->
+    <script src="demo.js"></script>
+</body>
+</html>
