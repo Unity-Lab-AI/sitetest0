@@ -149,7 +149,11 @@ const DemoApp = {
             console.log('Text models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch text models:', error);
-            // Use fallback default models for Firefox/other browsers
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
             this.useFallbackTextModels();
         }
     },
@@ -158,13 +162,11 @@ const DemoApp = {
     async fetchImageModels() {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
+            // Note: No custom headers to avoid CORS preflight (image endpoint only allows Content-Type)
             const response = await fetch('https://image.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
                 method: 'GET',
                 mode: 'cors',
-                cache: 'default',
-                headers: {
-                    'Accept': 'application/json'
-                }
+                cache: 'default'
             });
 
             if (!response.ok) {
@@ -192,7 +194,11 @@ const DemoApp = {
             console.log('Image models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch image models:', error);
-            // Use fallback default models for Firefox/other browsers
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
             this.useFallbackImageModels();
         }
     },
