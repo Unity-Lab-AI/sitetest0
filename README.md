@@ -126,8 +126,11 @@ sitetest0/
 ├── styles.css                      # Site styling
 ├── script.js                       # Site functionality
 ├── template-loader.js              # Template loading utility
-├── TODO.md                         # Project roadmap
-├── API_COVERAGE.md                 # API implementation status
+├── Docs/                           # Documentation and project tracking
+│   ├── TODO/                       # TODO files and roadmaps
+│   │   └── TODO.md                 # Main project roadmap
+│   ├── API_COVERAGE.md             # API implementation status
+│   └── ... (other documentation)
 └── README.md                       # This file
 ```
 
@@ -185,8 +188,11 @@ Changes tested here are promoted to the main Unity AI Lab website after validati
 - **API Documentation**: [Docs/Pollinations_API_Documentation.md](./Docs/Pollinations_API_Documentation.md)
 - **JavaScript Library**: [PolliLibJS/README.md](./PolliLibJS/README.md)
 - **Python Library**: [PolliLibPy/README.md](./PolliLibPy/README.md)
-- **Project Roadmap**: [TODO.md](./TODO.md)
-- **API Coverage**: [API_COVERAGE.md](./API_COVERAGE.md)
+- **Project Roadmap**: [Docs/TODO/TODO.md](./Docs/TODO/TODO.md)
+- **API Coverage**: [Docs/API_COVERAGE.md](./Docs/API_COVERAGE.md)
+- **Test Guide**: [Docs/TEST_GUIDE.md](./Docs/TEST_GUIDE.md)
+- **Performance Audit**: [Docs/PERFORMANCE_AUDIT.md](./Docs/PERFORMANCE_AUDIT.md)
+- **SEO Implementation**: [Docs/SEO_IMPLEMENTATION.md](./Docs/SEO_IMPLEMENTATION.md)
 
 ## External Resources
 

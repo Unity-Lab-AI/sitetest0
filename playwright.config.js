@@ -28,11 +28,14 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Disabled mobile tests - webkit not installed
-    // {
-    //   name: 'mobile',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
   ],
   webServer: process.env.CI ? undefined : {
     command: 'python3 -m http.server 8080',

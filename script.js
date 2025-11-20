@@ -637,7 +637,8 @@ function initSmokeEffect() {
         // Speed up dissipation if we're over the preferred max
         var puffCount = smokePuffs.length;
         var dissipationMultiplier = puffCount > MAX_SMOKE_PUFFS ? Math.min(3.0, 1 + (puffCount - MAX_SMOKE_PUFFS) * 0.5) : 1.0;
-        particle.decayRate = type === 'puff' ? (0.006 * dissipationMultiplier) : (type === 'wisp' ? 0.015 : 0.01);
+        // Reduced base decay rates for slower normal dissipation, but multiplier still applies when over threshold
+        particle.decayRate = type === 'puff' ? (0.003 * dissipationMultiplier) : (type === 'wisp' ? 0.008 : 0.005);
         particle.growRate = type === 'puff' ? 0.9 : (type === 'wisp' ? 0.2 : 0.35);
         particle.rotation = Math.random() * Math.PI * 2;
         particle.rotationSpeed = (Math.random() - 0.5) * 0.03;

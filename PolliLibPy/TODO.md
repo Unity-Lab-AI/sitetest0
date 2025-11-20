@@ -365,7 +365,7 @@ PolliLibPy/
 - **API Coverage:** [../Docs/API_COVERAGE.md](../Docs/API_COVERAGE.md)
 - **Main README:** [README.md](README.md)
 - **Pollinations API:** [../Docs/Pollinations_API_Documentation.md](../Docs/Pollinations_API_Documentation.md)
-- **Master TODO:** [../TODO.md](../TODO.md)
+- **Master TODO:** [../Docs/TODO/TODO.md](../Docs/TODO/TODO.md)
 
 ---
 

@@ -201,8 +201,8 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 | Component | Status | Detailed TODO |
 |-----------|--------|---------------|
-| PolliLibJS | ✅ Complete | [PolliLibJS/TODO.md](PolliLibJS/TODO.md) |
-| PolliLibPy | ✅ Complete | [PolliLibPy/TODO.md](PolliLibPy/TODO.md) |
+| PolliLibJS | ✅ Complete | [../../PolliLibJS/TODO.md](../../PolliLibJS/TODO.md) |
+| PolliLibPy | ✅ Complete | [../../PolliLibPy/TODO.md](../../PolliLibPy/TODO.md) |
 | Landing Website | 🟡 Functional | [website-TODO.md](website-TODO.md) |
 | /demo Page | ❌ Not Started | [demo-page-TODO.md](demo-page-TODO.md) |
 | Main Chat App | ❌ External | [main-app-TODO.md](main-app-TODO.md) |
