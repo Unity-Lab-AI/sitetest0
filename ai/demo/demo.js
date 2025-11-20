@@ -149,7 +149,11 @@ const DemoApp = {
             console.log('Text models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch text models:', error);
-            // Use fallback default models for Firefox/other browsers
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
             this.useFallbackTextModels();
         }
     },
@@ -158,13 +162,11 @@ const DemoApp = {
     async fetchImageModels() {
         try {
             // Remove forbidden headers (User-Agent, Referer) - browsers don't allow setting these
+            // Note: No custom headers to avoid CORS preflight (image endpoint only allows Content-Type)
             const response = await fetch('https://image.pollinations.ai/models?referrer=UA-73J7ItT-ws', {
                 method: 'GET',
                 mode: 'cors',
-                cache: 'default',
-                headers: {
-                    'Accept': 'application/json'
-                }
+                cache: 'default'
             });
 
             if (!response.ok) {
@@ -192,7 +194,11 @@ const DemoApp = {
             console.log('Image models loaded:', models.length);
         } catch (error) {
             console.error('Failed to fetch image models:', error);
-            // Use fallback default models for Firefox/other browsers
+            // Provide helpful error context
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.warn('Network error - possibly CORS, network connectivity, or ad blocker. Using fallback models.');
+            }
+            // Use fallback default models
             this.useFallbackImageModels();
         }
     },
@@ -313,19 +319,13 @@ const DemoApp = {
     // Fallback text models when API fails (Firefox/browser compatibility)
     useFallbackTextModels() {
         console.log('Using fallback text models');
-        const fallbackModels = [
-            { name: 'openai', displayName: 'OpenAI GPT-4', description: 'OpenAI GPT-4 - Powerful AI model' },
-            { name: 'mistral', displayName: 'Mistral', description: 'Mistral - Fast and efficient' },
-            { name: 'claude-3.5-sonnet', displayName: 'Claude 3.5 Sonnet', description: 'Anthropic Claude - Advanced reasoning' },
-            { name: 'llama-3.3-70b', displayName: 'Llama 3.3 70B', description: 'Meta Llama - Open source powerhouse' },
-            { name: 'qwen-2.5-72b', displayName: 'Qwen 2.5 72B', description: 'Alibaba Qwen - Multilingual excellence' }
-        ];
+        const fallbackModels = [{"name":"deepseek","description":"DeepSeek V3.1","maxInputChars":10000,"reasoning":true,"tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["deepseek-v3","deepseek-v3.1","deepseek-reasoning","deepseek-r1-0528"],"vision":false,"audio":false},{"name":"gemini","description":"Gemini 2.5 Flash Lite","tier":"seed","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["gemini-2.5-flash-lite"],"vision":true,"audio":false},{"name":"gemini-search","description":"Gemini 2.5 Flash Lite with Google Search","tier":"seed","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["searchgpt","geminisearch"],"vision":true,"audio":false},{"name":"mistral","description":"Mistral Small 3.2 24B","tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["mistral-small-3.1-24b-instruct","mistral-small-3.1-24b-instruct-2503","mistral-small-3.2-24b-instruct-2506"],"vision":false,"audio":false},{"name":"openai","description":"OpenAI GPT-5 Nano","tier":"anonymous","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"maxInputChars":7000,"aliases":["gpt-5-mini"],"vision":true,"audio":false},{"name":"openai-audio","description":"OpenAI GPT-4o Mini Audio Preview","maxInputChars":5000,"voices":["alloy","echo","fable","onyx","nova","shimmer","coral","verse","ballad","ash","sage","amuch","dan"],"tier":"seed","community":false,"input_modalities":["text","image","audio"],"output_modalities":["audio","text"],"tools":true,"aliases":["gpt-4o-mini-audio-preview"],"vision":true,"audio":true},{"name":"openai-fast","description":"OpenAI GPT-4.1 Nano","tier":"anonymous","community":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"maxInputChars":5000,"aliases":["gpt-5-nano"],"vision":true,"audio":false},{"name":"openai-reasoning","description":"OpenAI o4 Mini","tier":"seed","community":false,"reasoning":true,"supportsSystemMessages":false,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":["o4-mini"],"vision":true,"audio":false},{"name":"qwen-coder","description":"Qwen 2.5 Coder 32B","tier":"flower","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["qwen2.5-coder-32b-instruct"],"vision":false,"audio":false},{"name":"roblox-rp","description":"Llama 3.1 8B Instruct","tier":"seed","community":false,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":["llama-roblox","llama-fast-roblox"],"vision":false,"audio":false},{"name":"bidara","description":"BIDARA (Biomimetic Designer and Research Assistant by NASA)","tier":"anonymous","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false},{"name":"chickytutor","description":"ChickyTutor AI Language Tutor - (chickytutor.com)","tier":"anonymous","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"evil","description":"Evil","uncensored":true,"tier":"seed","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false},{"name":"midijourney","description":"MIDIjourney","tier":"anonymous","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"rtist","description":"Rtist","tier":"seed","community":true,"input_modalities":["text"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":false,"audio":false},{"name":"unity","description":"Unity Unrestricted Agent","uncensored":true,"tier":"seed","community":true,"input_modalities":["text","image"],"output_modalities":["text"],"tools":true,"aliases":[],"vision":true,"audio":false}];
 
         this.availableTextModels = fallbackModels;
         this.populateTextModels(fallbackModels);
 
-        // Also populate fallback voices
-        const fallbackVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+        // Also populate fallback voices (extracted from openai-audio model)
+        const fallbackVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral', 'verse', 'ballad', 'ash', 'sage', 'amuch', 'dan'];
         const voiceSelect = document.getElementById('voiceSelect');
         if (voiceSelect) {
             voiceSelect.innerHTML = '';
@@ -346,13 +346,7 @@ const DemoApp = {
     // Fallback image models when API fails (Firefox/browser compatibility)
     useFallbackImageModels() {
         console.log('Using fallback image models');
-        const fallbackModels = [
-            { name: 'flux', displayName: 'Flux', description: 'Flux - High quality image generation' },
-            { name: 'flux-realism', displayName: 'Flux Realism', description: 'Flux Realism - Photorealistic images' },
-            { name: 'flux-anime', displayName: 'Flux Anime', description: 'Flux Anime - Anime style art' },
-            { name: 'flux-3d', displayName: 'Flux 3D', description: 'Flux 3D - 3D rendered style' },
-            { name: 'turbo', displayName: 'Turbo', description: 'Turbo - Fast generation' }
-        ];
+        const fallbackModels = ['flux', 'turbo', 'gptimage'];
 
         this.availableImageModels = fallbackModels;
         this.populateImageModels(fallbackModels);
