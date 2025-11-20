@@ -22,6 +22,15 @@ module.exports = defineConfig({
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
     navigationTimeout: 20000,
+    launchOptions: {
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-blink-features=AutomationControlled',
+        '--disable-web-security',
+      ],
+    },
   },
   projects: [
     {
@@ -37,9 +46,14 @@ module.exports = defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
   ],
-  webServer: process.env.CI ? undefined : {
+  webServer: process.env.CI ? {
     command: 'python3 -m http.server 8080',
     url: 'http://localhost:8080',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
+    timeout: 10000, // 10 seconds to wait for server to start
+  } : {
+    command: 'python3 -m http.server 8080',
+    url: 'http://localhost:8080',
+    reuseExistingServer: true,
   },
 });
