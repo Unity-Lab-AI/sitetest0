@@ -1085,31 +1085,42 @@ body {
 .smoke-particle {
     position: absolute;
     bottom: 30%;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, rgba(200, 200, 200, 0.3) 0%, rgba(150, 150, 150, 0.15) 40%, transparent 70%);
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(220, 220, 220, 0.6) 0%,
+        rgba(180, 180, 180, 0.45) 20%,
+        rgba(140, 140, 140, 0.3) 40%,
+        rgba(100, 100, 100, 0.15) 60%,
+        transparent 80%
+    );
     border-radius: 50%;
-    filter: blur(20px);
+    filter: blur(35px);
     opacity: 0;
-    animation: smokeRise 4s ease-out forwards;
+    animation: smokeRise 5s ease-out forwards;
 }
 
 /* Smoke rise animation - cross-browser */
 @keyframes smokeRise {
     0% {
         opacity: 0;
-        transform: translateY(0) translateX(0) scale(0.5);
+        transform: translateY(0) translateX(0) scale(0.4) rotate(0deg);
     }
     10% {
-        opacity: 0.6;
+        opacity: 0.85;
     }
-    50% {
-        opacity: 0.4;
-        transform: translateY(-30vh) translateX(var(--drift)) scale(1.2);
+    30% {
+        opacity: 0.7;
+        transform: translateY(-20vh) translateX(calc(var(--drift) * 0.6)) scale(0.9) rotate(var(--rotation));
+    }
+    60% {
+        opacity: 0.45;
+        transform: translateY(-50vh) translateX(calc(var(--drift) * 1.1)) scale(1.5) rotate(calc(var(--rotation) * 1.8));
     }
     100% {
         opacity: 0;
-        transform: translateY(-80vh) translateX(calc(var(--drift) * 1.5)) scale(1.8);
+        transform: translateY(-90vh) translateX(calc(var(--drift) * 1.6)) scale(2.2) rotate(calc(var(--rotation) * 2.5));
     }
 }
 
@@ -1117,21 +1128,26 @@ body {
 @-webkit-keyframes smokeRise {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(0) translateX(0) scale(0.5);
-        transform: translateY(0) translateX(0) scale(0.5);
+        -webkit-transform: translateY(0) translateX(0) scale(0.4) rotate(0deg);
+        transform: translateY(0) translateX(0) scale(0.4) rotate(0deg);
     }
     10% {
-        opacity: 0.6;
+        opacity: 0.85;
     }
-    50% {
-        opacity: 0.4;
-        -webkit-transform: translateY(-30vh) translateX(var(--drift)) scale(1.2);
-        transform: translateY(-30vh) translateX(var(--drift)) scale(1.2);
+    30% {
+        opacity: 0.7;
+        -webkit-transform: translateY(-20vh) translateX(calc(var(--drift) * 0.6)) scale(0.9) rotate(var(--rotation));
+        transform: translateY(-20vh) translateX(calc(var(--drift) * 0.6)) scale(0.9) rotate(var(--rotation));
+    }
+    60% {
+        opacity: 0.45;
+        -webkit-transform: translateY(-50vh) translateX(calc(var(--drift) * 1.1)) scale(1.5) rotate(calc(var(--rotation) * 1.8));
+        transform: translateY(-50vh) translateX(calc(var(--drift) * 1.1)) scale(1.5) rotate(calc(var(--rotation) * 1.8));
     }
     100% {
         opacity: 0;
-        -webkit-transform: translateY(-80vh) translateX(calc(var(--drift) * 1.5)) scale(1.8);
-        transform: translateY(-80vh) translateX(calc(var(--drift) * 1.5)) scale(1.8);
+        -webkit-transform: translateY(-90vh) translateX(calc(var(--drift) * 1.6)) scale(2.2) rotate(calc(var(--rotation) * 2.5));
+        transform: translateY(-90vh) translateX(calc(var(--drift) * 1.6)) scale(2.2) rotate(calc(var(--rotation) * 2.5));
     }
 }
 

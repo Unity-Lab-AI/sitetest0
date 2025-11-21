@@ -2565,24 +2565,28 @@ const DemoApp = {
         const container = document.getElementById('smokeContainer');
         if (!container) return;
 
-        // Generate 3-5 random smoke particles
-        const particleCount = Math.floor(Math.random() * 3) + 3; // 3-5 particles
+        // Generate 5-8 random smoke particles for heavier smoke
+        const particleCount = Math.floor(Math.random() * 4) + 5; // 5-8 particles
 
         for (let i = 0; i < particleCount; i++) {
             setTimeout(() => {
                 const particle = document.createElement('div');
                 particle.className = 'smoke-particle';
 
-                // Random horizontal position
-                const leftPos = Math.random() * 80 + 10; // 10-90%
+                // Random horizontal position (wider spread)
+                const leftPos = Math.random() * 70 + 15; // 15-85%
                 particle.style.left = `${leftPos}%`;
 
                 // Random drift amount (CSS variable)
-                const drift = (Math.random() - 0.5) * 200; // -100px to +100px
+                const drift = (Math.random() - 0.5) * 250; // -125px to +125px
                 particle.style.setProperty('--drift', `${drift}px`);
 
-                // Random delay for staggered effect
-                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                // Random rotation for curl effect (CSS variable)
+                const rotation = (Math.random() - 0.5) * 120; // -60deg to +60deg
+                particle.style.setProperty('--rotation', `${rotation}deg`);
+
+                // Random delay for more natural staggered effect
+                particle.style.animationDelay = `${Math.random() * 0.8}s`;
 
                 // Add to container
                 container.appendChild(particle);
@@ -2590,12 +2594,12 @@ const DemoApp = {
                 // Remove after animation completes
                 setTimeout(() => {
                     particle.remove();
-                }, 4500); // Animation is 4s + 0.5s max delay
+                }, 6000); // Animation is 5s + 0.8s max delay + buffer
 
-            }, i * 200); // Stagger particle creation by 200ms
+            }, i * 150); // Stagger particle creation by 150ms for denser smoke
         }
 
-        console.log('🔥 Smoke effect triggered');
+        console.log('🌫️ Smoke effect triggered');
     },
 
     // Trigger lighter flicker effect
