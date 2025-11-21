@@ -309,6 +309,52 @@ The workflow:
 
 ## Troubleshooting
 
+### Browser Crashes ("Page crashed" errors)
+
+If you see "Page crashed" errors when running tests locally:
+
+**Cause:** Missing system dependencies or headless browser issues
+
+**Solutions:**
+1. Install Playwright with system dependencies:
+   ```bash
+   npx playwright install --with-deps
+   ```
+
+2. Run only Chromium tests (best local compatibility):
+   ```bash
+   npx playwright test --project=chromium
+   ```
+
+3. Use GitHub Actions (CI) where all dependencies are installed
+
+### Firefox Permission Issues
+
+If Firefox fails with HOME folder ownership errors:
+
+```bash
+# Set HOME environment variable
+HOME=/root npx playwright test --project=firefox
+```
+
+### WebKit Missing Dependencies
+
+If WebKit fails due to missing system libraries:
+
+```bash
+# Install WebKit dependencies
+sudo npx playwright install-deps webkit
+```
+
+### Tests Pass in CI but Fail Locally
+
+This is **normal**! CI environments have all system dependencies properly installed.
+
+To match CI locally:
+```bash
+npx playwright install --with-deps
+```
+
 ### Tests Timing Out
 
 If tests timeout (exceed 30s), check:
@@ -316,6 +362,7 @@ If tests timeout (exceed 30s), check:
 - JavaScript has no infinite loops or errors
 - Network requests to CDNs are succeeding
 - Browser console for JavaScript errors
+- Run in headed mode to see what's happening: `npx playwright test --headed`
 
 ### Tests Failing to Find Elements
 
@@ -324,6 +371,7 @@ If selectors don't match:
 - Check class names and IDs are correct
 - Ensure JavaScript has finished loading before tests run
 - Wait for network idle before assertions
+- Run in UI mode to debug: `npx playwright test --ui`
 
 ### Server Not Starting
 
