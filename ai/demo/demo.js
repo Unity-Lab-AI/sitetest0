@@ -11,7 +11,9 @@
 const OPENAI_ENDPOINT = 'https://text.pollinations.ai/openai';
 
 // Tool Definitions for Function Calling
-const TOOLS = [
+
+// Array-based schema (for most models)
+const TOOLS_ARRAY = [
     {
         type: 'function',
         function: {
@@ -58,6 +60,48 @@ const TOOLS = [
         }
     }
 ];
+
+// Single prompt schema (for Unity/simpler models)
+const TOOLS_SINGLE = [
+    {
+        type: 'function',
+        function: {
+            name: 'generate_image',
+            description: 'Generates and displays an image using Pollinations image generation API. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    prompt: {
+                        type: 'string',
+                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result.'
+                    },
+                    width: {
+                        type: 'integer',
+                        description: 'Image width in pixels. Use 1920 for landscape, 1080 for portrait, 1024 for square.',
+                        enum: [1024, 1080, 1920],
+                        default: 1024
+                    },
+                    height: {
+                        type: 'integer',
+                        description: 'Image height in pixels. Use 1080 for landscape, 1920 for portrait, 1024 for square.',
+                        enum: [1024, 1080, 1920],
+                        default: 1024
+                    },
+                    model: {
+                        type: 'string',
+                        description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
+                        enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
+                        default: 'flux'
+                    }
+                },
+                required: ['prompt']
+            }
+        }
+    }
+];
+
+// Default to array schema for backward compatibility
+const TOOLS = TOOLS_ARRAY;
 
 // Unity Persona System Prompt
 // This is the exact system prompt used by the Unity model on Pollinations
@@ -1161,6 +1205,11 @@ const DemoApp = {
         // Build messages array with history (last 10 messages for context)
         const recentHistory = this.chatHistory.slice(-10);
 
+        // Determine which tool schema to use
+        // Unity model works better with single prompt schema
+        const isUnityModel = this.settings.model === 'unity';
+        const toolsToUse = isUnityModel ? TOOLS_SINGLE : TOOLS_ARRAY;
+
         // Build request payload
         const payload = {
             model: model,
@@ -1168,11 +1217,19 @@ const DemoApp = {
                 ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
                 ...recentHistory
             ],
-            temperature: this.settings.textTemperature,
             max_tokens: 4000,
-            tools: TOOLS,
+            tools: toolsToUse,
             tool_choice: 'auto'
         };
+
+        // Conditional temperature parameter
+        // OpenAI models don't support custom temperature values (only default 1)
+        const isOpenAI = model.startsWith('openai') || this.settings.model.startsWith('openai');
+        if (!isOpenAI) {
+            // Non-OpenAI models support custom temperature
+            payload.temperature = this.settings.textTemperature;
+        }
+        // OpenAI models will use their default temperature (1)
 
         // Add reasoning effort if specified and model supports it
         const currentModel = this.getCurrentModelMetadata();
@@ -1183,7 +1240,11 @@ const DemoApp = {
 
         console.log('=== API Request (Tool Calling) ===');
         console.log('Model:', model);
-        console.log('Tools available:', TOOLS.length);
+        console.log('Original model:', this.settings.model);
+        console.log('Tool schema:', isUnityModel ? 'SINGLE' : 'ARRAY');
+        console.log('Tools available:', toolsToUse.length);
+        console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
+        console.log('Payload:', JSON.stringify(payload, null, 2));
 
         try {
             // Make API call to OpenAI endpoint
@@ -1277,15 +1338,28 @@ const DemoApp = {
 
     // Execute image generation from tool call
     async executeImageGeneration(args) {
-        const { images } = args;
         const generatedImages = [];
 
-        if (!images || !Array.isArray(images)) {
-            return { success: false, message: 'Invalid images array' };
+        // Handle both single prompt schema and images array schema
+        let imageRequests = [];
+
+        if (args.images && Array.isArray(args.images)) {
+            // Array schema (multiple images)
+            imageRequests = args.images;
+        } else if (args.prompt) {
+            // Single prompt schema (Unity/simpler models)
+            imageRequests = [{
+                prompt: args.prompt,
+                width: args.width || 1024,
+                height: args.height || 1024,
+                model: args.model || 'flux'
+            }];
+        } else {
+            return { success: false, message: 'Invalid image generation parameters - no prompt or images array provided' };
         }
 
         // Generate each image
-        for (const imageRequest of images) {
+        for (const imageRequest of imageRequests) {
             const { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
 
             // Build Pollinations image URL
@@ -1330,11 +1404,17 @@ const DemoApp = {
                 ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
                 ...this.chatHistory
             ],
-            temperature: this.settings.textTemperature,
             max_tokens: 4000
         };
 
+        // Conditional temperature parameter (same logic as initial request)
+        const isOpenAI = model.startsWith('openai') || this.settings.model.startsWith('openai');
+        if (!isOpenAI) {
+            payload.temperature = this.settings.textTemperature;
+        }
+
         console.log('=== Getting Final Response ===');
+        console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
 
         const response = await fetch(`${OPENAI_ENDPOINT}?referrer=UA-73J7ItT-ws`, {
             method: 'POST',
