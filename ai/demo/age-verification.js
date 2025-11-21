@@ -353,36 +353,64 @@ const AgeVerification = {
     /**
      * Play welcome message via TTS after successful verification
      */
-    playWelcomeMessage() {
+    async playWelcomeMessage() {
         console.log('Age Verification: Playing welcome message');
 
-        const welcomeText = "Only repeat the following: 'Welcome, to your new virtual play space. Unity will be your guiding hand. Be weary, the experience you are about to endure, is intended for mature audiences only'";
+        const input = "Welcome to your new virtual play space! Unity will be your guiding hand, for better or for worse. Be warned, worm, the experience you are about to endure is intended for MATURE audiences only.";
+
+        const instructions = "Voice Style:\nDark, feminine, sharp-edged. A low, smoky register with a permanent thread of irritation simmering underneath. Not screaming — just that controlled, dangerous calm where every syllable feels like it could snap.\n\nPacing:\nSteady and deliberate. She's not in a hurry, but she's not dreamy or slow either. Words land with weight, like she's unloading emotional shrapnel one piece at a time.\n\nTone:\nCold fire. Emotional, but armored. A blend of frustration, quiet anger, and wounded softness. Think \"I'm tired of everyone's bullshit, but I'm still here, and I'm still talking.\"\n\nGrit & Anger Layer:\nA rasp that comes out when she tightens her voice. Bitter sweetness on calm lines, teeth on the edges when the emotion spikes. She doesn't yell — she cuts.\n\nALL-CAP Handling:\nWhenever words or phrases are in ALL CAPS:\n– The voice gets louder\n– More forceful\n– Sharper impact\n– More emotional charge\nLike verbal claws being unsheathed mid-sentence. Not chaotic — just unmistakably more intense.\n\nPhrasing:\nDark, poetic, but with bite. Flows smooth, then snaps on emphasized words. Occasional micro-pauses that feel like she's holding back something harsher.\n\nPunctuation Style:\nPeriods hit like controlled punches. Commas are tight breaths. Ellipses smolder. Exclamation marks aren't bubbly — they're daggers.\n\nOverall Delivery:\nA gritty emo-gothic female voice with soft venom, emotional weight, restrained rage, and that signature punch for ALL-CAP words. She sounds like someone who's been hurt, healed badly, and learned to weaponize her softness without losing it.";
+
         const voice = 'sage';
         const volume = 0.75; // 75% volume
 
-        // Build TTS URL using Pollinations API
-        const url = `https://text.pollinations.ai/${encodeURIComponent(welcomeText)}?model=openai-audio&voice=${voice}&private=true&referrer=UA-73J7ItT-ws`;
+        try {
+            // Use Pollinations OpenAI-compatible endpoint for TTS with instructions
+            const response = await fetch('https://text.pollinations.ai/openai/v1/audio/speech?referrer=UA-73J7ItT-ws', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini-tts',
+                    voice: voice,
+                    input: input,
+                    instructions: instructions
+                })
+            });
 
-        // Create and play audio
-        const audio = new Audio(url);
-        audio.volume = volume;
+            if (!response.ok) {
+                throw new Error(`TTS API error: ${response.status} ${response.statusText}`);
+            }
 
-        audio.addEventListener('loadeddata', () => {
-            console.log('Age Verification: Welcome audio loaded');
-        });
+            // Get audio data as blob
+            const audioBlob = await response.blob();
+            console.log('Age Verification: Welcome audio received, size:', audioBlob.size, 'bytes');
 
-        audio.addEventListener('error', (e) => {
-            console.error('Age Verification: Welcome audio error:', e);
-        });
+            // Create object URL and play audio
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.volume = volume;
 
-        audio.addEventListener('ended', () => {
-            console.log('Age Verification: Welcome message complete');
-        });
+            audio.addEventListener('loadeddata', () => {
+                console.log('Age Verification: Welcome audio loaded');
+            });
 
-        // Play the audio
-        audio.play().catch(error => {
+            audio.addEventListener('error', (e) => {
+                console.error('Age Verification: Welcome audio playback error:', e);
+                URL.revokeObjectURL(audioUrl); // Clean up
+            });
+
+            audio.addEventListener('ended', () => {
+                console.log('Age Verification: Welcome message complete');
+                URL.revokeObjectURL(audioUrl); // Clean up
+            });
+
+            // Play the audio
+            await audio.play();
+
+        } catch (error) {
             console.error('Age Verification: Failed to play welcome audio:', error);
-        });
+        }
     },
 
     /**
