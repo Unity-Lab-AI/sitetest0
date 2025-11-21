@@ -367,11 +367,12 @@ const AgeVerification = {
 
         const voice = 'sage';
         const volume = 0.75; // 75% volume
+        const seed = 420; // Fixed seed for consistent age verification audio
 
         // Use Pollinations documented TTS endpoint (GET request)
-        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}&private=true&referrer=UA-73J7ItT-ws`;
+        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
 
-        console.log('Age Verification: Fetching TTS audio with voice instructions');
+        console.log('Age Verification: Fetching TTS audio with voice instructions and seed', seed);
 
         // Create and play audio
         const audio = new Audio(url);

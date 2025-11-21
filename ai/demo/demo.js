@@ -519,6 +519,22 @@ const DemoApp = {
     imageAPI: null,
     voiceAPI: null,
 
+    /**
+     * Generate a random seed between 6 and 8 digits
+     * @returns {number} Random seed between 100000 and 99999999
+     */
+    generateRandomSeed() {
+        // Generate random number between 6 and 8 digits
+        const minDigits = 6;
+        const maxDigits = 8;
+        const digits = Math.floor(Math.random() * (maxDigits - minDigits + 1)) + minDigits;
+
+        const min = Math.pow(10, digits - 1);
+        const max = Math.pow(10, digits) - 1;
+
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
     // Available models (populated from API)
     availableTextModels: [],
     availableImageModels: [],
@@ -1348,7 +1364,8 @@ const DemoApp = {
             const { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
 
             // Build Pollinations image URL
-            const seed = Math.floor(Math.random() * 1000000);
+            // Use settings seed or generate random 6-8 digit seed
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
             const encodedPrompt = encodeURIComponent(prompt);
 
             let imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?` +
@@ -1441,11 +1458,10 @@ const DemoApp = {
             url += `?model=${encodeURIComponent(model)}`;
         }
 
-        // Add seed if specified (not -1)
-        if (this.settings.seed !== -1) {
-            url += url.includes('?') ? '&' : '?';
-            url += `seed=${this.settings.seed}`;
-        }
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        url += url.includes('?') ? '&' : '?';
+        url += `seed=${seed}`;
 
         // Add temperature
         url += url.includes('?') ? '&' : '?';
@@ -1540,10 +1556,9 @@ const DemoApp = {
             url += `&width=${this.settings.imageWidth}`;
             url += `&height=${this.settings.imageHeight}`;
 
-            // Add seed if specified (not -1)
-            if (this.settings.seed !== -1) {
-                url += `&seed=${this.settings.seed}`;
-            }
+            // Add seed - use settings seed or generate random 6-8 digit seed
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            url += `&seed=${seed}`;
 
             // IMPORTANT: Add safe mode parameter for NSFW filtering
             // Only add parameter when enabled (omit when disabled for unrestricted content)
@@ -1890,6 +1905,10 @@ const DemoApp = {
 
             // Build URL with safe mode - only add parameter when enabled
             let url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}`;
+
+            // Add seed - use settings seed or generate random 6-8 digit seed
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            url += `&seed=${seed}`;
 
             // Add safe mode if enabled (omit when disabled for unrestricted content)
             if (this.settings.safeMode) {
