@@ -1,62 +1,42 @@
+// @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
+/**
+ * @see https://playwright.dev/docs/test-configuration
+ */
 module.exports = defineConfig({
   testDir: './tests',
-  testIgnore: '**/backup/**',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 1,
-  timeout: 30000, // 30 seconds per test
-  expect: {
-    timeout: 10000,
-  },
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['list']
-  ],
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+
   use: {
     baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    actionTimeout: 10000,
-    navigationTimeout: 20000,
   },
+
   projects: [
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-          ],
-        },
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
+
     {
       name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
+      use: { ...devices['Desktop Firefox'] },
     },
+
     {
       name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-      },
+      use: { ...devices['Desktop Safari'] },
     },
   ],
-  webServer: process.env.CI ? {
+
+  webServer: {
     command: 'python3 -m http.server 8080',
     url: 'http://localhost:8080',
-    reuseExistingServer: true,
-    timeout: 10000, // 10 seconds to wait for server to start
-  } : {
-    command: 'python3 -m http.server 8080',
-    url: 'http://localhost:8080',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
   },
 });
