@@ -155,18 +155,6 @@
                     <small class="help-text">-1 for random</small>
                 </div>
 
-                <!-- Safe Mode (All Models) -->
-                <div class="control-section">
-                    <div class="toggle-control">
-                        <label for="safeMode">Safe Mode (NSFW Filter)</label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="safeMode">
-                            <span class="toggle-slider"></span>
-                        </div>
-                    </div>
-                    <small class="help-text">Filter inappropriate content</small>
-                </div>
-
                 <!-- Text Settings -->
                 <div class="settings-group">
                     <h4 class="group-title">
@@ -207,20 +195,33 @@
 
                     <div class="control-section">
                         <label class="control-label">Width</label>
-                        <input type="number" id="imageWidth" class="gothic-input-small" value="1024" step="64" min="256" max="2048">
+                        <select id="imageWidth" class="gothic-select">
+                            <option value="auto">Auto</option>
+                            <option value="1024" selected>1024</option>
+                            <option value="1080">1080</option>
+                            <option value="1920">1920</option>
+                        </select>
                     </div>
 
                     <div class="control-section">
                         <label class="control-label">Height</label>
-                        <input type="number" id="imageHeight" class="gothic-input-small" value="1024" step="64" min="256" max="2048">
+                        <select id="imageHeight" class="gothic-select">
+                            <option value="auto">Auto</option>
+                            <option value="1024" selected>1024</option>
+                            <option value="1080">1080</option>
+                            <option value="1920">1920</option>
+                        </select>
                     </div>
 
                     <div class="control-section">
-                        <label class="control-label">Enhance</label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="imageEnhance">
-                            <span class="toggle-slider"></span>
+                        <div class="toggle-control">
+                            <label for="imageEnhance">Enhance</label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="imageEnhance" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
                         </div>
+                        <small class="help-text">Image enhancement enabled by default</small>
                     </div>
                 </div>
 
@@ -233,6 +234,10 @@
                     <button id="stopTalking" class="action-btn stop-btn">
                         <i class="fas fa-stop-circle"></i>
                         Stop Talking
+                    </button>
+                    <button id="deleteAllData" class="action-btn delete-data-btn">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Delete All Data
                     </button>
                 </div>
             </div>
@@ -265,6 +270,9 @@
     <!-- PolliLibJS -->
     <!-- Only load pollylib.js for browser use - other modules are Node.js specific -->
     <script src="../../PolliLibJS/pollylib.js"></script>
+
+    <!-- Age Verification System (must load before demo.js) -->
+    <script src="age-verification.js"></script>
 
     <!-- Demo page functionality -->
     <script src="demo.js"></script>

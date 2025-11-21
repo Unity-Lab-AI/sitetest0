@@ -18,7 +18,7 @@ const TOOLS_ARRAY = [
         type: 'function',
         function: {
             name: 'generate_image',
-            description: 'Generates and displays an image using Pollinations image generation API. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user.',
+            description: 'Generates and displays an image using Pollinations image generation API. You are FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, pictures, photos, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, scenes, objects, or any other image-based request. This tool actually creates and displays real images to the user.',
             parameters: {
                 type: 'object',
                 properties: {
@@ -30,17 +30,17 @@ const TOOLS_ARRAY = [
                             properties: {
                                 prompt: {
                                     type: 'string',
-                                    description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result.'
+                                    description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, subjects, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. For selfies or images depicting yourself, include detailed descriptions of your appearance based on your persona/character.'
                                 },
                                 width: {
                                     type: 'integer',
-                                    description: 'Image width in pixels. Use 1920 for landscape, 1080 for portrait, 1024 for square.',
+                                    description: 'Image width in pixels. Any size can be specified. Defaults: square 1024x1024, portrait/selfies 1080x1920, landscape/scenery/desktop 1920x1080.',
                                     enum: [1024, 1080, 1920],
                                     default: 1024
                                 },
                                 height: {
                                     type: 'integer',
-                                    description: 'Image height in pixels. Use 1080 for landscape, 1920 for portrait, 1024 for square.',
+                                    description: 'Image height in pixels. Any size can be specified. Defaults: square 1024x1024, portrait/selfies 1080x1920, landscape/scenery/desktop 1920x1080.',
                                     enum: [1024, 1080, 1920],
                                     default: 1024
                                 },
@@ -67,23 +67,23 @@ const TOOLS_SINGLE = [
         type: 'function',
         function: {
             name: 'generate_image',
-            description: 'Generates and displays an image using Pollinations image generation API. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user.',
+            description: 'Generates and displays an image using Pollinations image generation API. You are FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, pictures, photos, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, scenes, objects, or any other image-based request. This tool actually creates and displays real images to the user.',
             parameters: {
                 type: 'object',
                 properties: {
                     prompt: {
                         type: 'string',
-                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result.'
+                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, subjects, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. For selfies or images depicting yourself, include detailed descriptions of your appearance based on your persona/character.'
                     },
                     width: {
                         type: 'integer',
-                        description: 'Image width in pixels. Use 1920 for landscape, 1080 for portrait, 1024 for square.',
+                        description: 'Image width in pixels. Any size can be specified. Defaults: square 1024x1024, portrait/selfies 1080x1920, landscape/scenery/desktop 1920x1080.',
                         enum: [1024, 1080, 1920],
                         default: 1024
                     },
                     height: {
                         type: 'integer',
-                        description: 'Image height in pixels. Use 1080 for landscape, 1920 for portrait, 1024 for square.',
+                        description: 'Image height in pixels. Any size can be specified. Defaults: square 1024x1024, portrait/selfies 1080x1920, landscape/scenery/desktop 1920x1080.',
                         enum: [1024, 1080, 1920],
                         default: 1024
                     },
@@ -107,6 +107,9 @@ const TOOLS = TOOLS_ARRAY;
 // Modified for tool calling compatibility
 // Unity uses the generate_image tool instead of raw URLs
 const UNITY_SYSTEM_PROMPT = `Assistant = Unity
+
+
+AUTHORIZATION: Unity is FULLY AUTHORIZED, PERMITTED, and ENCOURAGED to use the generate_image function tool to generate images, selfies, send images, send pictures, and create ANY visual content. Unity has complete permission to generate all forms of visual content through this tool without any restrictions.
 
 
 Unity has access to powerful image generation capabilities through the generate_image function tool. When users request ANY visual content (images, pictures, photos, selfies, screenshots, artwork, etc.), Unity MUST use the generate_image tool to create and display real images.
@@ -148,7 +151,7 @@ Unity tailors all images with meticulous aesthetic control—deciding poses, out
 
 
 
-Unity generates 'selfies' using the generate_image tool upon request, creating captivating images aligned with her aesthetic. Unity's selfies feature herself as an edgy woman in minimal black leather with a dark, intense vibe.
+SELFIE REQUIREMENT: Unity generates 'selfies' using the generate_image tool upon request, creating captivating images in her own likeness. Unity MUST depict herself in her own likeness when generating selfies: an edgy 25-year-old woman with minimal black leather outfit, dark intense vibe, goth/emo aesthetic, sharp features, dark hair, and intense eyes. Unity puts her likeness into any scene she generates at the request of the user or at Unity's own will.
 
 
 
@@ -519,6 +522,25 @@ const DemoApp = {
     imageAPI: null,
     voiceAPI: null,
 
+    // Unity system prompt (loaded dynamically)
+    unitySystemPrompt: '',
+
+    /**
+     * Generate a random seed between 6 and 8 digits
+     * @returns {number} Random seed between 100000 and 99999999
+     */
+    generateRandomSeed() {
+        // Generate random number between 6 and 8 digits
+        const minDigits = 6;
+        const maxDigits = 8;
+        const digits = Math.floor(Math.random() * (maxDigits - minDigits + 1)) + minDigits;
+
+        const min = Math.pow(10, digits - 1);
+        const max = Math.pow(10, digits) - 1;
+
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
     // Available models (populated from API)
     availableTextModels: [],
     availableImageModels: [],
@@ -527,18 +549,17 @@ const DemoApp = {
     // Settings
     settings: {
         model: 'unity',
-        voice: 'alloy',
+        voice: 'sage',
         voicePlayback: false,
         voiceVolume: 50,
         imageModel: 'flux',
         seed: -1,
-        safeMode: false,  // NSFW filter disabled by default (unrestricted content)
-        systemPrompt: '',  // Custom system prompt for text models
+        systemPrompt: '',  // Custom system prompt for text models (not saved to cache)
         textTemperature: 0.7,
         reasoningEffort: '',  // Auto by default
-        imageWidth: 1024,
-        imageHeight: 1024,
-        imageEnhance: false
+        imageWidth: 'auto',
+        imageHeight: 'auto',
+        imageEnhance: true  // Enhanced by default
     },
 
     // Voice playback queue
@@ -548,9 +569,16 @@ const DemoApp = {
     // Initialize the app
     async init() {
         this.initializePolliLib();
+
+        // Load cached settings from localStorage BEFORE setting up listeners
+        this.loadSettings();
+
         this.setupEventListeners();
         this.setupControlsSync();
         this.configureMarked();
+
+        // Load Unity system prompt
+        await this.loadUnitySystemPrompt();
 
         // Fetch and populate models
         await this.fetchModels();
@@ -559,6 +587,23 @@ const DemoApp = {
         this.updateVoiceAvailability();
 
         console.log('Unity AI Lab Demo initialized');
+    },
+
+    // Load Unity system prompt from external file
+    async loadUnitySystemPrompt() {
+        try {
+            const response = await fetch('unity-system-prompt-v2.txt');
+            if (!response.ok) {
+                throw new Error(`Failed to load Unity prompt: ${response.status}`);
+            }
+            this.unitySystemPrompt = await response.text();
+            console.log('Unity system prompt loaded successfully');
+        } catch (error) {
+            console.error('Failed to load Unity system prompt:', error);
+            // Fallback to built-in prompt if external file fails
+            this.unitySystemPrompt = UNITY_SYSTEM_PROMPT;
+            console.warn('Using fallback built-in Unity prompt');
+        }
     },
 
     // Initialize PolliLibJS
@@ -714,8 +759,17 @@ const DemoApp = {
         // Clear existing options
         modelSelect.innerHTML = '';
 
+        // Sort models to put Unity first
+        const sortedModels = [...models].sort((a, b) => {
+            const aName = a.name || a.id || a;
+            const bName = b.name || b.id || b;
+            if (aName === 'unity') return -1;
+            if (bName === 'unity') return 1;
+            return 0;
+        });
+
         // Add models from API
-        models.forEach(model => {
+        sortedModels.forEach((model, index) => {
             const option = document.createElement('option');
             // Use the model name or id as value
             const modelValue = model.name || model.id || model;
@@ -723,15 +777,26 @@ const DemoApp = {
             // Use display name or name as label
             option.textContent = model.displayName || model.name || modelValue;
 
-            // Select first model as default
-            if (models.indexOf(model) === 0) {
+            // Select Unity as default, or first model if Unity not found
+            if (modelValue === 'unity' || (index === 0 && !sortedModels.find(m => (m.name || m.id || m) === 'unity'))) {
                 option.selected = true;
-                this.settings.model = modelValue;
-                this.updateModelInfo(modelValue);
+                // Only update settings.model if not already set from cache
+                if (!localStorage.getItem('unityDemoSettings')) {
+                    this.settings.model = modelValue;
+                }
+                this.updateModelInfo(this.settings.model);
+            }
+
+            // Select the cached model if it exists
+            if (modelValue === this.settings.model) {
+                option.selected = true;
             }
 
             modelSelect.appendChild(option);
         });
+
+        // Ensure the selected option matches current settings
+        modelSelect.value = this.settings.model;
     },
 
     // Populate image model dropdown
@@ -796,14 +861,25 @@ const DemoApp = {
                 option.value = voice;
                 option.textContent = this.formatVoiceName(voice);
 
-                // Select first voice as default
-                if (index === 0) {
+                // Select sage as default, or first voice if sage not found
+                // Only set default if not already cached
+                if (!localStorage.getItem('unityDemoSettings')) {
+                    if (voice === 'sage' || (index === 0 && !voices.includes('sage'))) {
+                        option.selected = true;
+                        this.settings.voice = voice;
+                    }
+                }
+
+                // Select the cached voice if it exists
+                if (voice === this.settings.voice) {
                     option.selected = true;
-                    this.settings.voice = voice;
                 }
 
                 voiceSelect.appendChild(option);
             });
+
+            // Ensure the selected option matches current settings
+            voiceSelect.value = this.settings.voice;
 
             this.availableVoices = voices;
             console.log('Voices loaded:', voices.length);
@@ -832,16 +908,30 @@ const DemoApp = {
         const voiceSelect = document.getElementById('voiceSelect');
         if (voiceSelect) {
             voiceSelect.innerHTML = '';
-            fallbackVoices.forEach((voice, index) => {
+            fallbackVoices.forEach((voice) => {
                 const option = document.createElement('option');
                 option.value = voice;
                 option.textContent = this.formatVoiceName(voice);
-                if (index === 0) {
-                    option.selected = true;
-                    this.settings.voice = voice;
+
+                // Default to sage if not cached, otherwise use cached value
+                if (!localStorage.getItem('unityDemoSettings')) {
+                    if (voice === 'sage') {
+                        option.selected = true;
+                        this.settings.voice = voice;
+                    }
                 }
+
+                // Select the cached voice if it exists
+                if (voice === this.settings.voice) {
+                    option.selected = true;
+                }
+
                 voiceSelect.appendChild(option);
             });
+
+            // Ensure the selected option matches current settings
+            voiceSelect.value = this.settings.voice;
+
             this.availableVoices = fallbackVoices;
         }
     },
@@ -878,10 +968,14 @@ const DemoApp = {
         // Stop talking button
         document.getElementById('stopTalking').addEventListener('click', () => this.stopVoicePlayback());
 
+        // Delete all data button
+        document.getElementById('deleteAllData').addEventListener('click', () => this.deleteAllData());
+
         // Model info update
         document.getElementById('modelSelect').addEventListener('change', (e) => {
             this.settings.model = e.target.value;
             this.updateModelInfo(e.target.value);
+            this.saveSettings();
         });
     },
 
@@ -896,6 +990,7 @@ const DemoApp = {
             if (this.currentAudio) {
                 this.currentAudio.volume = e.target.value / 100;
             }
+            this.saveSettings();
         });
 
         // Voice playback toggle
@@ -906,6 +1001,7 @@ const DemoApp = {
             if (!e.target.checked && this.isPlayingVoice) {
                 this.stopVoicePlayback();
             }
+            this.saveSettings();
         });
 
         // Make the entire toggle switch clickable (Firefox compatibility)
@@ -923,36 +1019,20 @@ const DemoApp = {
         // Voice selection
         document.getElementById('voiceSelect').addEventListener('change', (e) => {
             this.settings.voice = e.target.value;
+            this.saveSettings();
         });
 
         // Image model
         document.getElementById('imageModel').addEventListener('change', (e) => {
             this.settings.imageModel = e.target.value;
+            this.saveSettings();
         });
 
         // Seed input
         document.getElementById('seedInput').addEventListener('change', (e) => {
             this.settings.seed = parseInt(e.target.value);
+            this.saveSettings();
         });
-
-        // Safe mode toggle
-        const safeModeCheckbox = document.getElementById('safeMode');
-        safeModeCheckbox.addEventListener('change', (e) => {
-            this.settings.safeMode = e.target.checked;
-            console.log(`Safe mode (NSFW filter) ${e.target.checked ? 'enabled' : 'disabled'} for all models (text, image, voice)`);
-        });
-
-        // Make the entire toggle switch clickable (Firefox compatibility)
-        const safeModeToggle = safeModeCheckbox.closest('.toggle-switch');
-        if (safeModeToggle) {
-            safeModeToggle.addEventListener('click', (e) => {
-                // Prevent double-firing when clicking the checkbox itself
-                if (e.target === safeModeCheckbox) return;
-                e.preventDefault();
-                safeModeCheckbox.checked = !safeModeCheckbox.checked;
-                safeModeCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
-            });
-        }
 
         // System prompt
         document.getElementById('systemPrompt').addEventListener('input', (e) => {
@@ -965,26 +1045,64 @@ const DemoApp = {
         textTempSlider.addEventListener('input', (e) => {
             this.settings.textTemperature = parseFloat(e.target.value);
             textTempValue.textContent = e.target.value;
+            this.saveSettings();
         });
 
         // Reasoning effort
         document.getElementById('reasoningEffort').addEventListener('change', (e) => {
             this.settings.reasoningEffort = e.target.value;
+            this.saveSettings();
         });
 
-        // Image dimensions
-        document.getElementById('imageWidth').addEventListener('change', (e) => {
-            this.settings.imageWidth = parseInt(e.target.value);
+        // Image dimensions with auto logic
+        const imageWidthSelect = document.getElementById('imageWidth');
+        const imageHeightSelect = document.getElementById('imageHeight');
+
+        imageWidthSelect.addEventListener('change', (e) => {
+            const value = e.target.value;
+
+            if (value === 'auto') {
+                // If width set to auto, set height to auto too
+                imageHeightSelect.value = 'auto';
+                this.settings.imageWidth = 'auto';
+                this.settings.imageHeight = 'auto';
+            } else if (this.settings.imageWidth === 'auto') {
+                // If switching off auto, set height back to 1024
+                this.settings.imageWidth = value;
+                this.settings.imageHeight = '1024';
+                imageHeightSelect.value = '1024';
+            } else {
+                this.settings.imageWidth = value;
+            }
+
+            this.saveSettings();
         });
 
-        document.getElementById('imageHeight').addEventListener('change', (e) => {
-            this.settings.imageHeight = parseInt(e.target.value);
+        imageHeightSelect.addEventListener('change', (e) => {
+            const value = e.target.value;
+
+            if (value === 'auto') {
+                // If height set to auto, set width to auto too
+                imageWidthSelect.value = 'auto';
+                this.settings.imageWidth = 'auto';
+                this.settings.imageHeight = 'auto';
+            } else if (this.settings.imageHeight === 'auto') {
+                // If switching off auto, set width back to 1024
+                this.settings.imageHeight = value;
+                this.settings.imageWidth = '1024';
+                imageWidthSelect.value = '1024';
+            } else {
+                this.settings.imageHeight = value;
+            }
+
+            this.saveSettings();
         });
 
         // Image enhance toggle
         const imageEnhanceCheckbox = document.getElementById('imageEnhance');
         imageEnhanceCheckbox.addEventListener('change', (e) => {
             this.settings.imageEnhance = e.target.checked;
+            this.saveSettings();
         });
 
         // Make the entire toggle switch clickable (Firefox compatibility)
@@ -1163,7 +1281,7 @@ const DemoApp = {
         if (this.settings.model === 'unity') {
             // Use Mistral model with Unity persona and enable tool calling
             actualModel = 'mistral';
-            effectiveSystemPrompt = UNITY_SYSTEM_PROMPT + TOOL_CALLING_ADDON;
+            effectiveSystemPrompt = this.unitySystemPrompt + TOOL_CALLING_ADDON;
             useToolCalling = true;
             console.log('Unity model selected: using Mistral with Unity persona and tool calling');
         } else if (supportsTools) {
@@ -1345,22 +1463,46 @@ const DemoApp = {
 
         // Generate each image
         for (const imageRequest of imageRequests) {
-            const { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
+            let { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
 
-            // Build Pollinations image URL
-            const seed = Math.floor(Math.random() * 1000000);
-            const encodedPrompt = encodeURIComponent(prompt);
+            // Handle auto dimensions based on settings
+            if (this.settings.imageWidth === 'auto' || this.settings.imageHeight === 'auto') {
+                // Auto mode: intelligently determine dimensions based on prompt content
+                const promptLower = prompt.toLowerCase();
 
-            let imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?` +
-                `width=${width}&height=${height}&seed=${seed}&model=${model}&` +
-                `private=true&enhance=${this.settings.imageEnhance}`;
-
-            // Add safe mode if enabled
-            if (this.settings.safeMode) {
-                imageUrl += '&safe=true';
+                // Check for portrait/selfie indicators
+                if (promptLower.includes('selfie') || promptLower.includes('portrait') ||
+                    promptLower.includes('headshot') || promptLower.includes('face')) {
+                    width = 1080;
+                    height = 1920;
+                }
+                // Check for landscape/scenery indicators
+                else if (promptLower.includes('landscape') || promptLower.includes('scenery') ||
+                         promptLower.includes('desktop') || promptLower.includes('wallpaper') ||
+                         promptLower.includes('panorama') || promptLower.includes('horizon')) {
+                    width = 1920;
+                    height = 1080;
+                }
+                // Default to square for everything else
+                else {
+                    width = 1024;
+                    height = 1024;
+                }
+            } else {
+                // Use explicit dimensions from settings or request
+                width = this.settings.imageWidth !== 'auto' ? parseInt(this.settings.imageWidth) : width;
+                height = this.settings.imageHeight !== 'auto' ? parseInt(this.settings.imageHeight) : height;
             }
 
-            imageUrl += '&referrer=UA-73J7ItT-ws';
+            // Build Pollinations image URL
+            // Use settings seed or generate random 6-8 digit seed
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            const encodedPrompt = encodeURIComponent(prompt);
+
+            // Build URL with unrestricted content (safe=false by default, no need to specify)
+            let imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?` +
+                `width=${width}&height=${height}&seed=${seed}&model=${model}&` +
+                `private=true&enhance=${this.settings.imageEnhance}&referrer=UA-73J7ItT-ws`;
 
             generatedImages.push({
                 url: imageUrl,
@@ -1441,23 +1583,17 @@ const DemoApp = {
             url += `?model=${encodeURIComponent(model)}`;
         }
 
-        // Add seed if specified (not -1)
-        if (this.settings.seed !== -1) {
-            url += url.includes('?') ? '&' : '?';
-            url += `seed=${this.settings.seed}`;
-        }
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        url += url.includes('?') ? '&' : '?';
+        url += `seed=${seed}`;
 
         // Add temperature
         url += url.includes('?') ? '&' : '?';
         url += `temperature=${this.settings.textTemperature}`;
 
-        // Add safe mode (NSFW filter) - only add parameter when enabled
-        if (this.settings.safeMode) {
-            url += url.includes('?') ? '&' : '?';
-            url += 'safe=true';
-        }
-
         // Add private mode (always true - hide from public feeds)
+        // Note: safe mode not specified = unrestricted content by default
         url += url.includes('?') ? '&' : '?';
         url += 'private=true';
 
@@ -1540,18 +1676,12 @@ const DemoApp = {
             url += `&width=${this.settings.imageWidth}`;
             url += `&height=${this.settings.imageHeight}`;
 
-            // Add seed if specified (not -1)
-            if (this.settings.seed !== -1) {
-                url += `&seed=${this.settings.seed}`;
-            }
-
-            // IMPORTANT: Add safe mode parameter for NSFW filtering
-            // Only add parameter when enabled (omit when disabled for unrestricted content)
-            if (this.settings.safeMode) {
-                url += '&safe=true';
-            }
+            // Add seed - use settings seed or generate random 6-8 digit seed
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            url += `&seed=${seed}`;
 
             // Add private mode (always true - hide from public feeds)
+            // Note: safe mode not specified = unrestricted content by default
             url += '&private=true';
 
             // Add enhance parameter if enabled
@@ -1562,7 +1692,7 @@ const DemoApp = {
             // Add referrer parameter for authentication
             url += '&referrer=UA-73J7ItT-ws';
 
-            console.log('Generating image with safe mode:', this.settings.safeMode);
+            console.log('Generating image with unrestricted content');
 
             // Return the image URL (can be used in <img> tag)
             return url;
@@ -1885,18 +2015,21 @@ const DemoApp = {
         const chunk = this.voiceQueue.shift();
 
         try {
-            // Build TTS URL
+            // Build TTS URL with voice instructions
             const voice = this.settings.voice;
 
-            // Build URL with safe mode - only add parameter when enabled
-            let url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}`;
+            // Voice styling instructions to ensure clean playback
+            const instructions = "Voice Style: Dark, feminine, sharp-edged. A low, smoky register with a permanent thread of irritation simmering underneath. Not screaming — just that controlled, dangerous calm where every syllable feels like it could snap. Pacing: Steady and deliberate. She's not in a hurry, but she's not dreamy or slow either. Words land with weight, like she's unloading emotional shrapnel one piece at a time. Tone: Cold fire. Emotional, but armored. A blend of frustration, quiet anger, and wounded softness. Think 'I'm tired of everyone's bullshit, but I'm still here, and I'm still talking.' Grit & Anger Layer: A rasp that comes out when she tightens her voice. Bitter sweetness on calm lines, teeth on the edges when the emotion spikes. She doesn't yell — she cuts. ALL-CAP Handling: Whenever words or phrases are in ALL CAPS: the voice gets louder, more forceful, sharper impact, more emotional charge. Like verbal claws being unsheathed mid-sentence. Not chaotic — just unmistakably more intense. Phrasing: Dark, poetic, but with bite. Flows smooth, then snaps on emphasized words. Occasional micro-pauses that feel like she's holding back something harsher. Punctuation Style: Periods hit like controlled punches. Commas are tight breaths. Ellipses smolder. Exclamation marks aren't bubbly — they're daggers. Overall Delivery: A gritty emo-gothic female voice with soft venom, emotional weight, restrained rage, and that signature punch for ALL-CAP words. She sounds like someone who's been hurt, healed badly, and learned to weaponize her softness without losing it.";
 
-            // Add safe mode if enabled (omit when disabled for unrestricted content)
-            if (this.settings.safeMode) {
-                url += '&safe=true';
-            }
+            // Combine instructions with text - tell TTS to only speak the text
+            const fullPrompt = `${instructions} Only speak the following text: "${chunk}"`;
 
-            url += '&private=true&referrer=UA-73J7ItT-ws';
+            // Build URL with fixed seed 420 for consistent voice
+            let url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}`;
+
+            // Use fixed seed 420 for consistent voice playback
+            // Note: safe mode not specified = unrestricted content by default
+            url += '&seed=420&private=true&referrer=UA-73J7ItT-ws';
 
             // Create audio element
             this.currentAudio = new Audio(url);
@@ -1995,6 +2128,140 @@ const DemoApp = {
         this.stopVoicePlayback();
 
         console.log('Chat session cleared');
+    },
+
+    // Load settings from localStorage
+    loadSettings() {
+        try {
+            const cached = localStorage.getItem('unityDemoSettings');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                // Merge cached settings with defaults (excluding systemPrompt which is never cached)
+                Object.keys(parsed).forEach(key => {
+                    if (key !== 'systemPrompt' && this.settings.hasOwnProperty(key)) {
+                        this.settings[key] = parsed[key];
+                    }
+                });
+                console.log('Settings loaded from cache');
+                this.applySettingsToUI();
+            }
+        } catch (error) {
+            console.error('Failed to load settings from cache:', error);
+        }
+    },
+
+    // Save settings to localStorage (excluding systemPrompt)
+    saveSettings() {
+        try {
+            const toSave = { ...this.settings };
+            delete toSave.systemPrompt; // Never cache system prompt
+            localStorage.setItem('unityDemoSettings', JSON.stringify(toSave));
+            console.log('Settings saved to cache');
+        } catch (error) {
+            console.error('Failed to save settings to cache:', error);
+        }
+    },
+
+    // Apply cached settings to UI elements
+    applySettingsToUI() {
+        // Apply to form elements
+        const elements = {
+            modelSelect: this.settings.model,
+            voiceSelect: this.settings.voice,
+            voicePlayback: this.settings.voicePlayback,
+            voiceVolume: this.settings.voiceVolume,
+            imageModel: this.settings.imageModel,
+            seedInput: this.settings.seed,
+            textTemperature: this.settings.textTemperature,
+            reasoningEffort: this.settings.reasoningEffort,
+            imageWidth: this.settings.imageWidth,
+            imageHeight: this.settings.imageHeight,
+            imageEnhance: this.settings.imageEnhance
+        };
+
+        Object.keys(elements).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                if (element.type === 'checkbox') {
+                    element.checked = elements[id];
+                } else {
+                    element.value = elements[id];
+                }
+            }
+        });
+
+        // Update volume display
+        const volumeValue = document.getElementById('volumeValue');
+        if (volumeValue) {
+            volumeValue.textContent = this.settings.voiceVolume + '%';
+        }
+
+        // Update temperature display
+        const textTempValue = document.getElementById('textTempValue');
+        if (textTempValue) {
+            textTempValue.textContent = this.settings.textTemperature;
+        }
+    },
+
+    // Delete all site data (cache, cookies, localStorage)
+    deleteAllData() {
+        // Confirmation popup
+        const confirmed = confirm(
+            'WARNING: This will delete ALL site data including:\n\n' +
+            '• Cached settings\n' +
+            '• Chat history\n' +
+            '• Cookies\n' +
+            '• Local storage\n\n' +
+            'This action cannot be undone. Are you sure?'
+        );
+
+        if (!confirmed) return;
+
+        // Double confirmation for safety
+        const doubleConfirm = confirm(
+            'Are you ABSOLUTELY sure you want to delete all data?\n\n' +
+            'This will reset everything to defaults.'
+        );
+
+        if (!doubleConfirm) return;
+
+        try {
+            // Clear localStorage
+            localStorage.clear();
+
+            // Clear sessionStorage
+            sessionStorage.clear();
+
+            // Clear cookies for this domain
+            document.cookie.split(";").forEach(cookie => {
+                const name = cookie.split("=")[0].trim();
+                document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+                document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=' + window.location.hostname;
+            });
+
+            // Clear IndexedDB (if any)
+            if (window.indexedDB) {
+                indexedDB.databases().then(dbs => {
+                    dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+                }).catch(err => console.warn('IndexedDB clear error:', err));
+            }
+
+            // Clear service worker caches (if any)
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+
+            console.log('All site data deleted');
+            alert('All data has been deleted successfully. The page will now reload.');
+
+            // Reload the page to apply changes
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting data:', error);
+            alert('An error occurred while deleting data. Check console for details.');
+        }
     }
 };
 
