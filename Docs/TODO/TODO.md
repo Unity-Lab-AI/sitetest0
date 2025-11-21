@@ -213,7 +213,7 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - [x] **Website:** Performance audit ✅ (COMPLETED - see PERFORMANCE_AUDIT.md)
 - [x] **Website:** Accessibility audit and major fixes ✅ (COMPLETED - ARIA, labels, skip links)
 - [x] **Website:** CSS/JS minification for performance ✅ (COMPLETED - automated workflow)
-- [x] **Website:** Cross-browser testing ✅ (Firefox & WebKit 100% passing, see PLAYWRIGHT_CI_NOTES.md)
+- [x] **Website:** Cross-browser testing ✅ (Firefox & WebKit 100% passing, see archived-tests/PLAYWRIGHT_CI_NOTES.md)
 - [x] **Demo Page:** Implementation ✅ (~85% COMPLETE - functional demo with chat, images, TTS)
 - [ ] **Demo Page:** Add STT (speech-to-text) functionality
 - [ ] **Demo Page:** Enhanced error handling and edge cases
@@ -264,8 +264,9 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 | SEO Implementation | [../SEO_IMPLEMENTATION.md](../SEO_IMPLEMENTATION.md) |
 | Test Guide | [../TEST_GUIDE.md](../TEST_GUIDE.md) |
 | Test Results | [../TEST_RESULTS.md](../TEST_RESULTS.md) |
-| Demo Parameters Analysis | [../../ANALYSIS_DEMO_PARAMETERS.md](../../ANALYSIS_DEMO_PARAMETERS.md) |
-| Playwright CI Notes | [../../PLAYWRIGHT_CI_NOTES.md](../../PLAYWRIGHT_CI_NOTES.md) |
+| Demo Parameters Analysis | [../../archived-tests/ANALYSIS_DEMO_PARAMETERS.md](../../archived-tests/ANALYSIS_DEMO_PARAMETERS.md) |
+| Playwright CI Notes | [../../archived-tests/PLAYWRIGHT_CI_NOTES.md](../../archived-tests/PLAYWRIGHT_CI_NOTES.md) |
+| Archived Tests | [../../archived-tests/README.md](../../archived-tests/README.md) |
 | Project README | [../../README.md](../../README.md) |
 
 ---
