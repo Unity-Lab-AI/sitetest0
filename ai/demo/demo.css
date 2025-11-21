@@ -936,36 +936,46 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 30px;
-    height: 60px;
-    background: rgba(26, 26, 26, 0.95);
-    border: 2px solid var(--crimson-red, #dc143c);
-    color: var(--crimson-red, #dc143c);
+    width: 24px;
+    height: 50px;
+    background: rgba(26, 26, 26, 0.9);
+    border: 1px solid rgba(220, 20, 60, 0.6);
+    color: rgba(220, 20, 60, 0.7);
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .panel-collapse-btn.left-collapse {
-    right: -15px;
-    border-radius: 0 8px 8px 0;
+    right: -12px;
+    border-radius: 0 6px 6px 0;
 }
 
 .panel-collapse-btn.right-collapse {
-    left: -15px;
-    border-radius: 8px 0 0 8px;
+    left: -12px;
+    border-radius: 6px 0 0 6px;
+}
+
+/* Show collapse buttons on panel hover */
+.left-panel:hover .panel-collapse-btn.left-collapse,
+.right-panel:hover .panel-collapse-btn.right-collapse {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .panel-collapse-btn:hover {
-    background: var(--crimson-red, #dc143c);
+    background: rgba(220, 20, 60, 0.95);
     color: var(--white, #ffffff);
+    border-color: var(--crimson-red, #dc143c);
 }
 
 .panel-collapse-btn i {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 /* Expand buttons (fixed to screen edges when panels are collapsed) */
@@ -973,36 +983,37 @@ body {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 40px;
-    height: 80px;
-    background: rgba(26, 26, 26, 0.95);
-    border: 2px solid var(--crimson-red, #dc143c);
-    color: var(--crimson-red, #dc143c);
+    width: 32px;
+    height: 70px;
+    background: rgba(26, 26, 26, 0.9);
+    border: 1px solid rgba(220, 20, 60, 0.6);
+    color: rgba(220, 20, 60, 0.7);
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 99;
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 }
 
 .panel-expand-btn.left-expand {
     left: 0;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 8px 8px 0;
     border-left: none;
 }
 
 .panel-expand-btn.right-expand {
     right: 0;
-    border-radius: 12px 0 0 12px;
+    border-radius: 8px 0 0 8px;
     border-right: none;
 }
 
 .panel-expand-btn:hover {
-    background: var(--crimson-red, #dc143c);
+    background: rgba(220, 20, 60, 0.95);
     color: var(--white, #ffffff);
-    transform: translateY(-50%) scale(1.1);
+    border-color: var(--crimson-red, #dc143c);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .panel-expand-btn.visible {
@@ -1010,7 +1021,7 @@ body {
 }
 
 .panel-expand-btn i {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }
 
 /* Collapsed panel states */
