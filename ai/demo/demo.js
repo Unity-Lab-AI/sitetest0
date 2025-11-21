@@ -991,6 +991,51 @@ const DemoApp = {
 
         // Mobile modal event listeners
         this.setupMobileModalListeners();
+
+        // Desktop panel collapse event listeners
+        this.setupDesktopPanelCollapse();
+    },
+
+    // Setup desktop panel collapse/expand functionality
+    setupDesktopPanelCollapse() {
+        const collapseLeftBtn = document.getElementById('collapseLeftPanel');
+        const collapseRightBtn = document.getElementById('collapseRightPanel');
+        const expandLeftBtn = document.getElementById('expandLeftPanel');
+        const expandRightBtn = document.getElementById('expandRightPanel');
+        const leftPanel = document.querySelector('.left-panel');
+        const rightPanel = document.querySelector('.right-panel');
+
+        // Collapse left panel
+        if (collapseLeftBtn && leftPanel && expandLeftBtn) {
+            collapseLeftBtn.addEventListener('click', () => {
+                leftPanel.classList.add('collapsed');
+                expandLeftBtn.classList.add('visible');
+            });
+        }
+
+        // Expand left panel
+        if (expandLeftBtn && leftPanel) {
+            expandLeftBtn.addEventListener('click', () => {
+                leftPanel.classList.remove('collapsed');
+                expandLeftBtn.classList.remove('visible');
+            });
+        }
+
+        // Collapse right panel
+        if (collapseRightBtn && rightPanel && expandRightBtn) {
+            collapseRightBtn.addEventListener('click', () => {
+                rightPanel.classList.add('collapsed');
+                expandRightBtn.classList.add('visible');
+            });
+        }
+
+        // Expand right panel
+        if (expandRightBtn && rightPanel) {
+            expandRightBtn.addEventListener('click', () => {
+                rightPanel.classList.remove('collapsed');
+                expandRightBtn.classList.remove('visible');
+            });
+        }
     },
 
     // Setup controls synchronization with settings

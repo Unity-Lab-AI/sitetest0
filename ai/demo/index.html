@@ -42,6 +42,9 @@
     <div class="demo-container">
         <!-- Left Panel: Model & Voice Controls -->
         <aside class="left-panel">
+            <button class="panel-collapse-btn left-collapse" id="collapseLeftPanel" aria-label="Collapse left panel">
+                <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="panel-content">
                 <!-- Logo/Title -->
                 <a href="../../" class="demo-logo">
@@ -143,6 +146,9 @@
 
         <!-- Right Panel: Settings & Controls -->
         <aside class="right-panel">
+            <button class="panel-collapse-btn right-collapse" id="collapseRightPanel" aria-label="Collapse right panel">
+                <i class="fas fa-chevron-right"></i>
+            </button>
             <div class="panel-content">
                 <h3 class="panel-title">Settings</h3>
 
@@ -243,6 +249,14 @@
             </div>
         </aside>
     </div>
+
+    <!-- Desktop Panel Expand Buttons (hidden when panels are open) -->
+    <button class="panel-expand-btn left-expand" id="expandLeftPanel" aria-label="Expand left panel">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+    <button class="panel-expand-btn right-expand" id="expandRightPanel" aria-label="Expand right panel">
+        <i class="fas fa-chevron-left"></i>
+    </button>
 
     <!-- Mobile Menu Buttons -->
     <div class="mobile-menu-buttons">

@@ -928,6 +928,127 @@ body {
 }
 
 /* ===================================
+   Desktop Panel Collapse/Expand Buttons
+   =================================== */
+
+/* Collapse buttons (inside panels) */
+.panel-collapse-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-collapse-btn.left-collapse {
+    right: -15px;
+    border-radius: 0 8px 8px 0;
+}
+
+.panel-collapse-btn.right-collapse {
+    left: -15px;
+    border-radius: 8px 0 0 8px;
+}
+
+.panel-collapse-btn:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+}
+
+.panel-collapse-btn i {
+    font-size: 0.9rem;
+}
+
+/* Expand buttons (fixed to screen edges when panels are collapsed) */
+.panel-expand-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 99;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.panel-expand-btn.left-expand {
+    left: 0;
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+}
+
+.panel-expand-btn.right-expand {
+    right: 0;
+    border-radius: 12px 0 0 12px;
+    border-right: none;
+}
+
+.panel-expand-btn:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.panel-expand-btn.visible {
+    display: flex;
+}
+
+.panel-expand-btn i {
+    font-size: 1.1rem;
+}
+
+/* Collapsed panel states */
+.left-panel.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-right: none;
+    padding: 0;
+}
+
+.right-panel.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-left: none;
+    padding: 0;
+}
+
+.left-panel.collapsed .panel-content,
+.right-panel.collapsed .panel-content,
+.left-panel.collapsed .panel-collapse-btn,
+.right-panel.collapsed .panel-collapse-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Smooth transitions for panel collapse */
+.left-panel,
+.right-panel {
+    transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease;
+}
+
+.panel-content {
+    transition: opacity 0.3s ease;
+}
+
+/* ===================================
    Mobile Menu Buttons
    =================================== */
 
@@ -1094,6 +1215,12 @@ body {
     /* Hide sidebars on mobile */
     .left-panel,
     .right-panel {
+        display: none !important;
+    }
+
+    /* Hide desktop collapse/expand buttons on mobile */
+    .panel-collapse-btn,
+    .panel-expand-btn {
         display: none !important;
     }
 
