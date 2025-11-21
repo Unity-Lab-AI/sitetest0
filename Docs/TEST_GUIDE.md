@@ -1,15 +1,20 @@
-# Playwright Test Suite - Smoke Tests
+# Playwright Test Suite
 
 ## Overview
 
-Simplified automated test suite for the UnityAILab website focusing on essential functionality and user flows.
+Automated test suite for the UnityAILab website with two main test suites:
+
+1. **Navigation Tests** - Basic page navigation and loading
+2. **Browser Compatibility Tests** - HTML/JS element loading across all browsers
 
 **Test Coverage:**
-- Basic page loading and navigation
-- JavaScript functionality verification
+- Page navigation and loading
+- Browser compatibility (Chromium, Firefox, WebKit)
+- HTML element presence verification
+- JavaScript execution verification
+- CSS and resource loading
 - Mobile responsiveness
-- Form interactivity
-- Footer presence across pages
+- Footer and navigation consistency
 
 ---
 
@@ -17,7 +22,7 @@ Simplified automated test suite for the UnityAILab website focusing on essential
 
 ```bash
 npm install
-npx playwright install chromium
+npx playwright install  # Installs Chromium, Firefox, and WebKit
 ```
 
 ---
@@ -38,9 +43,9 @@ npm run test:report
 
 ## Test Suite
 
-### Smoke Tests (`tests/smoke.spec.js`)
+### Navigation Tests (`tests/navigation.spec.js`)
 
-**Tests 5 core functionality areas:**
+**Tests core navigation functionality:**
 
 #### 1. Complete User Flow Through All Pages
 
@@ -107,7 +112,90 @@ Tests footer consistency:
 
 ---
 
-## Smoke Animation Performance Limits
+### Browser Compatibility Tests (`tests/browser-compatibility.spec.js`)
+
+**Tests HTML and JavaScript loading across all browsers:**
+
+This test suite verifies that all expected HTML elements and JavaScript functionality load correctly across Chromium, Firefox, and WebKit browsers.
+
+#### Test Categories
+
+**1. Chromium Browser Compatibility (4 tests)**
+- Verifies all critical HTML elements load
+- Tests JavaScript execution (loaded class, AOS library, Bootstrap)
+- Checks all pages load without errors
+- Validates CSS and JavaScript resource loading
+
+**2. Firefox Browser Compatibility (5 tests)**
+- Same HTML element verification as Chromium
+- JavaScript execution tests
+- Page loading verification
+- Resource loading checks
+- Animation and transition rendering tests
+
+**3. WebKit Browser Compatibility (6 tests)**
+- HTML element verification
+- JavaScript execution validation
+- Page error checking
+- Resource loading verification
+- Animation rendering tests
+- WebKit-specific CSS property handling
+
+**4. Cross-Browser Consistency (5 tests)**
+- Nav link count consistency (should be 6)
+- Feature card count (should be 3)
+- Service card count (should be 2)
+- Footer social links (should be 3)
+- JavaScript 'loaded' class execution
+
+**5. AI Demo Page Tests (3 tests)**
+- One test per browser (Chromium, Firefox, WebKit)
+- Verifies demo container loads
+- Checks page renders correctly
+
+#### Elements Tested
+
+**HTML Elements:**
+- Navigation (navbar, brand, toggle, nav links)
+- Hero section (title, subtitle, buttons, scroll indicator)
+- Feature cards (3 cards)
+- Service cards (2 cards)
+- Footer (social links, quick links, copyright)
+- Background elements (overlay, red streaks)
+
+**JavaScript Functionality:**
+- Body 'loaded' class added
+- AOS (Animate On Scroll) library initialization
+- Bootstrap JavaScript loaded
+- Navbar scroll events
+- Data-AOS attributes present and functional
+
+**Resources:**
+- Stylesheets loaded
+- JavaScript files loaded
+- Bootstrap framework availability
+
+#### Running Browser-Specific Tests
+
+```bash
+# Run only browser compatibility tests
+npx playwright test browser-compatibility
+
+# Run only Chromium tests
+npx playwright test browser-compatibility --project=chromium
+
+# Run only Firefox tests
+npx playwright test browser-compatibility --project=firefox
+
+# Run only WebKit tests
+npx playwright test browser-compatibility --project=webkit
+```
+
+**Purpose:** Ensures the site works consistently across all major browser engines and that all expected HTML/JS elements are present and functional.
+
+---
+
+## Note on Animation Performance Limits
 
 To prevent performance degradation, the smoke throwing animation has built-in limits:
 
@@ -138,7 +226,7 @@ When puff count exceeds the preferred max, dissipation rate increases:
 - Multiplier when over max: 1 + (count - MAX) * 0.5
 - Maximum multiplier: 3.0
 
-**Note:** These tests do NOT test the smoke animations themselves - they're purely for user flow verification.
+**Note:** These navigation tests do NOT test the smoke animations themselves - they're purely for navigation and page loading verification.
 
 ---
 
@@ -280,6 +368,9 @@ These can be re-enabled by moving them back to `tests/` if more thorough testing
 ---
 
 **Created:** 2025-11-19
-**Test Suite Version:** 2.0 (Simplified Smoke Tests)
-**Total Tests:** 5 smoke tests
-**Test Focus:** Essential functionality and user flows
+**Last Updated:** 2025-11-21
+**Test Suite Version:** 4.0 (Navigation + Browser Compatibility)
+**Total Tests:**
+- 10 navigation tests
+- 23 browser compatibility tests (Chromium: 4, Firefox: 5, WebKit: 6, Cross-browser: 5, AI Demo: 3)
+**Test Focus:** Site navigation, browser compatibility, HTML/JS element loading verification
