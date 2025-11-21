@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Parameter Testing - Pollinations API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .test-panel {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-panel h2 {
+            color: #00d4ff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 8px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            background: rgba(45, 45, 68, 0.6);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .control-group label {
+            display: block;
+            color: #00d4ff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .control-group select,
+        .control-group input,
+        .control-group textarea {
+            width: 100%;
+            background: rgba(60, 60, 80, 0.8);
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 8px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .control-group textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        button.clear-btn {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+        }
+
+        button.clear-btn:hover:not(:disabled) {
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+        }
+
+        .results-panel {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .results-panel h2 {
+            color: #00d4ff;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            background: rgba(45, 45, 68, 0.6);
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .result-item.success {
+            border-left-color: #00ff88;
+        }
+
+        .result-item.error {
+            border-left-color: #ff4444;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .result-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .result-status.success {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .result-status.error {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .result-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            color: #ffc107;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Model Parameter Testing</h1>
+        <p class="subtitle">Test different models with various parameters to identify compatibility</p>
+
+        <div class="info-box">
+            <strong>📋 Purpose:</strong> This page tests Pollinations API models with different parameter combinations
+            to identify which parameters each model supports. Use this to debug issues and find the optimal
+            configuration before implementing in the demo page.
+        </div>
+
+        <!-- Test Configuration -->
+        <div class="test-panel">
+            <h2>Test Configuration</h2>
+
+            <div class="control-grid">
+                <div class="control-group">
+                    <label>Model</label>
+                    <select id="testModel">
+                        <option value="mistral">Mistral</option>
+                        <option value="unity">Unity</option>
+                        <option value="openai">OpenAI GPT-5 Nano</option>
+                        <option value="openai-fast">OpenAI GPT-4.1 Nano</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="qwen-coder">Qwen Coder</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Temperature</label>
+                    <select id="temperatureValue">
+                        <option value="none">Not included</option>
+                        <option value="0.7" selected>0.7</option>
+                        <option value="1">1 (default)</option>
+                        <option value="0.5">0.5</option>
+                        <option value="1.5">1.5</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Max Tokens</label>
+                    <select id="maxTokensValue">
+                        <option value="none">Not included</option>
+                        <option value="1000" selected>1000</option>
+                        <option value="2000">2000</option>
+                        <option value="4000">4000</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Tool Choice</label>
+                    <select id="toolChoiceValue">
+                        <option value="auto" selected>auto</option>
+                        <option value="none">Not included</option>
+                        <option value="required">required</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-grid">
+                <div class="control-group">
+                    <label>User Message</label>
+                    <textarea id="testMessage" placeholder="Enter test message...">Generate an image of a cute robot in a futuristic city</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label>System Prompt</label>
+                    <select id="systemPromptType">
+                        <option value="none">None</option>
+                        <option value="simple" selected>Simple</option>
+                        <option value="tool-calling">With Tool Calling Addon</option>
+                        <option value="unity">Unity Full Persona</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-grid">
+                <div class="control-group checkbox-group">
+                    <input type="checkbox" id="includeTools" checked>
+                    <label for="includeTools">Include Tools</label>
+                </div>
+
+                <div class="control-group checkbox-group">
+                    <input type="checkbox" id="useArraySchema" checked>
+                    <label for="useArraySchema">Use Images Array Schema</label>
+                </div>
+
+                <div class="control-group checkbox-group">
+                    <input type="checkbox" id="useSingleSchema">
+                    <label for="useSingleSchema">Use Single Prompt Schema</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="runTestBtn">🚀 Run Test</button>
+                <button id="runAllModelsBtn">🎯 Test All Models</button>
+                <button id="clearResultsBtn" class="clear-btn">🗑️ Clear Results</button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-panel">
+            <h2>Test Results</h2>
+            <div id="resultsContainer">
+                <p style="color: #888; text-align: center;">No tests run yet. Click "Run Test" to begin.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="model_parameter_test.js"></script>
+</body>
+</html>
