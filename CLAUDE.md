@@ -97,6 +97,7 @@ sitetest0/
 │
 ├── tests/                             # Active Playwright tests
 │   ├── navigation.spec.js             # Navigation tests
+│   ├── browser-compatibility.spec.js  # Browser compatibility & loading tests
 │   └── backup/                        # Backup test files
 │
 ├── archived-tests/                    # Archived test files (see README)
@@ -354,7 +355,8 @@ npx playwright test --debug
 
 ### Test Organization
 
-- **navigation.spec.js** - Navigation and page loading tests (currently active)
+- **navigation.spec.js** - Navigation and page loading tests (10 tests)
+- **browser-compatibility.spec.js** - Browser compatibility & element loading tests across Chromium, Firefox, and WebKit
 - **backup/** - More comprehensive tests (disabled due to flakiness)
 
 ### After Testing
