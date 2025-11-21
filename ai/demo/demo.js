@@ -1137,8 +1137,9 @@ const DemoApp = {
             effectiveSystemPrompt = UNITY_SYSTEM_PROMPT + TOOL_CALLING_ADDON;
             useToolCalling = true;
             console.log('Unity model selected: using Mistral with Unity persona and tool calling');
-        } else if (supportsTools && !isCommunityModel) {
+        } else if (supportsTools) {
             // Add tool calling addon to system prompt for models that support it
+            // This includes community models - voice playback is already disabled for them separately
             if (effectiveSystemPrompt) {
                 effectiveSystemPrompt += TOOL_CALLING_ADDON;
             } else {
