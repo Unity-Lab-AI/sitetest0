@@ -365,16 +365,19 @@ const AgeVerification = {
 
         try {
             // Use Pollinations OpenAI-compatible endpoint for TTS with instructions
-            const response = await fetch('https://text.pollinations.ai/openai/v1/audio/speech?referrer=UA-73J7ItT-ws', {
+            // Try the audio speech endpoint without /v1 prefix
+            const response = await fetch('https://text.pollinations.ai/openai/audio/speech', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Referrer': 'UA-73J7ItT-ws'
                 },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini-tts',
                     voice: voice,
                     input: input,
-                    instructions: instructions
+                    instructions: instructions,
+                    referrer: 'UA-73J7ItT-ws'
                 })
             });
 
