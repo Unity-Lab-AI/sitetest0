@@ -767,13 +767,14 @@ body {
 
 .input-wrapper {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 12px;
     background: rgba(42, 42, 42, 0.8);
     border: 1px solid rgba(220, 20, 60, 0.3);
     border-radius: 24px;
     padding: 12px 16px;
     transition: all 0.3s ease;
+    cursor: text;
 }
 
 .input-wrapper:focus-within {
@@ -795,10 +796,13 @@ body {
     max-height: 200px;
     overflow-y: auto;
     line-height: 1.5;
+    padding: 0;
+    margin: 0;
 }
 
 .message-input::placeholder {
     color: rgba(204, 204, 204, 0.5);
+    line-height: 1.5;
 }
 
 .message-input::-webkit-scrollbar {
@@ -923,6 +927,281 @@ body {
     background: var(--crimson-red, #dc143c);
 }
 
+/* ===================================
+   Desktop Panel Collapse/Expand Buttons
+   =================================== */
+
+/* Collapse buttons (inside panels) */
+.panel-collapse-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-collapse-btn.left-collapse {
+    right: -15px;
+    border-radius: 0 8px 8px 0;
+}
+
+.panel-collapse-btn.right-collapse {
+    left: -15px;
+    border-radius: 8px 0 0 8px;
+}
+
+.panel-collapse-btn:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+}
+
+.panel-collapse-btn i {
+    font-size: 0.9rem;
+}
+
+/* Expand buttons (fixed to screen edges when panels are collapsed) */
+.panel-expand-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 99;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.panel-expand-btn.left-expand {
+    left: 0;
+    border-radius: 0 12px 12px 0;
+    border-left: none;
+}
+
+.panel-expand-btn.right-expand {
+    right: 0;
+    border-radius: 12px 0 0 12px;
+    border-right: none;
+}
+
+.panel-expand-btn:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.panel-expand-btn.visible {
+    display: flex;
+}
+
+.panel-expand-btn i {
+    font-size: 1.1rem;
+}
+
+/* Collapsed panel states */
+.left-panel.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-right: none;
+    padding: 0;
+}
+
+.right-panel.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-left: none;
+    padding: 0;
+}
+
+.left-panel.collapsed .panel-content,
+.right-panel.collapsed .panel-content,
+.left-panel.collapsed .panel-collapse-btn,
+.right-panel.collapsed .panel-collapse-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Smooth transitions for panel collapse */
+.left-panel,
+.right-panel {
+    transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease;
+}
+
+.panel-content {
+    transition: opacity 0.3s ease;
+}
+
+/* ===================================
+   Mobile Menu Buttons
+   =================================== */
+
+.mobile-menu-buttons {
+    display: none; /* Hidden by default, shown on mobile */
+    position: fixed;
+    top: 20px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 20px;
+    pointer-events: none;
+}
+
+.mobile-menu-buttons-inner {
+    display: flex;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
+.mobile-menu-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(26, 26, 26, 0.95);
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-menu-btn:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+    transform: scale(1.1);
+}
+
+.mobile-menu-btn i {
+    font-size: 1.3rem;
+}
+
+/* ===================================
+   Mobile Modal Panels
+   =================================== */
+
+.mobile-modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-modal-backdrop.active {
+    display: block;
+    opacity: 1;
+}
+
+.mobile-modal {
+    position: fixed;
+    top: 0;
+    width: 85vw;
+    max-width: 400px;
+    height: 100vh;
+    background: rgba(26, 26, 26, 0.98);
+    border: 2px solid var(--crimson-red, #dc143c);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 201;
+    transition: transform 0.3s ease;
+    box-shadow: 0 0 50px rgba(220, 20, 60, 0.5);
+}
+
+.mobile-modal.left-modal {
+    left: 0;
+    border-right: 2px solid var(--crimson-red, #dc143c);
+    transform: translateX(-100%);
+}
+
+.mobile-modal.left-modal.active {
+    transform: translateX(0);
+}
+
+.mobile-modal.right-modal {
+    right: 0;
+    border-left: 2px solid var(--crimson-red, #dc143c);
+    transform: translateX(100%);
+}
+
+.mobile-modal.right-modal.active {
+    transform: translateX(0);
+}
+
+.mobile-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+    position: sticky;
+    top: 0;
+    background: rgba(26, 26, 26, 0.98);
+    z-index: 10;
+}
+
+.mobile-modal-title {
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.2rem;
+    color: var(--white, #ffffff);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.mobile-modal-close {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid var(--crimson-red, #dc143c);
+    color: var(--crimson-red, #dc143c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mobile-modal-close:hover {
+    background: var(--crimson-red, #dc143c);
+    color: var(--white, #ffffff);
+    transform: rotate(90deg);
+}
+
+.mobile-modal-close i {
+    font-size: 1.2rem;
+}
+
+.mobile-modal-content {
+    padding: 20px;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .left-panel,
@@ -933,29 +1212,49 @@ body {
 }
 
 @media (max-width: 992px) {
-    .demo-container {
-        flex-direction: column;
-        height: auto;
-        min-height: 100vh;
-    }
-
+    /* Hide sidebars on mobile */
     .left-panel,
     .right-panel {
-        width: 100%;
-        min-width: unset;
-        max-height: none;
-        border: none;
-        border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+        display: none !important;
+    }
+
+    /* Hide desktop collapse/expand buttons on mobile */
+    .panel-collapse-btn,
+    .panel-expand-btn {
+        display: none !important;
+    }
+
+    /* Show mobile menu buttons */
+    .mobile-menu-buttons {
+        display: block;
+    }
+
+    /* Chat section takes full screen */
+    .demo-container {
+        flex-direction: column;
     }
 
     .chat-section {
-        min-height: 60vh;
+        width: 100%;
+        height: 100vh;
+        flex: 1;
+    }
+
+    .chat-messages {
+        padding: 80px 15px 20px; /* Top padding to avoid overlap with menu buttons */
     }
 
     .message-bubble.user,
     .message-bubble.ai {
         margin-left: 10%;
         margin-right: 10%;
+    }
+
+    /* Adjust input container for mobile */
+    .message-input-container {
+        padding: 15px;
+        position: relative;
+        z-index: 50;
     }
 }
 

@@ -42,6 +42,9 @@
     <div class="demo-container">
         <!-- Left Panel: Model & Voice Controls -->
         <aside class="left-panel">
+            <button class="panel-collapse-btn left-collapse" id="collapseLeftPanel" aria-label="Collapse left panel">
+                <i class="fas fa-chevron-left"></i>
+            </button>
             <div class="panel-content">
                 <!-- Logo/Title -->
                 <a href="../../" class="demo-logo">
@@ -143,6 +146,9 @@
 
         <!-- Right Panel: Settings & Controls -->
         <aside class="right-panel">
+            <button class="panel-collapse-btn right-collapse" id="collapseRightPanel" aria-label="Collapse right panel">
+                <i class="fas fa-chevron-right"></i>
+            </button>
             <div class="panel-content">
                 <h3 class="panel-title">Settings</h3>
 
@@ -242,6 +248,55 @@
                 </div>
             </div>
         </aside>
+    </div>
+
+    <!-- Desktop Panel Expand Buttons (hidden when panels are open) -->
+    <button class="panel-expand-btn left-expand" id="expandLeftPanel" aria-label="Expand left panel">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+    <button class="panel-expand-btn right-expand" id="expandRightPanel" aria-label="Expand right panel">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <!-- Mobile Menu Buttons -->
+    <div class="mobile-menu-buttons">
+        <div class="mobile-menu-buttons-inner">
+            <button class="mobile-menu-btn" id="openLeftModal" aria-label="Open model settings">
+                <i class="fas fa-robot"></i>
+            </button>
+            <button class="mobile-menu-btn" id="openRightModal" aria-label="Open settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Modal Backdrop -->
+    <div class="mobile-modal-backdrop" id="mobileModalBackdrop"></div>
+
+    <!-- Left Panel Mobile Modal (Model & Voice Controls) -->
+    <div class="mobile-modal left-modal" id="leftModal">
+        <div class="mobile-modal-header">
+            <h3 class="mobile-modal-title">Model & Voice</h3>
+            <button class="mobile-modal-close" id="closeLeftModal" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-modal-content" id="leftModalContent">
+            <!-- Content will be cloned from left panel -->
+        </div>
+    </div>
+
+    <!-- Right Panel Mobile Modal (Settings & Controls) -->
+    <div class="mobile-modal right-modal" id="rightModal">
+        <div class="mobile-modal-header">
+            <h3 class="mobile-modal-title">Settings</h3>
+            <button class="mobile-modal-close" id="closeRightModal" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-modal-content" id="rightModalContent">
+            <!-- Content will be cloned from right panel -->
+        </div>
     </div>
 
     <!-- Footer -->
