@@ -345,6 +345,44 @@ const AgeVerification = {
 
         // Enable site
         this.enableSite();
+
+        // Play welcome message (only on first verification, not on return visits)
+        setTimeout(() => this.playWelcomeMessage(), 500);
+    },
+
+    /**
+     * Play welcome message via TTS after successful verification
+     */
+    playWelcomeMessage() {
+        console.log('Age Verification: Playing welcome message');
+
+        const welcomeText = "Only repeat the following: 'Welcome, to your new virtual play space. Unity will be your guiding hand. Be weary, the experience you are about to endure, is intended for mature audiences only'";
+        const voice = 'sage';
+        const volume = 0.75; // 75% volume
+
+        // Build TTS URL using Pollinations API
+        const url = `https://text.pollinations.ai/${encodeURIComponent(welcomeText)}?model=openai-audio&voice=${voice}&private=true&referrer=UA-73J7ItT-ws`;
+
+        // Create and play audio
+        const audio = new Audio(url);
+        audio.volume = volume;
+
+        audio.addEventListener('loadeddata', () => {
+            console.log('Age Verification: Welcome audio loaded');
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.error('Age Verification: Welcome audio error:', e);
+        });
+
+        audio.addEventListener('ended', () => {
+            console.log('Age Verification: Welcome message complete');
+        });
+
+        // Play the audio
+        audio.play().catch(error => {
+            console.error('Age Verification: Failed to play welcome audio:', error);
+        });
     },
 
     /**
