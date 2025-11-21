@@ -962,6 +962,17 @@ const DemoApp = {
         // Auto-resize textarea
         messageInput.addEventListener('input', () => this.autoResizeTextarea(messageInput));
 
+        // Input wrapper click - focus on textarea
+        const inputWrapper = document.querySelector('.input-wrapper');
+        if (inputWrapper) {
+            inputWrapper.addEventListener('click', (e) => {
+                // Don't focus if clicking the send button
+                if (!e.target.closest('.send-button')) {
+                    messageInput.focus();
+                }
+            });
+        }
+
         // Clear session button
         document.getElementById('clearSession').addEventListener('click', () => this.clearSession());
 
@@ -977,6 +988,9 @@ const DemoApp = {
             this.updateModelInfo(e.target.value);
             this.saveSettings();
         });
+
+        // Mobile modal event listeners
+        this.setupMobileModalListeners();
     },
 
     // Setup controls synchronization with settings
@@ -2200,6 +2214,125 @@ const DemoApp = {
         const textTempValue = document.getElementById('textTempValue');
         if (textTempValue) {
             textTempValue.textContent = this.settings.textTemperature;
+        }
+    },
+
+    // Setup mobile modal listeners
+    setupMobileModalListeners() {
+        const openLeftBtn = document.getElementById('openLeftModal');
+        const openRightBtn = document.getElementById('openRightModal');
+        const closeLeftBtn = document.getElementById('closeLeftModal');
+        const closeRightBtn = document.getElementById('closeRightModal');
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const leftModal = document.getElementById('leftModal');
+        const rightModal = document.getElementById('rightModal');
+
+        // Clone panel contents into modals on first load
+        this.initializeMobileModals();
+
+        // Open left modal
+        if (openLeftBtn) {
+            openLeftBtn.addEventListener('click', () => {
+                this.openMobileModal('left');
+            });
+        }
+
+        // Open right modal
+        if (openRightBtn) {
+            openRightBtn.addEventListener('click', () => {
+                this.openMobileModal('right');
+            });
+        }
+
+        // Close left modal
+        if (closeLeftBtn) {
+            closeLeftBtn.addEventListener('click', () => {
+                this.closeMobileModal('left');
+            });
+        }
+
+        // Close right modal
+        if (closeRightBtn) {
+            closeRightBtn.addEventListener('click', () => {
+                this.closeMobileModal('right');
+            });
+        }
+
+        // Close on backdrop click
+        if (backdrop) {
+            backdrop.addEventListener('click', () => {
+                this.closeMobileModal('left');
+                this.closeMobileModal('right');
+            });
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (leftModal && leftModal.classList.contains('active')) {
+                    this.closeMobileModal('left');
+                }
+                if (rightModal && rightModal.classList.contains('active')) {
+                    this.closeMobileModal('right');
+                }
+            }
+        });
+    },
+
+    // Initialize mobile modals by cloning panel content
+    initializeMobileModals() {
+        const leftPanel = document.querySelector('.left-panel .panel-content');
+        const rightPanel = document.querySelector('.right-panel .panel-content');
+        const leftModalContent = document.getElementById('leftModalContent');
+        const rightModalContent = document.getElementById('rightModalContent');
+
+        if (leftPanel && leftModalContent) {
+            // Clone left panel content
+            leftModalContent.innerHTML = leftPanel.innerHTML;
+        }
+
+        if (rightPanel && rightModalContent) {
+            // Clone right panel content
+            rightModalContent.innerHTML = rightPanel.innerHTML;
+        }
+    },
+
+    // Open mobile modal
+    openMobileModal(side) {
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const modal = document.getElementById(side === 'left' ? 'leftModal' : 'rightModal');
+
+        if (backdrop && modal) {
+            // Show backdrop
+            backdrop.classList.add('active');
+
+            // Show modal
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    // Close mobile modal
+    closeMobileModal(side) {
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const modal = document.getElementById(side === 'left' ? 'leftModal' : 'rightModal');
+        const leftModal = document.getElementById('leftModal');
+        const rightModal = document.getElementById('rightModal');
+
+        if (modal) {
+            modal.classList.remove('active');
+        }
+
+        // Only hide backdrop if both modals are closed
+        if (leftModal && rightModal && backdrop) {
+            if (!leftModal.classList.contains('active') && !rightModal.classList.contains('active')) {
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         }
     },
 

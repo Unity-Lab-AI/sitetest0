@@ -244,6 +244,47 @@
         </aside>
     </div>
 
+    <!-- Mobile Menu Buttons -->
+    <div class="mobile-menu-buttons">
+        <div class="mobile-menu-buttons-inner">
+            <button class="mobile-menu-btn" id="openLeftModal" aria-label="Open model settings">
+                <i class="fas fa-robot"></i>
+            </button>
+            <button class="mobile-menu-btn" id="openRightModal" aria-label="Open settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Modal Backdrop -->
+    <div class="mobile-modal-backdrop" id="mobileModalBackdrop"></div>
+
+    <!-- Left Panel Mobile Modal (Model & Voice Controls) -->
+    <div class="mobile-modal left-modal" id="leftModal">
+        <div class="mobile-modal-header">
+            <h3 class="mobile-modal-title">Model & Voice</h3>
+            <button class="mobile-modal-close" id="closeLeftModal" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-modal-content" id="leftModalContent">
+            <!-- Content will be cloned from left panel -->
+        </div>
+    </div>
+
+    <!-- Right Panel Mobile Modal (Settings & Controls) -->
+    <div class="mobile-modal right-modal" id="rightModal">
+        <div class="mobile-modal-header">
+            <h3 class="mobile-modal-title">Settings</h3>
+            <button class="mobile-modal-close" id="closeRightModal" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-modal-content" id="rightModalContent">
+            <!-- Content will be cloned from right panel -->
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer-section demo-footer" role="contentinfo" aria-label="Site footer">
         <div class="container-fluid">
