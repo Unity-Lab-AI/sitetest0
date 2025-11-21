@@ -95,11 +95,27 @@ sitetest0/
 │   ├── test_safety_and_reasoning.py   # Safety/reasoning tests
 │   └── __init__.py                    # Package initialization
 │
-├── tests/                             # Playwright tests
+├── tests/                             # Active Playwright tests
 │   ├── smoke.spec.js                  # Current smoke tests
 │   └── backup/                        # Backup test files
 │
-├── ai/                                # AI Chat Section (NEW!)
+├── archived-tests/                    # Archived test files (see README)
+│   ├── README.md                      # Archive documentation
+│   ├── standalone-tool-calling-test.js        # Standalone tool test
+│   ├── unity_testing.js               # Unity testing script
+│   ├── unity_testing.html             # Unity test interface
+│   ├── model_parameter_test.js        # Parameter test script
+│   ├── model_parameter_test.html      # Parameter test interface
+│   ├── test_unity_tools.html          # Unity tools test interface
+│   ├── TOOL_CALLING_TESTS_README.md   # Tool calling test docs
+│   ├── ANALYSIS_DEMO_PARAMETERS.md    # Demo parameter analysis
+│   ├── MODEL_PARAMETER_COMPATIBILITY.md  # Model compatibility notes
+│   ├── FIXES_UNITY_IMAGE_GENERATION.md   # Unity image gen fixes
+│   ├── PLAYWRIGHT_CI_NOTES.md         # Playwright CI notes
+│   └── playwright-tests/
+│       └── tool-calling-rate-limited.spec.js  # Archived Playwright test
+│
+├── ai/                                # AI Chat Section
 │   ├── index.html                     # AI landing page
 │   └── demo/                          # Interactive demo
 │       ├── index.html                 # Demo page
@@ -119,8 +135,6 @@ sitetest0/
 ├── script.min.js                      # Minified JavaScript
 ├── sitemap.xml                        # SEO sitemap
 ├── robots.txt                         # Robots directives
-├── ANALYSIS_DEMO_PARAMETERS.md        # Demo parameter analysis (NEW!)
-├── PLAYWRIGHT_CI_NOTES.md             # Playwright CI testing notes (NEW!)
 ├── README.md                          # Main project README
 ├── CLAUDE.md                          # This file
 └── ... (other config files)
@@ -140,8 +154,6 @@ All documentation is centralized in the `Docs/` folder:
 4. **[Docs/TEST_GUIDE.md](./Docs/TEST_GUIDE.md)** - Testing procedures
 5. **[Docs/PERFORMANCE_AUDIT.md](./Docs/PERFORMANCE_AUDIT.md)** - Performance metrics
 6. **[Docs/SEO_IMPLEMENTATION.md](./Docs/SEO_IMPLEMENTATION.md)** - SEO implementation details
-7. **[ANALYSIS_DEMO_PARAMETERS.md](./ANALYSIS_DEMO_PARAMETERS.md)** - Demo parameter analysis (NEW!)
-8. **[PLAYWRIGHT_CI_NOTES.md](./PLAYWRIGHT_CI_NOTES.md)** - Playwright CI testing notes (NEW!)
 
 ### Library-Specific Documentation
 
@@ -152,6 +164,12 @@ All documentation is centralized in the `Docs/` folder:
 
 - **[ai/demo/index.html](./ai/demo/index.html)** - Interactive AI demo page (~85% complete)
 - **[Docs/TODO/demo-page-TODO.md](./Docs/TODO/demo-page-TODO.md)** - Demo features and status
+
+### Archived Tests Documentation
+
+- **[archived-tests/README.md](./archived-tests/README.md)** - Documentation for archived test files
+- Archived test files include tool calling tests, Unity testing utilities, and related documentation
+- See the archived-tests directory for historical test implementations
 
 ### How to Update Documentation
 
@@ -554,6 +572,6 @@ This CLAUDE.md file should be updated when:
 
 ---
 
-**Last Updated:** 2025-11-20
-**Version:** 1.1.0
+**Last Updated:** 2025-11-21
+**Version:** 1.2.0
 **Maintained by:** Unity AI Lab Team
