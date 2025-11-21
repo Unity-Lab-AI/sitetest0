@@ -33,9 +33,10 @@ body {
     background: rgba(26, 26, 26, 0.95);
     border-right: 1px solid rgba(220, 20, 60, 0.2);
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* Right Panel: 20% width */
@@ -45,9 +46,10 @@ body {
     background: rgba(26, 26, 26, 0.95);
     border-left: 1px solid rgba(220, 20, 60, 0.2);
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* Main Chat Section: 60% width */
@@ -936,8 +938,8 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 24px;
-    height: 50px;
+    width: 28px;
+    height: 55px;
     background: rgba(26, 26, 26, 0.9);
     border: 1px solid rgba(220, 20, 60, 0.6);
     color: rgba(220, 20, 60, 0.7);
@@ -947,25 +949,26 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0.3;
+    pointer-events: auto;
 }
 
 .panel-collapse-btn.left-collapse {
-    right: -12px;
-    border-radius: 0 6px 6px 0;
+    right: 0;
+    border-radius: 0 8px 8px 0;
+    transform: translate(50%, -50%);
 }
 
 .panel-collapse-btn.right-collapse {
-    left: -12px;
-    border-radius: 6px 0 0 6px;
+    left: 0;
+    border-radius: 8px 0 0 8px;
+    transform: translate(-50%, -50%);
 }
 
-/* Show collapse buttons on panel hover */
+/* Show collapse buttons more prominently on panel hover */
 .left-panel:hover .panel-collapse-btn.left-collapse,
 .right-panel:hover .panel-collapse-btn.right-collapse {
     opacity: 1;
-    pointer-events: auto;
 }
 
 .panel-collapse-btn:hover {
@@ -1028,7 +1031,7 @@ body {
 .left-panel.collapsed {
     width: 0;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
     border-right: none;
     padding: 0;
 }
@@ -1036,17 +1039,20 @@ body {
 .right-panel.collapsed {
     width: 0;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
     border-left: none;
     padding: 0;
 }
 
 .left-panel.collapsed .panel-content,
-.right-panel.collapsed .panel-content,
-.left-panel.collapsed .panel-collapse-btn,
-.right-panel.collapsed .panel-collapse-btn {
+.right-panel.collapsed .panel-content {
     opacity: 0;
     pointer-events: none;
+}
+
+.left-panel.collapsed .panel-collapse-btn,
+.right-panel.collapsed .panel-collapse-btn {
+    display: none;
 }
 
 /* Smooth transitions for panel collapse */
