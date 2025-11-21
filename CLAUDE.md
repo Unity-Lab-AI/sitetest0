@@ -96,7 +96,7 @@ sitetest0/
 │   └── __init__.py                    # Package initialization
 │
 ├── tests/                             # Active Playwright tests
-│   ├── smoke.spec.js                  # Current smoke tests
+│   ├── navigation.spec.js             # Navigation tests
 │   └── backup/                        # Backup test files
 │
 ├── archived-tests/                    # Archived test files (see README)
@@ -343,7 +343,7 @@ npm install
 npx playwright test
 
 # Run specific test
-npx playwright test tests/smoke.spec.js
+npx playwright test tests/navigation.spec.js
 
 # Run with UI
 npx playwright test --ui
@@ -354,7 +354,7 @@ npx playwright test --debug
 
 ### Test Organization
 
-- **smoke.spec.js** - Basic functionality tests (currently active)
+- **navigation.spec.js** - Navigation and page loading tests (currently active)
 - **backup/** - More comprehensive tests (disabled due to flakiness)
 
 ### After Testing

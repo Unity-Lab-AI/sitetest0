@@ -1,8 +1,8 @@
-# Playwright Test Suite - Smoke Tests
+# Playwright Test Suite - Navigation Tests
 
 ## Overview
 
-Simplified automated test suite for the UnityAILab website focusing on essential functionality and user flows.
+Automated test suite for the UnityAILab website focusing on navigation and page loading functionality.
 
 **Test Coverage:**
 - Basic page loading and navigation
@@ -38,9 +38,9 @@ npm run test:report
 
 ## Test Suite
 
-### Smoke Tests (`tests/smoke.spec.js`)
+### Navigation Tests (`tests/navigation.spec.js`)
 
-**Tests 5 core functionality areas:**
+**Tests core navigation functionality:**
 
 #### 1. Complete User Flow Through All Pages
 
@@ -107,7 +107,7 @@ Tests footer consistency:
 
 ---
 
-## Smoke Animation Performance Limits
+## Note on Animation Performance Limits
 
 To prevent performance degradation, the smoke throwing animation has built-in limits:
 
@@ -138,7 +138,7 @@ When puff count exceeds the preferred max, dissipation rate increases:
 - Multiplier when over max: 1 + (count - MAX) * 0.5
 - Maximum multiplier: 3.0
 
-**Note:** These tests do NOT test the smoke animations themselves - they're purely for user flow verification.
+**Note:** These navigation tests do NOT test the smoke animations themselves - they're purely for navigation and page loading verification.
 
 ---
 
@@ -280,6 +280,7 @@ These can be re-enabled by moving them back to `tests/` if more thorough testing
 ---
 
 **Created:** 2025-11-19
-**Test Suite Version:** 2.0 (Simplified Smoke Tests)
-**Total Tests:** 5 smoke tests
-**Test Focus:** Essential functionality and user flows
+**Last Updated:** 2025-11-21
+**Test Suite Version:** 3.0 (Navigation Tests)
+**Total Tests:** 10 navigation tests
+**Test Focus:** Site navigation, page loading, and link verification
