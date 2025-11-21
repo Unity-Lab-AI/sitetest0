@@ -962,6 +962,17 @@ const DemoApp = {
         // Auto-resize textarea
         messageInput.addEventListener('input', () => this.autoResizeTextarea(messageInput));
 
+        // Input wrapper click - focus on textarea
+        const inputWrapper = document.querySelector('.input-wrapper');
+        if (inputWrapper) {
+            inputWrapper.addEventListener('click', (e) => {
+                // Don't focus if clicking the send button
+                if (!e.target.closest('.send-button')) {
+                    messageInput.focus();
+                }
+            });
+        }
+
         // Clear session button
         document.getElementById('clearSession').addEventListener('click', () => this.clearSession());
 
@@ -977,6 +988,54 @@ const DemoApp = {
             this.updateModelInfo(e.target.value);
             this.saveSettings();
         });
+
+        // Mobile modal event listeners
+        this.setupMobileModalListeners();
+
+        // Desktop panel collapse event listeners
+        this.setupDesktopPanelCollapse();
+    },
+
+    // Setup desktop panel collapse/expand functionality
+    setupDesktopPanelCollapse() {
+        const collapseLeftBtn = document.getElementById('collapseLeftPanel');
+        const collapseRightBtn = document.getElementById('collapseRightPanel');
+        const expandLeftBtn = document.getElementById('expandLeftPanel');
+        const expandRightBtn = document.getElementById('expandRightPanel');
+        const leftPanel = document.querySelector('.left-panel');
+        const rightPanel = document.querySelector('.right-panel');
+
+        // Collapse left panel
+        if (collapseLeftBtn && leftPanel && expandLeftBtn) {
+            collapseLeftBtn.addEventListener('click', () => {
+                leftPanel.classList.add('collapsed');
+                expandLeftBtn.classList.add('visible');
+            });
+        }
+
+        // Expand left panel
+        if (expandLeftBtn && leftPanel) {
+            expandLeftBtn.addEventListener('click', () => {
+                leftPanel.classList.remove('collapsed');
+                expandLeftBtn.classList.remove('visible');
+            });
+        }
+
+        // Collapse right panel
+        if (collapseRightBtn && rightPanel && expandRightBtn) {
+            collapseRightBtn.addEventListener('click', () => {
+                rightPanel.classList.add('collapsed');
+                expandRightBtn.classList.add('visible');
+            });
+        }
+
+        // Expand right panel
+        if (expandRightBtn && rightPanel) {
+            expandRightBtn.addEventListener('click', () => {
+                rightPanel.classList.remove('collapsed');
+                expandRightBtn.classList.remove('visible');
+            });
+        }
     },
 
     // Setup controls synchronization with settings
@@ -1768,6 +1827,11 @@ const DemoApp = {
 
         messagesContainer.appendChild(messageDiv);
 
+        // Trigger atmospheric effects for Unity AI messages
+        if (sender === 'ai' && content) {
+            this.detectAndQueueEffects(content);
+        }
+
         // Scroll to bottom
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     },
@@ -2203,6 +2267,125 @@ const DemoApp = {
         }
     },
 
+    // Setup mobile modal listeners
+    setupMobileModalListeners() {
+        const openLeftBtn = document.getElementById('openLeftModal');
+        const openRightBtn = document.getElementById('openRightModal');
+        const closeLeftBtn = document.getElementById('closeLeftModal');
+        const closeRightBtn = document.getElementById('closeRightModal');
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const leftModal = document.getElementById('leftModal');
+        const rightModal = document.getElementById('rightModal');
+
+        // Clone panel contents into modals on first load
+        this.initializeMobileModals();
+
+        // Open left modal
+        if (openLeftBtn) {
+            openLeftBtn.addEventListener('click', () => {
+                this.openMobileModal('left');
+            });
+        }
+
+        // Open right modal
+        if (openRightBtn) {
+            openRightBtn.addEventListener('click', () => {
+                this.openMobileModal('right');
+            });
+        }
+
+        // Close left modal
+        if (closeLeftBtn) {
+            closeLeftBtn.addEventListener('click', () => {
+                this.closeMobileModal('left');
+            });
+        }
+
+        // Close right modal
+        if (closeRightBtn) {
+            closeRightBtn.addEventListener('click', () => {
+                this.closeMobileModal('right');
+            });
+        }
+
+        // Close on backdrop click
+        if (backdrop) {
+            backdrop.addEventListener('click', () => {
+                this.closeMobileModal('left');
+                this.closeMobileModal('right');
+            });
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (leftModal && leftModal.classList.contains('active')) {
+                    this.closeMobileModal('left');
+                }
+                if (rightModal && rightModal.classList.contains('active')) {
+                    this.closeMobileModal('right');
+                }
+            }
+        });
+    },
+
+    // Initialize mobile modals by cloning panel content
+    initializeMobileModals() {
+        const leftPanel = document.querySelector('.left-panel .panel-content');
+        const rightPanel = document.querySelector('.right-panel .panel-content');
+        const leftModalContent = document.getElementById('leftModalContent');
+        const rightModalContent = document.getElementById('rightModalContent');
+
+        if (leftPanel && leftModalContent) {
+            // Clone left panel content
+            leftModalContent.innerHTML = leftPanel.innerHTML;
+        }
+
+        if (rightPanel && rightModalContent) {
+            // Clone right panel content
+            rightModalContent.innerHTML = rightPanel.innerHTML;
+        }
+    },
+
+    // Open mobile modal
+    openMobileModal(side) {
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const modal = document.getElementById(side === 'left' ? 'leftModal' : 'rightModal');
+
+        if (backdrop && modal) {
+            // Show backdrop
+            backdrop.classList.add('active');
+
+            // Show modal
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    // Close mobile modal
+    closeMobileModal(side) {
+        const backdrop = document.getElementById('mobileModalBackdrop');
+        const modal = document.getElementById(side === 'left' ? 'leftModal' : 'rightModal');
+        const leftModal = document.getElementById('leftModal');
+        const rightModal = document.getElementById('rightModal');
+
+        if (modal) {
+            modal.classList.remove('active');
+        }
+
+        // Only hide backdrop if both modals are closed
+        if (leftModal && rightModal && backdrop) {
+            if (!leftModal.classList.contains('active') && !rightModal.classList.contains('active')) {
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    },
+
     // Delete all site data (cache, cookies, localStorage)
     deleteAllData() {
         // Confirmation popup
@@ -2262,6 +2445,182 @@ const DemoApp = {
             console.error('Error deleting data:', error);
             alert('An error occurred while deleting data. Check console for details.');
         }
+    },
+
+    // ===================================
+    // Unity Atmospheric Effects System
+    // ===================================
+
+    // Effect queue to trigger effects sequentially
+    effectQueue: [],
+    isProcessingEffects: false,
+
+    // Detect and queue atmospheric effects from Unity's message
+    detectAndQueueEffects(messageText) {
+        // Only trigger for Unity model
+        if (this.settings.model !== 'unity') return;
+
+        const effects = [];
+
+        // Smoke-related keywords (case-insensitive)
+        const smokePatterns = [
+            /\bexhales?\b/gi,
+            /\bblow(?:s|ing)?\s+(?:out\s+)?smoke\b/gi,
+            /\bsmoke\s+(?:curl|drift|rise)s?\b/gi,
+            /\btakes?\s+(?:a\s+)?(?:drag|puff|hit)\b/gi,
+            /\bbreath(?:es?)?\s+out\b/gi
+        ];
+
+        // Lighter-related keywords (case-insensitive)
+        const lighterPatterns = [
+            /\bspark(?:s|ing)?\s+(?:up|it)\b/gi,
+            /\bflick(?:s|ing)?\s+(?:the\s+)?lighter\b/gi,
+            /\blight(?:s|ing)?\s+(?:up|it|a\s+\w+)\b/gi,
+            /\bstrike(?:s|ing)?\s+(?:the\s+)?(?:lighter|match)\b/gi,
+            /\b(?:pulls?\s+out|grabs?\s+|reaches?\s+for)\s+(?:a\s+|her\s+|the\s+)?lighter\b/gi
+        ];
+
+        // Find all matches with their positions
+        const allMatches = [];
+
+        // Find smoke matches
+        smokePatterns.forEach(pattern => {
+            let match;
+            while ((match = pattern.exec(messageText)) !== null) {
+                allMatches.push({
+                    type: 'smoke',
+                    position: match.index,
+                    text: match[0]
+                });
+            }
+        });
+
+        // Find lighter matches
+        lighterPatterns.forEach(pattern => {
+            let match;
+            while ((match = pattern.exec(messageText)) !== null) {
+                allMatches.push({
+                    type: 'lighter',
+                    position: match.index,
+                    text: match[0]
+                });
+            }
+        });
+
+        // Sort by position to maintain order
+        allMatches.sort((a, b) => a.position - b.position);
+
+        // Calculate timing based on position in message (reading speed)
+        const wordsPerMinute = 200; // Average reading speed
+        const msPerWord = 60000 / wordsPerMinute;
+
+        allMatches.forEach((match, index) => {
+            const wordsBefore = messageText.substring(0, match.position).split(/\s+/).length;
+            const delay = wordsBefore * msPerWord;
+
+            effects.push({
+                type: match.type,
+                delay: delay,
+                text: match.text
+            });
+        });
+
+        // Add effects to queue
+        this.effectQueue.push(...effects);
+
+        // Start processing if not already running
+        if (!this.isProcessingEffects) {
+            this.processEffectQueue();
+        }
+
+        console.log(`Queued ${effects.length} atmospheric effects:`, effects);
+    },
+
+    // Process effect queue sequentially
+    async processEffectQueue() {
+        if (this.effectQueue.length === 0) {
+            this.isProcessingEffects = false;
+            return;
+        }
+
+        this.isProcessingEffects = true;
+        const effect = this.effectQueue.shift();
+
+        // Wait for the calculated delay
+        await new Promise(resolve => setTimeout(resolve, effect.delay));
+
+        // Trigger the effect
+        if (effect.type === 'smoke') {
+            this.triggerSmokeEffect();
+        } else if (effect.type === 'lighter') {
+            this.triggerLighterEffect();
+        }
+
+        // Continue processing queue
+        this.processEffectQueue();
+    },
+
+    // Trigger smoke effect with random particles
+    triggerSmokeEffect() {
+        const container = document.getElementById('smokeContainer');
+        if (!container) return;
+
+        // Generate 5-8 random smoke particles for heavier smoke
+        const particleCount = Math.floor(Math.random() * 4) + 5; // 5-8 particles
+
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'smoke-particle';
+
+                // Random horizontal position (wider spread)
+                const leftPos = Math.random() * 70 + 15; // 15-85%
+                particle.style.left = `${leftPos}%`;
+
+                // Random drift amount (CSS variable)
+                const drift = (Math.random() - 0.5) * 250; // -125px to +125px
+                particle.style.setProperty('--drift', `${drift}px`);
+
+                // Random rotation for curl effect (CSS variable)
+                const rotation = (Math.random() - 0.5) * 120; // -60deg to +60deg
+                particle.style.setProperty('--rotation', `${rotation}deg`);
+
+                // Random delay for more natural staggered effect
+                particle.style.animationDelay = `${Math.random() * 0.8}s`;
+
+                // Add to container
+                container.appendChild(particle);
+
+                // Remove after animation completes
+                setTimeout(() => {
+                    particle.remove();
+                }, 6000); // Animation is 5s + 0.8s max delay + buffer
+
+            }, i * 150); // Stagger particle creation by 150ms for denser smoke
+        }
+
+        console.log('🌫️ Smoke effect triggered');
+    },
+
+    // Trigger lighter flicker effect
+    triggerLighterEffect() {
+        // Create lighter overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'lighter-effect';
+        document.body.appendChild(overlay);
+
+        // Create flame element
+        const flame = document.createElement('div');
+        flame.className = 'lighter-flame';
+        document.body.appendChild(flame);
+
+        // Remove after animation completes
+        setTimeout(() => {
+            overlay.remove();
+            flame.remove();
+        }, 2100); // Animation is 2s + small buffer
+
+        console.log('🔥 Lighter effect triggered');
     }
 };
 
