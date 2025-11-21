@@ -530,6 +530,21 @@ body {
     box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
 }
 
+.delete-data-btn {
+    background: rgba(139, 0, 0, 0.3);
+    border-color: rgba(139, 0, 0, 0.6);
+    color: rgba(255, 100, 100, 0.9);
+    margin-top: 20px;
+}
+
+.delete-data-btn:hover {
+    background: rgba(139, 0, 0, 0.6);
+    border-color: #8b0000;
+    color: var(--white, #ffffff);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.6);
+}
+
 /* Chat Messages Container */
 .chat-messages {
     flex: 1;
