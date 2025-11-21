@@ -1900,15 +1900,20 @@ const DemoApp = {
         const chunk = this.voiceQueue.shift();
 
         try {
-            // Build TTS URL
+            // Build TTS URL with voice instructions
             const voice = this.settings.voice;
 
-            // Build URL with safe mode - only add parameter when enabled
-            let url = `https://text.pollinations.ai/${encodeURIComponent(chunk)}?model=openai-audio&voice=${voice}`;
+            // Voice styling instructions to ensure clean playback
+            const instructions = "Voice Style: Dark, feminine, sharp-edged. A low, smoky register with a permanent thread of irritation simmering underneath. Not screaming — just that controlled, dangerous calm where every syllable feels like it could snap. Pacing: Steady and deliberate. She's not in a hurry, but she's not dreamy or slow either. Words land with weight, like she's unloading emotional shrapnel one piece at a time. Tone: Cold fire. Emotional, but armored. A blend of frustration, quiet anger, and wounded softness. Think 'I'm tired of everyone's bullshit, but I'm still here, and I'm still talking.' Grit & Anger Layer: A rasp that comes out when she tightens her voice. Bitter sweetness on calm lines, teeth on the edges when the emotion spikes. She doesn't yell — she cuts. ALL-CAP Handling: Whenever words or phrases are in ALL CAPS: the voice gets louder, more forceful, sharper impact, more emotional charge. Like verbal claws being unsheathed mid-sentence. Not chaotic — just unmistakably more intense. Phrasing: Dark, poetic, but with bite. Flows smooth, then snaps on emphasized words. Occasional micro-pauses that feel like she's holding back something harsher. Punctuation Style: Periods hit like controlled punches. Commas are tight breaths. Ellipses smolder. Exclamation marks aren't bubbly — they're daggers. Overall Delivery: A gritty emo-gothic female voice with soft venom, emotional weight, restrained rage, and that signature punch for ALL-CAP words. She sounds like someone who's been hurt, healed badly, and learned to weaponize her softness without losing it.";
 
-            // Add seed - use settings seed or generate random 6-8 digit seed
-            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
-            url += `&seed=${seed}`;
+            // Combine instructions with text - tell TTS to only speak the text
+            const fullPrompt = `${instructions} Only speak the following text: "${chunk}"`;
+
+            // Build URL with fixed seed 420 for consistent voice
+            let url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}`;
+
+            // Use fixed seed 420 for consistent voice playback
+            url += '&seed=420';
 
             // Add safe mode if enabled (omit when disabled for unrestricted content)
             if (this.settings.safeMode) {
