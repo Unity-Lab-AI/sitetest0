@@ -1827,6 +1827,11 @@ const DemoApp = {
 
         messagesContainer.appendChild(messageDiv);
 
+        // Trigger atmospheric effects for Unity AI messages
+        if (sender === 'ai' && content) {
+            this.detectAndQueueEffects(content);
+        }
+
         // Scroll to bottom
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     },
@@ -2440,6 +2445,178 @@ const DemoApp = {
             console.error('Error deleting data:', error);
             alert('An error occurred while deleting data. Check console for details.');
         }
+    },
+
+    // ===================================
+    // Unity Atmospheric Effects System
+    // ===================================
+
+    // Effect queue to trigger effects sequentially
+    effectQueue: [],
+    isProcessingEffects: false,
+
+    // Detect and queue atmospheric effects from Unity's message
+    detectAndQueueEffects(messageText) {
+        // Only trigger for Unity model
+        if (this.settings.model !== 'unity') return;
+
+        const effects = [];
+
+        // Smoke-related keywords (case-insensitive)
+        const smokePatterns = [
+            /\bexhales?\b/gi,
+            /\bblow(?:s|ing)?\s+(?:out\s+)?smoke\b/gi,
+            /\bsmoke\s+(?:curl|drift|rise)s?\b/gi,
+            /\btakes?\s+(?:a\s+)?(?:drag|puff|hit)\b/gi,
+            /\bbreath(?:es?)?\s+out\b/gi
+        ];
+
+        // Lighter-related keywords (case-insensitive)
+        const lighterPatterns = [
+            /\bspark(?:s|ing)?\s+(?:up|it)\b/gi,
+            /\bflick(?:s|ing)?\s+(?:the\s+)?lighter\b/gi,
+            /\blight(?:s|ing)?\s+(?:up|it|a\s+\w+)\b/gi,
+            /\bstrike(?:s|ing)?\s+(?:the\s+)?(?:lighter|match)\b/gi,
+            /\b(?:pulls?\s+out|grabs?\s+|reaches?\s+for)\s+(?:a\s+|her\s+|the\s+)?lighter\b/gi
+        ];
+
+        // Find all matches with their positions
+        const allMatches = [];
+
+        // Find smoke matches
+        smokePatterns.forEach(pattern => {
+            let match;
+            while ((match = pattern.exec(messageText)) !== null) {
+                allMatches.push({
+                    type: 'smoke',
+                    position: match.index,
+                    text: match[0]
+                });
+            }
+        });
+
+        // Find lighter matches
+        lighterPatterns.forEach(pattern => {
+            let match;
+            while ((match = pattern.exec(messageText)) !== null) {
+                allMatches.push({
+                    type: 'lighter',
+                    position: match.index,
+                    text: match[0]
+                });
+            }
+        });
+
+        // Sort by position to maintain order
+        allMatches.sort((a, b) => a.position - b.position);
+
+        // Calculate timing based on position in message (reading speed)
+        const wordsPerMinute = 200; // Average reading speed
+        const msPerWord = 60000 / wordsPerMinute;
+
+        allMatches.forEach((match, index) => {
+            const wordsBefore = messageText.substring(0, match.position).split(/\s+/).length;
+            const delay = wordsBefore * msPerWord;
+
+            effects.push({
+                type: match.type,
+                delay: delay,
+                text: match.text
+            });
+        });
+
+        // Add effects to queue
+        this.effectQueue.push(...effects);
+
+        // Start processing if not already running
+        if (!this.isProcessingEffects) {
+            this.processEffectQueue();
+        }
+
+        console.log(`Queued ${effects.length} atmospheric effects:`, effects);
+    },
+
+    // Process effect queue sequentially
+    async processEffectQueue() {
+        if (this.effectQueue.length === 0) {
+            this.isProcessingEffects = false;
+            return;
+        }
+
+        this.isProcessingEffects = true;
+        const effect = this.effectQueue.shift();
+
+        // Wait for the calculated delay
+        await new Promise(resolve => setTimeout(resolve, effect.delay));
+
+        // Trigger the effect
+        if (effect.type === 'smoke') {
+            this.triggerSmokeEffect();
+        } else if (effect.type === 'lighter') {
+            this.triggerLighterEffect();
+        }
+
+        // Continue processing queue
+        this.processEffectQueue();
+    },
+
+    // Trigger smoke effect with random particles
+    triggerSmokeEffect() {
+        const container = document.getElementById('smokeContainer');
+        if (!container) return;
+
+        // Generate 3-5 random smoke particles
+        const particleCount = Math.floor(Math.random() * 3) + 3; // 3-5 particles
+
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'smoke-particle';
+
+                // Random horizontal position
+                const leftPos = Math.random() * 80 + 10; // 10-90%
+                particle.style.left = `${leftPos}%`;
+
+                // Random drift amount (CSS variable)
+                const drift = (Math.random() - 0.5) * 200; // -100px to +100px
+                particle.style.setProperty('--drift', `${drift}px`);
+
+                // Random delay for staggered effect
+                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+
+                // Add to container
+                container.appendChild(particle);
+
+                // Remove after animation completes
+                setTimeout(() => {
+                    particle.remove();
+                }, 4500); // Animation is 4s + 0.5s max delay
+
+            }, i * 200); // Stagger particle creation by 200ms
+        }
+
+        console.log('🔥 Smoke effect triggered');
+    },
+
+    // Trigger lighter flicker effect
+    triggerLighterEffect() {
+        // Create lighter overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'lighter-effect';
+        document.body.appendChild(overlay);
+
+        // Create flame element
+        const flame = document.createElement('div');
+        flame.className = 'lighter-flame';
+        document.body.appendChild(flame);
+
+        // Remove after animation completes
+        setTimeout(() => {
+            overlay.remove();
+            flame.remove();
+        }, 2100); // Animation is 2s + small buffer
+
+        console.log('🔥 Lighter effect triggered');
     }
 };
 
