@@ -38,29 +38,29 @@ const TOOLS = [
         type: 'function',
         function: {
             name: 'generate_image',
-            description: 'Generates an image using Pollinations image generation API. Use this when the user asks for an image, picture, photo, or visual.',
+            description: 'Generates and displays an image using Pollinations image generation API. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user.',
             parameters: {
                 type: 'object',
                 properties: {
                     prompt: {
                         type: 'string',
-                        description: 'Detailed description of the image to generate. Be specific and descriptive.'
+                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result.'
                     },
                     width: {
                         type: 'integer',
-                        description: 'Image width in pixels',
+                        description: 'Image width in pixels. Use 1920 for landscape, 1080 for portrait, 1024 for square.',
                         enum: [1024, 1080, 1920],
                         default: 1024
                     },
                     height: {
                         type: 'integer',
-                        description: 'Image height in pixels',
+                        description: 'Image height in pixels. Use 1080 for landscape, 1920 for portrait, 1024 for square.',
                         enum: [1024, 1080, 1920],
                         default: 1024
                     },
                     model: {
                         type: 'string',
-                        description: 'Image generation model to use',
+                        description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
                         enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
                         default: 'flux'
                     }
@@ -191,7 +191,11 @@ async function getAIResponse() {
         tool_choice: 'auto'  // Let the AI decide when to call functions
     };
 
-    console.log('Sending request with function calling enabled:', payload);
+    console.log('=== API Request ===');
+    console.log('Model:', CONFIG.MODEL);
+    console.log('Tools available:', TOOLS.map(t => t.function.name));
+    console.log('Full payload:', JSON.stringify(payload, null, 2));
+    addSystemMessage(`📤 Sending request to Pollinations API with ${TOOLS.length} tool(s) available...`);
 
     // Make API call
     const response = await fetch(`${CONFIG.POLLINATIONS_OPENAI_ENDPOINT}?referrer=${CONFIG.REFERRER}`, {
@@ -203,18 +207,23 @@ async function getAIResponse() {
     });
 
     if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('=== API Response ===');
+    console.log('Full response:', JSON.stringify(data, null, 2));
 
     // Handle the response
     const assistantMessage = data.choices[0].message;
 
     // Check if the AI wants to call a function
     if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
-        console.log('Function calls detected:', assistantMessage.tool_calls);
+        console.log('✅ Function calls detected!');
+        console.log('Tool calls:', JSON.stringify(assistantMessage.tool_calls, null, 2));
+        addSystemMessage(`✅ AI is calling ${assistantMessage.tool_calls.length} function(s)...`);
 
         // Add assistant message to history (with tool calls)
         STATE.conversationHistory.push(assistantMessage);
@@ -228,6 +237,7 @@ async function getAIResponse() {
         await getFinalResponse();
     } else {
         // Regular text response
+        console.log('ℹ️ No function calls in response - text only');
         const content = assistantMessage.content || 'No response';
 
         // Add to history
@@ -245,7 +255,10 @@ async function handleToolCall(toolCall) {
     const functionName = toolCall.function.name;
     const functionArgs = JSON.parse(toolCall.function.arguments);
 
-    console.log(`Executing function: ${functionName}`, functionArgs);
+    console.log('=== Executing Tool Call ===');
+    console.log('Function:', functionName);
+    console.log('Arguments:', JSON.stringify(functionArgs, null, 2));
+    console.log('Tool Call ID:', toolCall.id);
 
     // Show function call in UI
     addFunctionCallMessage(functionName, functionArgs);
@@ -254,8 +267,11 @@ async function handleToolCall(toolCall) {
 
     // Execute the function
     if (functionName === 'generate_image') {
+        addSystemMessage('🎨 Generating image with Pollinations...');
         functionResult = await generateImage(functionArgs);
+        console.log('✅ Image generation completed');
     } else {
+        console.error('❌ Unknown function:', functionName);
         functionResult = { error: `Unknown function: ${functionName}` };
     }
 
@@ -267,7 +283,8 @@ async function handleToolCall(toolCall) {
         content: JSON.stringify(functionResult)
     });
 
-    console.log('Function result:', functionResult);
+    console.log('=== Function Result ===');
+    console.log(JSON.stringify(functionResult, null, 2));
 }
 
 async function getFinalResponse() {
@@ -285,7 +302,15 @@ async function getFinalResponse() {
         max_tokens: STATE.settings.maxTokens
     };
 
-    console.log('Getting final response after function execution');
+    console.log('=== Getting Final Response ===');
+    console.log('Conversation history length:', STATE.conversationHistory.length);
+    console.log('Last few messages:', STATE.conversationHistory.slice(-3).map(m => ({
+        role: m.role,
+        hasContent: !!m.content,
+        hasToolCalls: !!m.tool_calls,
+        tool_call_id: m.tool_call_id
+    })));
+    addSystemMessage('💬 Getting AI response after tool execution...');
 
     const response = await fetch(`${CONFIG.POLLINATIONS_OPENAI_ENDPOINT}?referrer=${CONFIG.REFERRER}`, {
         method: 'POST',
@@ -296,10 +321,15 @@ async function getFinalResponse() {
     });
 
     if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('Final response API Error:', errorText);
+        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('=== Final Response Data ===');
+    console.log(JSON.stringify(data, null, 2));
+
     const finalMessage = data.choices[0].message;
 
     // Add to history
@@ -310,6 +340,7 @@ async function getFinalResponse() {
 
     // Display final message
     addMessage('assistant', finalMessage.content);
+    console.log('✅ Final response displayed');
 }
 
 // ===================================
@@ -319,6 +350,11 @@ async function getFinalResponse() {
 async function generateImage(args) {
     const { prompt, width = 1024, height = 1024, model = 'flux' } = args;
 
+    console.log('=== Image Generation Parameters ===');
+    console.log('Prompt:', prompt);
+    console.log('Dimensions:', `${width}x${height}`);
+    console.log('Model:', model);
+
     // Build Pollinations image URL
     const seed = Math.floor(Math.random() * 1000000);
     const encodedPrompt = encodeURIComponent(prompt);
@@ -327,19 +363,27 @@ async function generateImage(args) {
         `width=${width}&height=${height}&seed=${seed}&model=${model}&` +
         `private=true&enhance=true&referrer=${CONFIG.REFERRER}`;
 
-    console.log('Generated image URL:', imageUrl);
+    console.log('=== Generated Image URL ===');
+    console.log(imageUrl);
+    console.log('Seed:', seed);
 
     // Display the image in the chat
     addImageMessage(imageUrl, prompt);
+    addSystemMessage(`✅ Image generated! (${width}x${height}, model: ${model}, seed: ${seed})`);
 
     // Return result for the AI
-    return {
+    const result = {
         success: true,
         imageUrl: imageUrl,
         prompt: prompt,
         dimensions: `${width}x${height}`,
-        model: model
+        model: model,
+        seed: seed,
+        message: 'Image successfully generated and displayed to the user.'
     };
+
+    console.log('Returning result to AI:', result);
+    return result;
 }
 
 // ===================================
