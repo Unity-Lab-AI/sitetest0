@@ -4,6 +4,11 @@
   "description": "**Test site for the latest version of the main Unity AI Lab website**",
   "main": "script.js",
   "scripts": {
+    "test": "playwright test",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:report": "playwright show-report",
     "minify": "npx terser script.js -c -m -o script.min.js && npx cleancss -o styles.min.css styles.css",
     "build": "npm run minify && ./update-version.sh"
   },
@@ -15,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "clean-css-cli": "^5.6.3",
     "lighthouse": "^13.0.1",
     "terser": "^5.44.1"
