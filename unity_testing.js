@@ -374,15 +374,15 @@ async function generateImage(args) {
     // Return result for the AI
     const result = {
         success: true,
-        imageUrl: imageUrl,
         prompt: prompt,
         dimensions: `${width}x${height}`,
         model: model,
         seed: seed,
-        message: 'Image successfully generated and displayed to the user.'
+        message: 'Image successfully generated and automatically displayed to the user. DO NOT include the image URL in your response - the image is already visible to the user.'
     };
 
     console.log('Returning result to AI:', result);
+    console.log('Note: Image URL removed from result to prevent AI from repeating it');
     return result;
 }
 
