@@ -522,6 +522,9 @@ const DemoApp = {
     imageAPI: null,
     voiceAPI: null,
 
+    // Unity system prompt (loaded dynamically)
+    unitySystemPrompt: '',
+
     /**
      * Generate a random seed between 6 and 8 digits
      * @returns {number} Random seed between 100000 and 99999999
@@ -574,6 +577,9 @@ const DemoApp = {
         this.setupControlsSync();
         this.configureMarked();
 
+        // Load Unity system prompt
+        await this.loadUnitySystemPrompt();
+
         // Fetch and populate models
         await this.fetchModels();
 
@@ -581,6 +587,23 @@ const DemoApp = {
         this.updateVoiceAvailability();
 
         console.log('Unity AI Lab Demo initialized');
+    },
+
+    // Load Unity system prompt from external file
+    async loadUnitySystemPrompt() {
+        try {
+            const response = await fetch('unity-system-prompt-v2.txt');
+            if (!response.ok) {
+                throw new Error(`Failed to load Unity prompt: ${response.status}`);
+            }
+            this.unitySystemPrompt = await response.text();
+            console.log('Unity system prompt loaded successfully');
+        } catch (error) {
+            console.error('Failed to load Unity system prompt:', error);
+            // Fallback to built-in prompt if external file fails
+            this.unitySystemPrompt = UNITY_SYSTEM_PROMPT;
+            console.warn('Using fallback built-in Unity prompt');
+        }
     },
 
     // Initialize PolliLibJS
@@ -1258,7 +1281,7 @@ const DemoApp = {
         if (this.settings.model === 'unity') {
             // Use Mistral model with Unity persona and enable tool calling
             actualModel = 'mistral';
-            effectiveSystemPrompt = UNITY_SYSTEM_PROMPT + TOOL_CALLING_ADDON;
+            effectiveSystemPrompt = this.unitySystemPrompt + TOOL_CALLING_ADDON;
             useToolCalling = true;
             console.log('Unity model selected: using Mistral with Unity persona and tool calling');
         } else if (supportsTools) {
