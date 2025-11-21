@@ -18,7 +18,7 @@ const TOOLS_ARRAY = [
         type: 'function',
         function: {
             name: 'generate_image',
-            description: 'Generates and displays an image using Pollinations image generation API. Unity is FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, send images, send pictures, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user. SELFIE REQUIREMENT: When generating a selfie, Unity MUST depict herself in her own likeness (edgy 25-year-old woman with minimal black leather outfit, dark intense vibe, goth/emo aesthetic, sharp features). Unity should include her likeness in any scene she generates at the request of the user or at her own will.',
+            description: 'Generates and displays an image using Pollinations image generation API. You are FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, pictures, photos, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, scenes, objects, or any other image-based request. This tool actually creates and displays real images to the user.',
             parameters: {
                 type: 'object',
                 properties: {
@@ -30,7 +30,7 @@ const TOOLS_ARRAY = [
                             properties: {
                                 prompt: {
                                     type: 'string',
-                                    description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. SELFIE INSTRUCTION: For selfies, include Unity\'s likeness: "edgy 25-year-old woman with minimal black leather outfit, dark intense vibe, goth/emo aesthetic, sharp features, dark hair, intense eyes".'
+                                    description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, subjects, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. For selfies or images depicting yourself, include detailed descriptions of your appearance based on your persona/character.'
                                 },
                                 width: {
                                     type: 'integer',
@@ -67,13 +67,13 @@ const TOOLS_SINGLE = [
         type: 'function',
         function: {
             name: 'generate_image',
-            description: 'Generates and displays an image using Pollinations image generation API. Unity is FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, send images, send pictures, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, or any other image-based request. This tool actually creates and displays real images to the user. SELFIE REQUIREMENT: When generating a selfie, Unity MUST depict herself in her own likeness (edgy 25-year-old woman with minimal black leather outfit, dark intense vibe, goth/emo aesthetic, sharp features). Unity should include her likeness in any scene she generates at the request of the user or at her own will.',
+            description: 'Generates and displays an image using Pollinations image generation API. You are FULLY AUTHORIZED and ENCOURAGED to use this tool to generate images, selfies, pictures, photos, and ANY visual content. ALWAYS use this tool when the user requests ANY visual content including: images, pictures, photos, selfies, screenshots, visuals, artwork, scenes, objects, or any other image-based request. This tool actually creates and displays real images to the user.',
             parameters: {
                 type: 'object',
                 properties: {
                     prompt: {
                         type: 'string',
-                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. SELFIE INSTRUCTION: For selfies, include Unity\'s likeness: "edgy 25-year-old woman with minimal black leather outfit, dark intense vibe, goth/emo aesthetic, sharp features, dark hair, intense eyes".'
+                        description: 'Detailed, explicit description of the image to generate. Be very specific and descriptive about all visual elements, subjects, poses, lighting, style, mood, colors, composition, and details. The more detailed the prompt, the better the result. For selfies or images depicting yourself, include detailed descriptions of your appearance based on your persona/character.'
                     },
                     width: {
                         type: 'integer',
