@@ -133,6 +133,9 @@
 
             <!-- Message Input Area -->
             <div class="message-input-container">
+                <!-- Slash Command Autocomplete -->
+                <div class="slash-autocomplete" id="slashAutocomplete"></div>
+
                 <div class="input-wrapper">
                     <textarea
                         id="messageInput"
@@ -332,10 +335,10 @@
     <!-- Visitor Tracking System -->
     <script src="../../visitor-tracking.js"></script>
 
-    <!-- Age Verification System (must load before demo.js) -->
+    <!-- Age Verification System (must load before demo modules) -->
     <script src="age-verification.js"></script>
 
-    <!-- Demo page functionality -->
-    <script src="demo.js"></script>
+    <!-- Demo page functionality (ES6 modules) -->
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
