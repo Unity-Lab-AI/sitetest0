@@ -11,7 +11,7 @@ PolliLibPy is a comprehensive Python library providing complete access to all Po
 
 **Quick Stats:**
 - **Modules:** 13 Python files
-- **Lines of Code:** ~10,000+ lines
+- **Lines of Code:** ~5,700 lines
 - **API Coverage:** 100%
 - **Feature Parity:** Matches PolliLibJS 1:1
 - **Python Version:** 3.7+

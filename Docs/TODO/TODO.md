@@ -136,9 +136,9 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 ---
 
 ### 🎮 **/ai/demo Page** - Interactive Demo AI Chat
-**Status:** ✅ **IMPLEMENTED** (~85%)
+**Status:** ✅ **HIGHLY COMPLETE** (~90%)
 **Location:** `demo-page-TODO.md`
-**Summary:** Fully functional interactive demo showcasing PolliLibJS capabilities with text chat, image generation, TTS/voice features, markdown rendering, and advanced parameter controls.
+**Summary:** Fully functional interactive demo showcasing PolliLibJS capabilities with text chat, image generation, TTS/voice features, markdown rendering, advanced parameter controls, Unity persona integration, and age verification system.
 
 **Implemented Features:**
 - ✅ Text-to-text chat with AI models
@@ -152,8 +152,20 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 - ✅ CORS compatibility fixes
 - ✅ Cross-browser support (Firefox, WebKit confirmed)
 - ✅ Referrer authentication with Pollinations API
+- ✅ Unity persona with custom system prompt
+- ✅ Age verification system
+- ✅ ~8,000 lines of HTML/CSS/JS code
 
-**Remaining Work:** Additional polish, STT (speech-to-text), enhanced error handling, more testing
+**Remaining Work:** STT (speech-to-text), additional polish, enhanced error handling
+
+---
+
+### 🎯 **/apps Page** - Mini Applications Gallery
+**Status:** 🟢 **IN DEVELOPMENT** (~70%)
+**Location:** `/apps/`
+**Summary:** Collection of mini applications and interactive tools, including slideshows, image galleries, and other utility apps.
+
+**Note:** This is a newer addition with active development. See recent commits for apps page improvements (slideshow fixes, navigation, styling).
 
 ---
 
@@ -246,7 +258,8 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 | PolliLibPy | ✅ Complete (100%) | [../../PolliLibPy/TODO.md](../../PolliLibPy/TODO.md) |
 | Landing Website | ✅ Improved (~90%) | [website-TODO.md](website-TODO.md) |
 | /ai Landing Page | ✅ Complete (~95%) | `/ai/index.html` |
-| /ai/demo Page | ✅ Implemented (~85%) | [demo-page-TODO.md](demo-page-TODO.md) |
+| /ai/demo Page | ✅ Highly Complete (~90%) | [demo-page-TODO.md](demo-page-TODO.md) |
+| /apps Page | 🟢 In Development (~70%) | `/apps/` |
 | Main Chat App | ❌ External | [main-app-TODO.md](main-app-TODO.md) |
 | Infrastructure | ❌ Not Started | [infrastructure-TODO.md](infrastructure-TODO.md) |
 
@@ -264,10 +277,8 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 | SEO Implementation | [../SEO_IMPLEMENTATION.md](../SEO_IMPLEMENTATION.md) |
 | Test Guide | [../TEST_GUIDE.md](../TEST_GUIDE.md) |
 | Test Results | [../TEST_RESULTS.md](../TEST_RESULTS.md) |
-| Demo Parameters Analysis | [../../archived-tests/ANALYSIS_DEMO_PARAMETERS.md](../../archived-tests/ANALYSIS_DEMO_PARAMETERS.md) |
-| Playwright CI Notes | [../../archived-tests/PLAYWRIGHT_CI_NOTES.md](../../archived-tests/PLAYWRIGHT_CI_NOTES.md) |
-| Archived Tests | [../../archived-tests/README.md](../../archived-tests/README.md) |
 | Project README | [../../README.md](../../README.md) |
+| N8N Webhook Integration | [../N8N_WEBHOOK_INTEGRATION.md](../N8N_WEBHOOK_INTEGRATION.md) |
 
 ---
 
@@ -283,5 +294,5 @@ This project is a comprehensive AI-powered website showcasing the Pollinations A
 
 ---
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-22
 **Project:** UnityAILab Test Site (sitetest0)
