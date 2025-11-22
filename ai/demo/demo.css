@@ -1945,3 +1945,192 @@ body {
         width: 100%;
     }
 }
+
+/* ===================================
+   Mobile Browser UI Adjustments
+   Fixes input accessibility with browser navigation bars
+   =================================== */
+
+/* Account for mobile browser UI (address bars, home buttons, etc.) */
+@media (max-width: 992px) {
+    /* Use safe-area-inset for devices with notches/home indicators */
+    .message-input-container {
+        padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+        padding-left: calc(15px + env(safe-area-inset-left, 0px));
+        padding-right: calc(15px + env(safe-area-inset-right, 0px));
+    }
+
+    /* Ensure chat messages don't get hidden behind input area */
+    .chat-messages {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Adjust chat section height to account for browser chrome */
+    .chat-section {
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height - excludes browser UI */
+    }
+}
+
+/* Extra spacing for very small screens */
+@media (max-width: 576px) {
+    .message-input-container {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .chat-messages {
+        padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* ===================================
+   Improved Font Responsiveness
+   Better scaling for different screen sizes
+   =================================== */
+
+/* Base font size adjustments for smaller screens */
+@media (max-width: 992px) {
+    .demo-logo {
+        font-size: 1.1rem;
+    }
+
+    .demo-logo i {
+        font-size: 1.2rem;
+    }
+
+    .panel-title,
+    .mobile-modal-title {
+        font-size: 1rem;
+    }
+
+    .control-label {
+        font-size: 0.8rem;
+    }
+
+    .gothic-select,
+    .gothic-input-small,
+    .gothic-textarea {
+        font-size: 0.85rem;
+    }
+
+    .message-content {
+        font-size: 0.9rem;
+    }
+
+    .message-input {
+        font-size: 0.9rem;
+    }
+
+    .help-text {
+        font-size: 0.65rem;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+    }
+
+    .empty-state i {
+        font-size: 3.5rem;
+    }
+}
+
+/* Further adjustments for very small screens (phones) */
+@media (max-width: 576px) {
+    .demo-logo {
+        font-size: 1rem;
+    }
+
+    .demo-logo i {
+        font-size: 1.1rem;
+    }
+
+    .panel-title,
+    .mobile-modal-title {
+        font-size: 0.9rem;
+    }
+
+    .control-label {
+        font-size: 0.75rem;
+    }
+
+    .gothic-select,
+    .gothic-input-small,
+    .gothic-textarea {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+    }
+
+    .message-content {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .message-content h1 { font-size: 1.4rem; }
+    .message-content h2 { font-size: 1.2rem; }
+    .message-content h3 { font-size: 1.1rem; }
+    .message-content h4 { font-size: 1rem; }
+    .message-content h5 { font-size: 0.9rem; }
+    .message-content h6 { font-size: 0.85rem; }
+
+    .message-input {
+        font-size: 0.85rem;
+    }
+
+    .input-wrapper {
+        padding: 10px 14px;
+    }
+
+    .send-button {
+        width: 38px;
+        height: 38px;
+    }
+
+    .send-button i {
+        font-size: 1rem;
+    }
+
+    .help-text {
+        font-size: 0.6rem;
+    }
+
+    .model-info {
+        font-size: 0.7rem;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+    }
+
+    .empty-state i {
+        font-size: 2.5rem;
+    }
+
+    .mobile-menu-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .mobile-menu-btn i {
+        font-size: 1.1rem;
+    }
+
+    .action-btn {
+        font-size: 0.75rem;
+        padding: 10px 16px;
+    }
+
+    .group-title {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet-specific optimizations */
+@media (min-width: 577px) and (max-width: 992px) {
+    .message-content {
+        font-size: 0.92rem;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+    }
+}
