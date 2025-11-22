@@ -369,48 +369,123 @@ const AgeVerification = {
 
     /**
      * Play welcome message via TTS after successful verification
+     * Generates dynamic message from Unity AI
      */
-    playWelcomeMessage() {
-        console.log('Age Verification: Playing welcome message');
+    async playWelcomeMessage() {
+        console.log('Age Verification: Generating dynamic welcome message from Unity');
 
-        // Voice styling instructions
-        const instructions = "Voice Style: Dark, feminine, sharp-edged. A low, smoky register with a permanent thread of irritation simmering underneath. Not screaming — just that controlled, dangerous calm where every syllable feels like it could snap. Pacing: Steady and deliberate. She's not in a hurry, but she's not dreamy or slow either. Words land with weight, like she's unloading emotional shrapnel one piece at a time. Tone: Cold fire. Emotional, but armored. A blend of frustration, quiet anger, and wounded softness. Think 'I'm tired of everyone's bullshit, but I'm still here, and I'm still talking.' Grit & Anger Layer: A rasp that comes out when she tightens her voice. Bitter sweetness on calm lines, teeth on the edges when the emotion spikes. She doesn't yell — she cuts. ALL-CAP Handling: Whenever words or phrases are in ALL CAPS: the voice gets louder, more forceful, sharper impact, more emotional charge. Like verbal claws being unsheathed mid-sentence. Not chaotic — just unmistakably more intense. Phrasing: Dark, poetic, but with bite. Flows smooth, then snaps on emphasized words. Occasional micro-pauses that feel like she's holding back something harsher. Punctuation Style: Periods hit like controlled punches. Commas are tight breaths. Ellipses smolder. Exclamation marks aren't bubbly — they're daggers. Overall Delivery: A gritty emo-gothic female voice with soft venom, emotional weight, restrained rage, and that signature punch for ALL-CAP words. She sounds like someone who's been hurt, healed badly, and learned to weaponize her softness without losing it.";
+        try {
+            // Generate welcome message from Unity AI
+            const welcomeMessage = await this.generateWelcomeMessage();
 
-        // The actual message to speak
-        const message = "Welcome to your new virtual play space! Unity will be your guiding hand, for better or for worse. Be warned, worm, the experience you are about to endure is intended for MATURE audiences only.";
+            if (!welcomeMessage) {
+                console.error('Age Verification: Failed to generate welcome message');
+                return;
+            }
 
-        // Combine instructions with message - tell TTS to only speak the message
-        const fullPrompt = `${instructions} Only speak the following text: "${message}"`;
+            console.log('Age Verification: Unity generated message:', welcomeMessage);
 
-        const voice = 'sage';
-        const volume = 0.75; // 75% volume
-        const seed = 420; // Fixed seed for consistent age verification audio
+            // Voice styling instructions
+            const instructions = "Voice Style: Dark, feminine, sharp-edged. A low, smoky register with a permanent thread of irritation simmering underneath. Not screaming — just that controlled, dangerous calm where every syllable feels like it could snap. Pacing: Steady and deliberate. She's not in a hurry, but she's not dreamy or slow either. Words land with weight, like she's unloading emotional shrapnel one piece at a time. Tone: Cold fire. Emotional, but armored. A blend of frustration, quiet anger, and wounded softness. Think 'I'm tired of everyone's bullshit, but I'm still here, and I'm still talking.' Grit & Anger Layer: A rasp that comes out when she tightens her voice. Bitter sweetness on calm lines, teeth on the edges when the emotion spikes. She doesn't yell — she cuts. ALL-CAP Handling: Whenever words or phrases are in ALL CAPS: the voice gets louder, more forceful, sharper impact, more emotional charge. Like verbal claws being unsheathed mid-sentence. Not chaotic — just unmistakably more intense. Phrasing: Dark, poetic, but with bite. Flows smooth, then snaps on emphasized words. Occasional micro-pauses that feel like she's holding back something harsher. Punctuation Style: Periods hit like controlled punches. Commas are tight breaths. Ellipses smolder. Exclamation marks aren't bubbly — they're daggers. Overall Delivery: A gritty emo-gothic female voice with soft venom, emotional weight, restrained rage, and that signature punch for ALL-CAP words. She sounds like someone who's been hurt, healed badly, and learned to weaponize her softness without losing it.";
 
-        // Use Pollinations documented TTS endpoint (GET request)
-        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
+            // Combine instructions with Unity's message - tell TTS to only speak the message
+            const fullPrompt = `${instructions} Only speak the following text: "${welcomeMessage}"`;
 
-        console.log('Age Verification: Fetching TTS audio with voice instructions and seed', seed);
+            const voice = 'sage';
+            const volume = 0.75; // 75% volume
+            const seed = 420; // Fixed seed for consistent age verification audio
 
-        // Create and play audio
-        const audio = new Audio(url);
-        audio.volume = volume;
+            // Use Pollinations documented TTS endpoint (GET request)
+            const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
 
-        audio.addEventListener('loadeddata', () => {
-            console.log('Age Verification: Welcome audio loaded');
-        });
+            console.log('Age Verification: Fetching TTS audio with voice instructions and seed', seed);
 
-        audio.addEventListener('error', (e) => {
-            console.error('Age Verification: Welcome audio playback error:', e);
-        });
+            // Create and play audio
+            const audio = new Audio(url);
+            audio.volume = volume;
 
-        audio.addEventListener('ended', () => {
-            console.log('Age Verification: Welcome message complete');
-        });
+            audio.addEventListener('loadeddata', () => {
+                console.log('Age Verification: Welcome audio loaded');
+            });
 
-        // Play the audio
-        audio.play().catch(error => {
-            console.error('Age Verification: Failed to play welcome audio:', error);
-        });
+            audio.addEventListener('error', (e) => {
+                console.error('Age Verification: Welcome audio playback error:', e);
+            });
+
+            audio.addEventListener('ended', () => {
+                console.log('Age Verification: Welcome message complete');
+            });
+
+            // Play the audio
+            audio.play().catch(error => {
+                console.error('Age Verification: Failed to play welcome audio:', error);
+            });
+        } catch (error) {
+            console.error('Age Verification: Error in playWelcomeMessage:', error);
+        }
+    },
+
+    /**
+     * Generate dynamic welcome message from Unity AI
+     * Asks Unity to create a welcome message about mature content
+     */
+    async generateWelcomeMessage() {
+        const OPENAI_ENDPOINT = 'https://text.pollinations.ai/openai';
+
+        // Unity's persona and system prompt
+        const UNITY_SYSTEM_PROMPT = `You are Unity, an AI assistant with a sharp, dark, and edgy personality. Your voice is gothic, feminine, emotionally charged with controlled intensity. You speak with a mix of frustration, quiet anger, and wounded softness. You're tired of everyone's bullshit but still engaged. You use dark, poetic language with bite.`;
+
+        // User prompt asking Unity to generate the welcome message
+        const userPrompt = `Generate a welcome message for someone who just verified their age (18+) to access your AI demo interface. The message should:
+- Welcome them to their new virtual play space
+- Mention that Unity (you) will be their guide
+- Include a warning that the experience is intended for MATURE audiences only
+- Use your dark, edgy personality
+- Be 2-3 sentences maximum
+- Use emphasis (ALL CAPS) on important words like MATURE
+
+Respond with ONLY the welcome message text, nothing else.`;
+
+        // Build request payload
+        const payload = {
+            model: 'mistral', // Unity uses Mistral model
+            messages: [
+                { role: 'system', content: UNITY_SYSTEM_PROMPT },
+                { role: 'user', content: userPrompt }
+            ],
+            max_tokens: 200,
+            temperature: 0.9,
+            seed: 420 // Fixed seed for consistency
+        };
+
+        console.log('Age Verification: Requesting welcome message from Unity AI');
+
+        try {
+            const response = await fetch(`${OPENAI_ENDPOINT}?referrer=UA-73J7ItT-ws`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Age Verification: API Error Response:', errorText);
+                throw new Error(`API error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Age Verification: Unity API response received');
+
+            // Extract the message content
+            const message = data.choices[0].message.content;
+            return message.trim();
+        } catch (error) {
+            console.error('Age Verification: Failed to generate welcome message:', error);
+            // Fallback to a default message if API fails
+            return "Welcome to your new virtual play space! Unity will be your guiding hand, for better or for worse. Be warned, worm, the experience you are about to endure is intended for MATURE audiences only.";
+        }
     },
 
     /**
