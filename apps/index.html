@@ -59,7 +59,38 @@
 
     <!-- AOS Animation Library CSS -->
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
-    
+
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        /* Smooth transition when page loads */
+        body {
+            transition: opacity 0.3s ease-in;
+        }
+
+        /* Ensure background is visible immediately */
+        .background-overlay,
+        .red-streaks {
+            will-change: auto;
+        }
+
+        /* Skip to main content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #dc143c;
+            color: #fff;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            font-weight: bold;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+
+    <!-- Apps Page Specific Styles -->
     <link rel="stylesheet" href="apps.css">
 </head>
 <body>
