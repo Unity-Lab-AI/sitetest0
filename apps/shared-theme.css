@@ -221,3 +221,325 @@ body.unity-nav-active {
     background: var(--crimson-red);
     color: var(--white);
 }
+
+/* ===================================
+   Common App Styling Components
+   =================================== */
+
+/* Base App Container */
+.app-container {
+    max-width: 1400px;
+    margin: 80px auto 40px;
+    padding: 30px;
+    background: rgba(26, 26, 26, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    box-shadow: 0 10px 30px rgba(220, 20, 60, 0.2);
+}
+
+/* App Header */
+.app-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(220, 20, 60, 0.2);
+}
+
+.app-title {
+    font-family: 'Trajan Pro', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--white);
+    text-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.app-subtitle {
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.1rem;
+    color: var(--light-grey);
+    letter-spacing: 1px;
+}
+
+/* Common Button Styles */
+.unity-btn {
+    padding: 12px 30px;
+    font-family: 'Trajan Pro', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid var(--crimson-red);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2);
+}
+
+.unity-btn-primary {
+    background: var(--gradient-red);
+    color: var(--white);
+    border-color: var(--crimson-red);
+}
+
+.unity-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(220, 20, 60, 0.4);
+    border-color: var(--accent-red);
+}
+
+.unity-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(220, 20, 60, 0.3);
+}
+
+.unity-btn-primary:disabled {
+    background: var(--dark-grey);
+    border-color: #444;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.unity-btn-secondary {
+    background: transparent;
+    color: var(--crimson-red);
+    border-color: var(--crimson-red);
+}
+
+.unity-btn-secondary:hover {
+    background: rgba(220, 20, 60, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(220, 20, 60, 0.3);
+}
+
+/* Form Elements */
+.unity-input,
+.unity-select,
+.unity-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    font-family: 'Trajan Pro', serif;
+    font-size: 0.95rem;
+    background: rgba(26, 26, 26, 0.8);
+    color: var(--light-grey);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.unity-input:focus,
+.unity-select:focus,
+.unity-textarea:focus {
+    background: rgba(26, 26, 26, 1);
+    border-color: var(--crimson-red);
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.3);
+}
+
+.unity-input::placeholder,
+.unity-textarea::placeholder {
+    color: rgba(204, 204, 204, 0.5);
+}
+
+.unity-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23dc143c'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 1.2em;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.unity-select:hover {
+    border-color: var(--crimson-red);
+}
+
+/* Card Components */
+.unity-card {
+    background: rgba(42, 42, 42, 0.6);
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.unity-card:hover {
+    border-color: var(--crimson-red);
+    box-shadow: 0 8px 25px rgba(220, 20, 60, 0.2);
+    transform: translateY(-5px);
+}
+
+.unity-card-header {
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+}
+
+.unity-card-body {
+    color: var(--light-grey);
+    line-height: 1.6;
+}
+
+/* Panel/Settings Components */
+.unity-panel {
+    background: rgba(21, 21, 21, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    margin-bottom: 20px;
+}
+
+.unity-panel-header {
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--crimson-red);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Chat/Message Components */
+.unity-chat-container {
+    background: rgba(21, 21, 21, 0.8);
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    height: 500px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.unity-message {
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.unity-message-user {
+    background: rgba(220, 20, 60, 0.1);
+    border-left: 3px solid var(--crimson-red);
+    color: var(--white);
+}
+
+.unity-message-ai {
+    background: rgba(42, 42, 42, 0.6);
+    border-left: 3px solid var(--light-grey);
+    color: var(--light-grey);
+}
+
+/* Image/Media Containers */
+.unity-media-container {
+    width: 100%;
+    background: rgba(21, 21, 21, 0.8);
+    border: 1px solid rgba(220, 20, 60, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.unity-media-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Control Groups */
+.unity-control-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.unity-control-group > * {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Typography Utilities */
+.unity-text-primary {
+    color: var(--crimson-red);
+}
+
+.unity-text-secondary {
+    color: var(--light-grey);
+}
+
+.unity-text-white {
+    color: var(--white);
+}
+
+.unity-text-center {
+    text-align: center;
+}
+
+/* Spacing Utilities */
+.unity-mt-1 { margin-top: 10px; }
+.unity-mt-2 { margin-top: 20px; }
+.unity-mt-3 { margin-top: 30px; }
+.unity-mb-1 { margin-bottom: 10px; }
+.unity-mb-2 { margin-bottom: 20px; }
+.unity-mb-3 { margin-bottom: 30px; }
+.unity-p-1 { padding: 10px; }
+.unity-p-2 { padding: 20px; }
+.unity-p-3 { padding: 30px; }
+
+/* Loading Indicator */
+.unity-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(220, 20, 60, 0.3);
+    border-top-color: var(--crimson-red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .app-container {
+        margin: 70px 15px 20px;
+        padding: 20px;
+    }
+
+    .app-title {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+
+    .app-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .unity-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+
+    .unity-control-group {
+        flex-direction: column;
+    }
+
+    .unity-control-group > * {
+        min-width: 100%;
+    }
+
+    .unity-chat-container {
+        height: 400px;
+    }
+}
