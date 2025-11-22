@@ -4,50 +4,175 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unity Voice Lab – System Check</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Roboto+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    />
-    <style>
-        body { visibility: hidden; }
-    </style>
+
+    <!-- Bootstrap CSS -->
+    <link href="../../vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../vendor/fontawesome/all.min.css">
+
+    <!-- Shared Theme -->
+    <link rel="stylesheet" href="../shared-theme.css">
+
+    <!-- App-specific styles -->
     <link rel="stylesheet" href="style.css?v=20240606" />
     <link rel="stylesheet" href="./styleAI.css?v=20240606" />
-    <script>
-        (function () {
-            try {
-                var path = window.location.pathname || '';
-                if (!path.endsWith('/')) {
-                    var lastSegment = path.substring(path.lastIndexOf('/') + 1);
-                    if (lastSegment && lastSegment.indexOf('.') === -1) {
-                        var search = window.location.search || '';
-                        var hash = window.location.hash || '';
-                        var destination = path + '/' + search + hash;
-                        window.location.replace(destination);
-                    }
-                }
-            } catch (error) {
-                console.warn('Failed to normalize trailing slash for assets:', error);
-            }
-        })();
 
-        window.addEventListener('load', function() {
-            document.body.style.visibility = 'visible';
-        });
-    </script>
-    <script src="landing.js?v=20240606" defer></script>
-    <!-- Load the voice experience bundle from the project root -->
-    <script src="./app.js?v=20240606" defer></script>
+    <style>
+        body {
+            visibility: hidden;
+            background: var(--primary-black);
+            color: var(--light-grey);
+        }
+
+        /* Gothic theme overrides */
+        .landing {
+            background: transparent;
+        }
+
+        .landing-grid {
+            max-width: 1400px;
+            margin: 80px auto 40px;
+            padding: 30px;
+        }
+
+        .landing-hero h1 {
+            font-family: 'Trajan Pro', serif;
+            color: var(--white);
+            text-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .landing-badge {
+            background: var(--gradient-red);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Trajan Pro', serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .landing-lede {
+            font-family: 'Trajan Pro', serif;
+            color: var(--light-grey);
+            line-height: 1.6;
+        }
+
+        .surface-card {
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(220, 20, 60, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.2);
+        }
+
+        .accent-card {
+            border-color: var(--crimson-red);
+        }
+
+        button.primary,
+        #launch-app {
+            padding: 12px 30px;
+            background: var(--gradient-red);
+            color: var(--white);
+            border: 2px solid var(--crimson-red);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Trajan Pro', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2);
+        }
+
+        button.primary:hover,
+        #launch-app:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.4);
+        }
+
+        button.primary:disabled,
+        #launch-app:disabled {
+            background: var(--dark-grey);
+            border-color: #444;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        button.ghost,
+        #recheck-dependencies {
+            padding: 12px 30px;
+            background: transparent;
+            color: var(--crimson-red);
+            border: 2px solid var(--crimson-red);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Trajan Pro', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2);
+        }
+
+        button.ghost:hover,
+        #recheck-dependencies:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.3);
+        }
+
+        .dependency-light {
+            background: var(--crimson-red);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+        }
+
+        .dependency-light[data-state="pass"] {
+            background: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        .dependency-light[data-state="fail"] {
+            background: #ffaa00;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.5);
+        }
+
+        .landing-link {
+            color: var(--crimson-red);
+            text-decoration: none;
+            font-family: 'Trajan Pro', serif;
+            transition: all 0.3s ease;
+        }
+
+        .landing-link:hover {
+            color: var(--accent-red);
+            text-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
+        }
+
+        code {
+            background: rgba(220, 20, 60, 0.1);
+            color: var(--crimson-red);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+
     <noscript>
         <link rel="stylesheet" href="./style.css?v=20240606" />
         <link rel="stylesheet" href="./styleAI.css?v=20240606" />
     </noscript>
-  <link rel="stylesheet" href="../shared-theme.css">
 </head>
 <body class="no-js" data-app-state="landing">
-    
+    <!-- Background Effects -->
+    <div class="unity-background-overlay"></div>
+    <div class="unity-red-streaks"></div>
+
     <noscript>
         <div class="no-js-banner" role="alert">
             <strong>JavaScript is disabled.</strong>
@@ -59,10 +184,10 @@
         <div class="landing-grid">
             <div class="landing-hero surface-card accent-card">
                 <span class="landing-badge">Unity voice lab check-in</span>
-                <h1 id="landing-title">Let’s make sure every light is green</h1>
+                <h1 id="landing-title">Let's make sure every light is green</h1>
                 <p class="landing-lede">
                     Before Unity can chat with you, we run a quick readiness scan on your browser. Think of it like making sure
-                    your helmet is on straight. When a light glows amber, read the friendly tip, fix it, then press “Check again.”
+                    your helmet is on straight. When a light glows amber, read the friendly tip, fix it, then press "Check again."
                 </p>
                 <div class="landing-links">
                     <a class="landing-link" href="https://unityailab.online" target="_blank" rel="noopener">Back to Unity AI Lab home</a>
@@ -85,7 +210,7 @@
                         <div class="dependency-summary-text">
                             <h2>What the lights mean</h2>
                             <p id="dependency-summary">
-                                We’re checking right now. Green means your setup is ready. An amber light means we need to fix that part together
+                                We're checking right now. Green means your setup is ready. An amber light means we need to fix that part together
                                 before Unity can listen.
                             </p>
                         </div>
@@ -107,7 +232,7 @@
                                 Secure connection detected. Unity can safely access the microphone and speech features.
                             </p>
                             <p class="dependency-message" data-message-type="fail">
-                                Open this page with <code>https://</code> or from <code>localhost</code>, then press “Check again.”
+                                Open this page with <code>https://</code> or from <code>localhost</code>, then press "Check again."
                             </p>
                         </li>
                         <li
@@ -124,9 +249,10 @@
                             <p class="dependency-message" data-message-type="pass">
                                 Speech recognition is available. Unity will understand what you say.
                             </p>
-                                                            <p class="dependency-message" data-message-type="fail">
-                                                                Firefox is supported via the Vosklet fallback library.
-                                                            </p>                        </li>
+                            <p class="dependency-message" data-message-type="fail">
+                                Firefox is supported via the Vosklet fallback library.
+                            </p>
+                        </li>
                         <li
                             class="dependency-item"
                             data-dependency="speech-synthesis"
@@ -142,7 +268,7 @@
                                 Speech voices are ready. Unity can answer out loud through your speakers.
                             </p>
                             <p class="dependency-message" data-message-type="fail">
-                                Use Chrome, Edge, or Safari with audio enabled, then press “Check again.”
+                                Use Chrome, Edge, or Safari with audio enabled, then press "Check again."
                             </p>
                         </li>
                         <li
@@ -160,7 +286,7 @@
                                 Microphone permission granted. Unity can hear your voice input.
                             </p>
                             <p class="dependency-message" data-message-type="fail">
-                                Click “Allow” on the microphone prompt or enable it in site settings, then press “Check again.”
+                                Click "Allow" on the microphone prompt or enable it in site settings, then press "Check again."
                             </p>
                         </li>
                     </ul>
@@ -173,7 +299,7 @@
             <ol class="landing-steps">
                 <li>
                     <strong>Stay on a secure connection.</strong> Always load <code>https://unityailab.com/Talk-to-Unity/</code> or run the site from
-                    <code>localhost</code> while developing. If you see <code>http://</code> in the address bar, add the missing “s” or jump back to the
+                    <code>localhost</code> while developing. If you see <code>http://</code> in the address bar, add the missing "s" or jump back to the
                     Unity AI Lab home page and enter from there.
                 </li>
                 <li>
@@ -184,7 +310,7 @@
                     for microphone access, click <em>Allow</em>. You can also review these permissions via the lock icon near the URL bar.
                 </li>
                 <li>
-                    <strong>Re-run the check.</strong> Once you’ve made changes, press “Check again.” When every status reads “Ready,” the “Talk to Unity” button below
+                    <strong>Re-run the check.</strong> Once you've made changes, press "Check again." When every status reads "Ready," the "Talk to Unity" button below
                     will unlock and slide the live lab into view on this page.
                 </li>
                 <li>
@@ -192,7 +318,7 @@
                 </li>
             </ol>
             <p>
-                Need help? Refresh the page to start over, or read the tips above each alert. When everything looks good, we’ll send you forward
+                Need help? Refresh the page to start over, or read the tips above each alert. When everything looks good, we'll send you forward
                 to the interactive Unity assistant.
             </p>
         </div>
@@ -227,8 +353,20 @@
             </main>
         </div>
     </div>
-  <!-- Unity AI Lab Navigation -->
-  <script src="../shared-nav.js"></script>
 
+    <!-- Bootstrap JS -->
+    <script src="../../vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+    <!-- Unity AI Lab Navigation -->
+    <script src="../shared-nav.js"></script>
+
+    <!-- Initialization Script -->
+    <script src="index.js" defer></script>
+
+    <!-- Landing Page Logic -->
+    <script src="landing.js?v=20240606" defer></script>
+
+    <!-- Voice Experience Bundle -->
+    <script src="./app.js?v=20240606" defer></script>
 </body>
 </html>
