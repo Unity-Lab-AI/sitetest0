@@ -2365,8 +2365,39 @@ a {
 
     /* Range sliders */
     input[type="range"] {
-        min-height: 30px;
+        min-height: 44px;
+        padding: 10px 0;
         touch-action: pan-x;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
+
+    /* Improve slider thumb size for mobile */
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        touch-action: pan-x;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        touch-action: pan-x;
+    }
+
+    /* Larger track for easier dragging */
+    input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+    }
+
+    input[type="range"]::-moz-range-track {
+        height: 6px;
     }
 }
 
