@@ -56,6 +56,11 @@ body {
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Mobile safe area insets - prevents content from being obscured by browser UI */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 /* Background Effects */
@@ -192,6 +197,10 @@ body {
     -moz-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
+    /* Mobile safe area insets for navigation */
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 .navbar.scrolled {
@@ -295,6 +304,11 @@ body {
     background: -moz-linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0a0a0a 100%);
     background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0a0a0a 100%);
     overflow: hidden;
+    /* Mobile safe area insets for hero section */
+    padding-top: max(80px, env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 .hero-section::before {
@@ -763,6 +777,10 @@ body {
     background: var(--primary-black);
     border-top: 1px solid rgba(220, 20, 60, 0.3);
     color: var(--light-grey);
+    /* Mobile safe area insets for footer */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .footer-title {
@@ -1273,6 +1291,10 @@ body {
     background: var(--gradient-dark);
     background: -webkit-linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0a0a0a 100%);
     background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0a0a0a 100%);
+    /* Mobile safe area insets for page header */
+    padding-top: max(150px, calc(150px + env(safe-area-inset-top)));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 /* Stats Section */
