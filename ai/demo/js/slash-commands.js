@@ -203,6 +203,13 @@ export function handleSlashCommandInput(slashCommands) {
     const text = input.value;
     const autocompleteEl = document.getElementById('slashAutocomplete');
 
+    // Safety check for slashCommands
+    if (!slashCommands || !Array.isArray(slashCommands)) {
+        console.error('slashCommands is not defined or not an array:', slashCommands);
+        hideAutocomplete();
+        return;
+    }
+
     // Check if input starts with "/"
     if (text.startsWith('/')) {
         const parts = text.slice(1).split(' ');
@@ -215,6 +222,7 @@ export function handleSlashCommandInput(slashCommands) {
         );
 
         if (matches.length > 0) {
+            console.log('[SlashCmd] Found', matches.length, 'matches, showing autocomplete');
             showAutocomplete(matches, commandPart, paramPart);
             autocompleteVisible = true;
         } else {
