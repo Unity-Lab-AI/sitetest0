@@ -753,11 +753,9 @@ const DemoApp = {
 
     // Populate text model dropdown
     populateTextModels(models) {
-        const modelSelect = document.getElementById('modelSelect');
-        if (!modelSelect || !models || models.length === 0) return;
-
-        // Clear existing options
-        modelSelect.innerHTML = '';
+        // Get ALL model select elements (desktop sidebar + mobile modal)
+        const modelSelects = document.querySelectorAll('#modelSelect');
+        if (modelSelects.length === 0 || !models || models.length === 0) return;
 
         // Sort models to put Unity first
         const sortedModels = [...models].sort((a, b) => {
@@ -768,68 +766,89 @@ const DemoApp = {
             return 0;
         });
 
-        // Add models from API
-        sortedModels.forEach((model, index) => {
-            const option = document.createElement('option');
-            // Use the model name or id as value
-            const modelValue = model.name || model.id || model;
-            option.value = modelValue;
-            // Use display name or name as label
-            option.textContent = model.displayName || model.name || modelValue;
+        // Update ALL model select dropdowns
+        modelSelects.forEach(modelSelect => {
+            // Clear existing options
+            modelSelect.innerHTML = '';
 
-            // Select Unity as default, or first model if Unity not found
-            if (modelValue === 'unity' || (index === 0 && !sortedModels.find(m => (m.name || m.id || m) === 'unity'))) {
-                option.selected = true;
-                // Only update settings.model if not already set from cache
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    this.settings.model = modelValue;
+            // Add models from API
+            sortedModels.forEach((model, index) => {
+                const option = document.createElement('option');
+                // Use the model name or id as value
+                const modelValue = model.name || model.id || model;
+                option.value = modelValue;
+                // Use display name or name as label
+                option.textContent = model.displayName || model.name || modelValue;
+
+                // Select Unity as default, or first model if Unity not found
+                if (modelValue === 'unity' || (index === 0 && !sortedModels.find(m => (m.name || m.id || m) === 'unity'))) {
+                    option.selected = true;
+                    // Only update settings.model if not already set from cache
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        this.settings.model = modelValue;
+                    }
                 }
-                this.updateModelInfo(this.settings.model);
-            }
 
-            // Select the cached model if it exists
-            if (modelValue === this.settings.model) {
-                option.selected = true;
-            }
+                // Select the cached model if it exists
+                if (modelValue === this.settings.model) {
+                    option.selected = true;
+                }
 
-            modelSelect.appendChild(option);
+                modelSelect.appendChild(option);
+            });
+
+            // Ensure the selected option matches current settings
+            modelSelect.value = this.settings.model;
         });
 
-        // Ensure the selected option matches current settings
-        modelSelect.value = this.settings.model;
+        // Update model info display
+        this.updateModelInfo(this.settings.model);
     },
 
     // Populate image model dropdown
     populateImageModels(models) {
-        const imageModelSelect = document.getElementById('imageModel');
-        if (!imageModelSelect || !models || models.length === 0) return;
+        // Get ALL image model select elements (desktop sidebar + mobile modal)
+        const imageModelSelects = document.querySelectorAll('#imageModel');
+        if (imageModelSelects.length === 0 || !models || models.length === 0) return;
 
-        // Clear existing options
-        imageModelSelect.innerHTML = '';
+        // Update ALL image model select dropdowns
+        imageModelSelects.forEach(imageModelSelect => {
+            // Clear existing options
+            imageModelSelect.innerHTML = '';
 
-        // Add models from API
-        models.forEach(model => {
-            const option = document.createElement('option');
-            // Use the model name or id as value
-            const modelValue = model.name || model.id || model;
-            option.value = modelValue;
-            // Use display name or name as label
-            option.textContent = model.displayName || model.name || modelValue;
+            // Add models from API
+            models.forEach(model => {
+                const option = document.createElement('option');
+                // Use the model name or id as value
+                const modelValue = model.name || model.id || model;
+                option.value = modelValue;
+                // Use display name or name as label
+                option.textContent = model.displayName || model.name || modelValue;
 
-            // Select first model as default
-            if (models.indexOf(model) === 0) {
-                option.selected = true;
-                this.settings.imageModel = modelValue;
-            }
+                // Select first model as default
+                if (models.indexOf(model) === 0 && !localStorage.getItem('unityDemoSettings')) {
+                    option.selected = true;
+                    this.settings.imageModel = modelValue;
+                }
 
-            imageModelSelect.appendChild(option);
+                // Select the cached model if it exists
+                if (modelValue === this.settings.imageModel) {
+                    option.selected = true;
+                }
+
+                imageModelSelect.appendChild(option);
+            });
+
+            // Ensure the selected option matches current settings
+            imageModelSelect.value = this.settings.imageModel;
         });
     },
 
     // Extract voices from text models that support TTS
     extractVoices(models) {
-        const voiceSelect = document.getElementById('voiceSelect');
-        if (!voiceSelect || !models) return;
+        // Get ALL voice select elements (desktop sidebar + mobile modal)
+        const voiceSelects = document.querySelectorAll('#voiceSelect');
+        if (voiceSelects.length === 0 || !models) return;
 
         // Find models that support text-to-speech
         const ttsModels = models.filter(model => {
@@ -852,34 +871,37 @@ const DemoApp = {
             // Remove duplicates
             voices = [...new Set(voices)];
 
-            // Clear existing options
-            voiceSelect.innerHTML = '';
+            // Update ALL voice select dropdowns
+            voiceSelects.forEach(voiceSelect => {
+                // Clear existing options
+                voiceSelect.innerHTML = '';
 
-            // Add voices
-            voices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = voice;
-                option.textContent = this.formatVoiceName(voice);
+                // Add voices
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = this.formatVoiceName(voice);
 
-                // Select sage as default, or first voice if sage not found
-                // Only set default if not already cached
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    if (voice === 'sage' || (index === 0 && !voices.includes('sage'))) {
-                        option.selected = true;
-                        this.settings.voice = voice;
+                    // Select sage as default, or first voice if sage not found
+                    // Only set default if not already cached
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        if (voice === 'sage' || (index === 0 && !voices.includes('sage'))) {
+                            option.selected = true;
+                            this.settings.voice = voice;
+                        }
                     }
-                }
 
-                // Select the cached voice if it exists
-                if (voice === this.settings.voice) {
-                    option.selected = true;
-                }
+                    // Select the cached voice if it exists
+                    if (voice === this.settings.voice) {
+                        option.selected = true;
+                    }
 
-                voiceSelect.appendChild(option);
+                    voiceSelect.appendChild(option);
+                });
+
+                // Ensure the selected option matches current settings
+                voiceSelect.value = this.settings.voice;
             });
-
-            // Ensure the selected option matches current settings
-            voiceSelect.value = this.settings.voice;
 
             this.availableVoices = voices;
             console.log('Voices loaded:', voices.length);
@@ -905,32 +927,35 @@ const DemoApp = {
 
         // Also populate fallback voices (extracted from openai-audio model)
         const fallbackVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral', 'verse', 'ballad', 'ash', 'sage', 'amuch', 'dan'];
-        const voiceSelect = document.getElementById('voiceSelect');
-        if (voiceSelect) {
-            voiceSelect.innerHTML = '';
-            fallbackVoices.forEach((voice) => {
-                const option = document.createElement('option');
-                option.value = voice;
-                option.textContent = this.formatVoiceName(voice);
+        // Get ALL voice select elements (desktop sidebar + mobile modal)
+        const voiceSelects = document.querySelectorAll('#voiceSelect');
+        if (voiceSelects.length > 0) {
+            voiceSelects.forEach(voiceSelect => {
+                voiceSelect.innerHTML = '';
+                fallbackVoices.forEach((voice) => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = this.formatVoiceName(voice);
 
-                // Default to sage if not cached, otherwise use cached value
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    if (voice === 'sage') {
-                        option.selected = true;
-                        this.settings.voice = voice;
+                    // Default to sage if not cached, otherwise use cached value
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        if (voice === 'sage') {
+                            option.selected = true;
+                            this.settings.voice = voice;
+                        }
                     }
-                }
 
-                // Select the cached voice if it exists
-                if (voice === this.settings.voice) {
-                    option.selected = true;
-                }
+                    // Select the cached voice if it exists
+                    if (voice === this.settings.voice) {
+                        option.selected = true;
+                    }
 
-                voiceSelect.appendChild(option);
+                    voiceSelect.appendChild(option);
+                });
+
+                // Ensure the selected option matches current settings
+                voiceSelect.value = this.settings.voice;
             });
-
-            // Ensure the selected option matches current settings
-            voiceSelect.value = this.settings.voice;
 
             this.availableVoices = fallbackVoices;
         }
