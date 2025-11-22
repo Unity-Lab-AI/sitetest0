@@ -15,6 +15,9 @@ function logToScreen(message) {
 // FIXED: make the debug banner reflect the real script path
 
 
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
+
 const landingSection = document.getElementById('landing');
 const appRoot = document.getElementById('app-root');
 const heroStage = document.getElementById('hero-stage');
@@ -918,10 +921,11 @@ function buildPollinationsImageUrl(prompt, { model = currentImageModel } = {}) {
         height: '1024',
         nologo: 'true',
         enhance: 'true',
-        seed: Math.floor(Math.random() * 1_000_000_000).toString()
+        seed: Math.floor(Math.random() * 1_000_000_000).toString(),
+        referrer: encodeURIComponent(polliAPI.referrer)
     });
 
-    return `https://image.pollinations.ai/prompt/${encodeURIComponent(sanitized)}?${params.toString()}`;
+    return `${PollinationsAPI.IMAGE_API}/prompt/${polliAPI.encodePrompt(sanitized)}?${params.toString()}`;
 }
 
 function extractImageUrl(text) {
@@ -1293,7 +1297,7 @@ function handleVoiceCommand(command) {
     return false;
 }
 
-const POLLINATIONS_TEXT_URL = 'https://text.pollinations.ai/openai';
+const POLLINATIONS_TEXT_URL = PollinationsAPI.TEXT_API;
 const UNITY_REFERRER = 'https://www.unityailab.com/';
 
 async function getAIResponse(userInput) {
@@ -1318,7 +1322,7 @@ async function getAIResponse(userInput) {
             model: 'unity'
         });
 
-        const textResponse = await fetch(POLLINATIONS_TEXT_URL, {
+        const textResponse = await polliAPI.retryRequest(POLLINATIONS_TEXT_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

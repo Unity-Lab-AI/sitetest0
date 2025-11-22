@@ -3,22 +3,8 @@
  * AI-powered screensaver functionality
  */
 
-// From chat-core.js
-async function pollinationsFetch(url, options = {}, { timeoutMs = 45000 } = {}) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(new DOMException('timeout', 'AbortError')), timeoutMs);
-    try {
-        const res = await fetch(
-            url,
-            { ...options, signal: controller.signal, cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res;
-    } finally {
-        clearTimeout(timer);
-    }
-}
-window.pollinationsFetch = pollinationsFetch;
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
 
 // From screensaver.js
 document.addEventListener("DOMContentLoaded", () => {
@@ -163,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchImageModels() {
         try {
-            const res = await window.pollinationsFetch("https://image.pollinations.ai/models?referrer=unityailab.com", {
+            const res = await polliAPI.retryRequest(`${PollinationsAPI.IMAGE_API}/models`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
                 cache: "no-store"
@@ -217,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const textModel = "openai"; // Hardcoded as model-select is not available
         const seed = generateSeed();
         try {
-            const response = await window.pollinationsFetch("https://text.pollinations.ai/openai?referrer=unityailab.com", {
+            const response = await polliAPI.retryRequest(`${PollinationsAPI.TEXT_API}/openai`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 cache: "no-store",
@@ -282,7 +268,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const enhance = settings.enhance;
         const priv = settings.priv;
 
-        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=true&private=${priv}&enhance=${enhance}&nolog=true&referrer=unityailab.com`;
+        const encodedPrompt = polliAPI.encodePrompt(prompt);
+        const url = `${PollinationsAPI.IMAGE_API}/prompt/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&model=${model}&nologo=true&private=${priv}&enhance=${enhance}&nolog=true&referrer=${encodeURIComponent(polliAPI.referrer)}`;
         console.log("Generated new image URL:", url);
 
         const nextImage = currentImage === 'image1' ? 'image2' : 'image1';

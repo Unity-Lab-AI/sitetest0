@@ -1,6 +1,9 @@
 // Persona Demo - Unity AI Lab
 // JavaScript functionality for persona-based chat interface
 
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
+
 // Settings Toggle
 const settingsToggle = document.getElementById('settingsToggle');
 const settingsPanel = document.getElementById('settingsPanel');
@@ -17,7 +20,7 @@ const imageModel = document.getElementById('imageModel');
 // Fetch Text Models
 async function fetchTextModels() {
   try {
-    const response = await fetch('https://text.pollinations.ai/models');
+    const response = await polliAPI.retryRequest(`${PollinationsAPI.TEXT_API}/models`);
     const models = await response.json();
     textModel.innerHTML = '';
     models.forEach(model => {
@@ -34,7 +37,7 @@ async function fetchTextModels() {
 // Fetch Image Models
 async function fetchImageModels() {
   try {
-    const response = await fetch('https://image.pollinations.ai/models');
+    const response = await polliAPI.retryRequest(`${PollinationsAPI.IMAGE_API}/models`);
     const models = await response.json();
     imageModel.innerHTML = '';
     models.forEach(model => {
@@ -364,9 +367,10 @@ async function generateImageFromPrompt(prompt, appendToChat = true) {
     case '3:4': width = 768; height = 1024; cssClass = 'portrait'; break;
     default: width = 1024; height = 1024; cssClass = 'square';
   }
-  const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${randomSeed}&model=${selectedModel}&width=${width}&height=${height}&nofeed=true&nologo=true&enhance=false`;
+  const encodedPrompt = polliAPI.encodePrompt(prompt);
+  const imageUrl = `${PollinationsAPI.IMAGE_API}/prompt/${encodedPrompt}?seed=${randomSeed}&model=${selectedModel}&width=${width}&height=${height}&nofeed=true&nologo=true&enhance=false&referrer=${encodeURIComponent(polliAPI.referrer)}`;
   try {
-    const response = await fetch(imageUrl);
+    const response = await polliAPI.retryRequest(imageUrl);
     if (response.ok) {
       const imageBlob = await response.blob();
       const imageObjectURL = URL.createObjectURL(imageBlob);
@@ -412,7 +416,7 @@ chatForm.onsubmit = async function(event) {
   chatOutput.innerHTML += `<p id="ai-thinking"><em>${isEvil ? 'Evil AI plotting...' : 'AI is thinking...'}</em></p>`;
   scrollToBottom();
   try {
-    const response = await fetch('https://text.pollinations.ai/', {
+    const response = await polliAPI.retryRequest(PollinationsAPI.TEXT_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody)
