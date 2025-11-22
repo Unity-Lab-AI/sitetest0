@@ -20,6 +20,18 @@ export default defineConfig({
         projects: resolve(__dirname, 'projects/index.html'),
         ai: resolve(__dirname, 'ai/index.html'),
         demo: resolve(__dirname, 'ai/demo/index.html'),
+        // Apps directory
+        apps: resolve(__dirname, 'apps/index.html'),
+        textDemo: resolve(__dirname, 'apps/textDemo/text.html'),
+        unityDemo: resolve(__dirname, 'apps/unityDemo/unity.html'),
+        personaDemo: resolve(__dirname, 'apps/personaDemo/persona.html'),
+        helperInterfaceDemo: resolve(__dirname, 'apps/helperInterfaceDemo/helperInterface.html'),
+        slideshowDemo: resolve(__dirname, 'apps/slideshowDemo/slideshow.html'),
+        screensaverDemo: resolve(__dirname, 'apps/screensaverDemo/screensaver.html'),
+        talkingWithUnity: resolve(__dirname, 'apps/talkingWithUnity/index.html'),
+        talkingWithUnityAI: resolve(__dirname, 'apps/talkingWithUnity/indexAI.html'),
+        oldSiteProject: resolve(__dirname, 'apps/oldSiteProject/index.html'),
+        oldSiteScreensaver: resolve(__dirname, 'apps/oldSiteProject/screensaver.html'),
       },
       output: {
         // Aggressive content-based cache busting
