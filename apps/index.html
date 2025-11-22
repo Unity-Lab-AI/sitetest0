@@ -29,13 +29,9 @@
 
     <!-- Critical CSS for above-the-fold content -->
     <style>
-        /* Prevent FOUC and ensure proper theme loading */
+        /* Smooth transition when page loads */
         body {
-            opacity: 0;
             transition: opacity 0.3s ease-in;
-        }
-        body.loaded {
-            opacity: 1;
         }
 
         /* Ensure background is visible immediately */
@@ -59,19 +55,8 @@
         .skip-link:focus {
             top: 0;
         }
-    </style>
 
-    <style>
         /* App-specific styles */
-        body {
-            padding-top: 80px;
-            background: var(--primary-black);
-            background: #0a0a0a; /* Fallback */
-            color: var(--light-grey);
-            color: #cccccc; /* Fallback */
-            min-height: 100vh;
-        }
-
         .page-header {
             padding: 60px 0 40px;
             text-align: center;
