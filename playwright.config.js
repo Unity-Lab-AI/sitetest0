@@ -1,47 +1,57 @@
+// @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
+/**
+ * @see https://playwright.dev/docs/test-configuration
+ */
 module.exports = defineConfig({
   testDir: './tests',
-  testIgnore: '**/backup/**',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
-  timeout: 30000, // 30 seconds per test
-  expect: {
-    timeout: 10000,
-  },
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['list']
-  ],
+  retries: process.env.CI ? 2 : 1,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  timeout: 30000,
+
   use: {
     baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
     actionTimeout: 10000,
-    navigationTimeout: 20000,
+    navigationTimeout: 15000,
+    video: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
+
   projects: [
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        // Disable GPU to prevent crashes in headless mode
         launchOptions: {
           args: [
-            '--no-sandbox',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
+            '--no-sandbox',
           ],
         },
       },
     },
+
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
+        launchOptions: {
+          firefoxUserPrefs: {
+            // Disable problematic features that might cause crashes
+            'media.navigator.streams.fake': true,
+          },
+        },
       },
     },
+
     {
       name: 'webkit',
       use: {
@@ -49,14 +59,10 @@ module.exports = defineConfig({
       },
     },
   ],
-  webServer: process.env.CI ? {
+
+  webServer: {
     command: 'python3 -m http.server 8080',
     url: 'http://localhost:8080',
-    reuseExistingServer: true,
-    timeout: 10000, // 10 seconds to wait for server to start
-  } : {
-    command: 'python3 -m http.server 8080',
-    url: 'http://localhost:8080',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
   },
 });

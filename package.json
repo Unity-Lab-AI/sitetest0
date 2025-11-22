@@ -5,12 +5,10 @@
   "main": "script.js",
   "scripts": {
     "test": "playwright test",
-    "test:accessibility": "playwright test tests/accessibility.spec.js",
-    "test:keyboard": "playwright test tests/keyboard-navigation.spec.js",
-    "test:performance": "playwright test tests/performance.spec.js",
-    "test:responsive": "playwright test tests/responsive.spec.js",
-    "test:seo": "playwright test tests/seo.spec.js",
-    "test:report": "playwright show-report test-results/html",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:report": "playwright show-report",
     "minify": "npx terser script.js -c -m -o script.min.js && npx cleancss -o styles.min.css styles.css",
     "build": "npm run minify && ./update-version.sh"
   },
@@ -22,7 +20,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@axe-core/playwright": "^4.11.0",
     "@playwright/test": "^1.56.1",
     "clean-css-cli": "^5.6.3",
     "lighthouse": "^13.0.1",
