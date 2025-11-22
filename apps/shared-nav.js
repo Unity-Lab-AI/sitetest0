@@ -15,11 +15,11 @@
 
     const basePath = getBasePath();
 
-    // Navigation HTML
+    // Navigation HTML - using root-relative paths
     const navHTML = `
         <nav class="navbar navbar-expand-lg navbar-dark" role="navigation" aria-label="Main navigation">
             <div class="container-fluid px-4">
-                <a class="navbar-brand gothic-logo" href="/sitetest0/">
+                <a class="navbar-brand gothic-logo" href="${basePath}">
                     <i class="fas fa-brain" aria-hidden="true"></i>
                     <span>UNITYAILAB</span>
                 </a>
@@ -29,22 +29,22 @@
                 <div class="collapse navbar-collapse" id="unityNavbar">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/ai">AI</a>
+                            <a class="nav-link" href="${basePath}ai">AI</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/about">About</a>
+                            <a class="nav-link" href="${basePath}about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/apps">Apps</a>
+                            <a class="nav-link" href="${basePath}apps">Apps</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/services">Services</a>
+                            <a class="nav-link" href="${basePath}services">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/projects">Projects</a>
+                            <a class="nav-link" href="${basePath}projects">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/sitetest0/contact">Contact</a>
+                            <a class="nav-link" href="${basePath}contact">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -145,7 +145,7 @@
         if (!document.querySelector('link[href*="bootstrap"]')) {
             const bootstrapLink = document.createElement('link');
             bootstrapLink.rel = 'stylesheet';
-            bootstrapLink.href = '/sitetest0/vendor/bootstrap/bootstrap.min.css';
+            bootstrapLink.href = basePath + 'vendor/bootstrap/bootstrap.min.css';
             document.head.appendChild(bootstrapLink);
         }
 
@@ -154,7 +154,7 @@
             !document.querySelector('link[href*="font-awesome"]')) {
             const faLink = document.createElement('link');
             faLink.rel = 'stylesheet';
-            faLink.href = '/sitetest0/vendor/fontawesome/all.min.css';
+            faLink.href = basePath + 'vendor/fontawesome/all.min.css';
             document.head.appendChild(faLink);
         }
     }
@@ -164,7 +164,7 @@
         // Load Bootstrap JS if not present
         if (typeof bootstrap === 'undefined') {
             const script = document.createElement('script');
-            script.src = '/sitetest0/vendor/bootstrap/bootstrap.bundle.min.js';
+            script.src = basePath + 'vendor/bootstrap/bootstrap.bundle.min.js';
             document.body.appendChild(script);
         }
     }
