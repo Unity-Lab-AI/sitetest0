@@ -1,0 +1,223 @@
+/* Shared Theme CSS for Unity AI Lab Apps */
+/* This file provides consistent theming across all legacy apps */
+
+@import url('https://fonts.googleapis.com/css2?family=Trajan+Pro&display=swap');
+
+/* Import Trajan Pro Font */
+@font-face {
+    font-family: 'Trajan Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Trajan Pro Regular'), url('../fonts/trajan-pro/TrajanPro-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Trajan Pro';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Trajan Pro Bold'), url('../fonts/trajan-pro/TrajanPro-Bold.woff') format('woff');
+}
+
+/* Root Variables - Unity AI Lab Theme */
+:root {
+    --primary-black: #0a0a0a;
+    --secondary-black: #1a1a1a;
+    --dark-grey: #2a2a2a;
+    --crimson-red: #dc143c;
+    --blood-red: #8b0000;
+    --accent-red: #ff0033;
+    --light-grey: #cccccc;
+    --white: #ffffff;
+    --gradient-dark: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0a0a0a 100%);
+    --gradient-red: linear-gradient(135deg, #8b0000 0%, #dc143c 50%, #ff0033 100%);
+}
+
+/* Background Effects */
+.unity-background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 1) 100%);
+    z-index: -2;
+    pointer-events: none;
+}
+
+.unity-red-streaks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(90deg, transparent 0%, transparent 48%, rgba(220, 20, 60, 0.03) 50%, transparent 52%, transparent 100%),
+        linear-gradient(180deg, transparent 0%, transparent 48%, rgba(220, 20, 60, 0.02) 50%, transparent 52%, transparent 100%);
+    background-size: 80px 80px;
+    z-index: -1;
+    animation: streaksMove 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes streaksMove {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 80px 80px;
+    }
+}
+
+/* Navigation - Injected via JavaScript */
+#unity-nav-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+}
+
+#unity-nav-wrapper .navbar {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+#unity-nav-wrapper .navbar.scrolled {
+    box-shadow: 0 5px 30px rgba(220, 20, 60, 0.3);
+}
+
+#unity-nav-wrapper .gothic-logo {
+    font-family: 'Trajan Pro', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+#unity-nav-wrapper .gothic-logo i {
+    color: #dc143c;
+    font-size: 1.8rem;
+}
+
+#unity-nav-wrapper .nav-link {
+    font-family: 'Trajan Pro', serif;
+    color: #cccccc !important;
+    font-weight: 600;
+    margin: 0 15px;
+    padding: 8px 15px !important;
+    position: relative;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+#unity-nav-wrapper .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #8b0000 0%, #dc143c 50%, #ff0033 100%);
+    transition: width 0.3s ease;
+}
+
+#unity-nav-wrapper .nav-link:hover,
+#unity-nav-wrapper .nav-link.active {
+    color: #dc143c !important;
+}
+
+#unity-nav-wrapper .nav-link:hover::before {
+    width: 80%;
+}
+
+/* Navbar Toggle */
+#unity-nav-wrapper .navbar-toggler {
+    border-color: rgba(220, 20, 60, 0.5);
+    padding: 0.5rem 0.75rem;
+}
+
+#unity-nav-wrapper .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(220, 20, 60, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Content adjustment for fixed navbar */
+body.unity-nav-active {
+    padding-top: 80px;
+}
+
+/* Mobile responsive */
+@media (max-width: 991px) {
+    #unity-nav-wrapper .nav-link {
+        margin: 5px 0;
+        font-size: 0.85rem;
+        padding: 8px 12px !important;
+    }
+
+    #unity-nav-wrapper .navbar-collapse {
+        background: rgba(26, 26, 26, 0.95);
+        padding: 15px;
+        margin-top: 10px;
+        border: 1px solid rgba(220, 20, 60, 0.2);
+        border-radius: 8px;
+    }
+
+    body.unity-nav-active {
+        padding-top: 70px;
+    }
+}
+
+/* Utility class to hide original home links */
+.unity-hidden-home {
+    display: none !important;
+}
+
+/* Scrollbar theming */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #8b0000 0%, #dc143c 50%, #ff0033 100%);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--crimson-red);
+}
+
+/* Firefox Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #dc143c #0a0a0a;
+}
+
+/* Selection */
+::selection {
+    background: var(--crimson-red);
+    color: var(--white);
+}
+
+::-moz-selection {
+    background: var(--crimson-red);
+    color: var(--white);
+}
