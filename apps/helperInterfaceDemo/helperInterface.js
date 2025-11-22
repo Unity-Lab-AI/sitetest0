@@ -1,8 +1,11 @@
 // Helper Interface JavaScript - Extracted from inline script
 // Unity AI Lab - Gothic Dark Theme
 
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
+
 const DEFAULT_INSTRUCTION = "All code must be wrapped in [CODE]...[/CODE] tags." +
-  "When generating images, selfies, pics, photographs, ect  show them using format: https://image.pollinations.ai/prompt/your%20image-prompt-with-visual-style%20here?width=512&height=512&nologo=true&base=beesknees&private=true&seed={random}&enhance=false&model=Unity plus your response.\n\n" +
+  `When generating images, selfies, pics, photographs, ect  show them using format: ${PollinationsAPI.IMAGE_API}/prompt/your%20image-prompt-with-visual-style%20here?width=512&height=512&nologo=true&base=beesknees&private=true&seed={random}&enhance=false&model=Unity plus your response.\n\n` +
   "Code format: [CODE]code here[/CODE] with your response.\n\n" +
   'Just respond naturally and directly - no "I can" or "I will" - just do it and give your response to the context.';
 
@@ -269,7 +272,7 @@ async function buildMessages(modelName, userMessage) {
     messages.push(...trimmedHistory);
   }
 
-  const imageEnabledMessage = "You can and should generate images using the format: https://image.pollinations.ai/prompt/your_prompt_here. Always show images when asked or when appropriate.\n\n" + userMessage;
+  const imageEnabledMessage = `You can and should generate images using the format: ${PollinationsAPI.IMAGE_API}/prompt/your_prompt_here. Always show images when asked or when appropriate.\n\n` + userMessage;
 
   messages.push({
     role: "user",
@@ -471,7 +474,7 @@ async function sendMessage(message) {
       requestBody.seed = Math.floor(Math.random() * 1000000);
     }
 
-    const response = await fetch("https://text.pollinations.ai/", {
+    const response = await polliAPI.retryRequest(PollinationsAPI.TEXT_API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -545,7 +548,7 @@ async function fetchModels() {
   modelSelect.innerHTML = "";
 
   try {
-    const response = await fetch("https://text.pollinations.ai/models");
+    const response = await polliAPI.retryRequest(`${PollinationsAPI.TEXT_API}/models`);
     if (!response.ok) throw new Error("Failed to fetch models");
 
     const data = await response.json();
@@ -660,7 +663,6 @@ function extractPromptPart(url) {
 }
 
 function constructFullImageUrl(promptPart) {
-  const BASE_IMAGE_URL = "https://image.pollinations.ai/prompt/";
   const IMAGE_PARAMETERS = "?nologo=true&private=true&width=1920&height=1080&enhance=false";
 
   if (!promptPart) {
@@ -668,7 +670,7 @@ function constructFullImageUrl(promptPart) {
     return null;
   }
 
-  return `${BASE_IMAGE_URL}${promptPart}${IMAGE_PARAMETERS}&seed=${Math.floor(Math.random() * 1000000)}`;
+  return `${PollinationsAPI.IMAGE_API}/prompt/${promptPart}${IMAGE_PARAMETERS}&seed=${Math.floor(Math.random() * 1000000)}&referrer=${encodeURIComponent(polliAPI.referrer)}`;
 }
 
 function processMessage(text) {
@@ -703,7 +705,7 @@ function processMessage(text) {
         .trim();
 
       if (
-        codeContent.match(/^https:\/\/image\.pollinations\.ai\/prompt\/[^\s)]+$/i) ||
+        codeContent.match(new RegExp(`^${PollinationsAPI.IMAGE_API.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/prompt\\/[^\\s)]+$`, 'i')) ||
         codeContent.match(/^https?:\/\/[^\s<]+\.(?:jpg|jpeg|png|gif|webp)$/i)
       ) {
         const imgId = "img-" + Math.random().toString(36).substr(2, 9);
@@ -724,8 +726,9 @@ function processMessage(text) {
         </div>`;
       }
     } else {
+      const imageUrlPattern = new RegExp(`${PollinationsAPI.IMAGE_API.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/prompt\\/[^\\s)]+`, 'g');
       let processedSegment = segment.replace(
-        /https:\/\/image\.pollinations\.ai\/prompt\/[^\s)]+/g,
+        imageUrlPattern,
         (url) => {
           const imgId = "img-" + Math.random().toString(36).substr(2, 9);
           return `
@@ -779,7 +782,7 @@ async function getImageDescription(imageUrl) {
       jsonMode: false
     };
 
-    const response = await fetch("https://text.pollinations.ai/", {
+    const response = await polliAPI.retryRequest(PollinationsAPI.TEXT_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody)
@@ -1218,7 +1221,7 @@ async function getModelAvatar(modelName = "unity") {
 
   const prompt = prompts[modelName] || "artificial_intelligence_portrait_digital";
   const seed = Math.floor(Date.now() / (1000 * 60 * 60));
-  const avatarUrl = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&model=flux&nologo=true&seed=${seed}`;
+  const avatarUrl = `${PollinationsAPI.IMAGE_API}/prompt/${polliAPI.encodePrompt(prompt)}?width=512&height=512&model=flux&nologo=true&seed=${seed}&referrer=${encodeURIComponent(polliAPI.referrer)}`;
 
   localStorage.setItem(storageKey, avatarUrl);
   return avatarUrl;
