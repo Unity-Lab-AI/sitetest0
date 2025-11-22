@@ -972,6 +972,7 @@ body {
   padding: 8px;
   border-top: 2px solid #505050;
   z-index: 50;
+  display: none; /* Hidden by default, shown by JS when needed */
 }
 
 #past-image-gallery {
