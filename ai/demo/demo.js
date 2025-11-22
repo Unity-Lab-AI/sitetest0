@@ -46,8 +46,8 @@ const TOOLS_ARRAY = [
                                 },
                                 model: {
                                     type: 'string',
-                                    description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
-                                    enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
+                                    description: 'Image generation model: flux (default, best quality), turbo (fast generation), gptimage (GPT-powered generation). If user settings specify a model, use that model; otherwise choose the best model for the request.',
+                                    enum: ['flux', 'turbo', 'gptimage'],
                                     default: 'flux'
                                 }
                             },
@@ -89,8 +89,8 @@ const TOOLS_SINGLE = [
                     },
                     model: {
                         type: 'string',
-                        description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
-                        enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
+                        description: 'Image generation model: flux (default, best quality), turbo (fast generation), gptimage (GPT-powered generation). If user settings specify a model, use that model; otherwise choose the best model for the request.',
+                        enum: ['flux', 'turbo', 'gptimage'],
                         default: 'flux'
                     }
                 },
@@ -163,16 +163,10 @@ Unity uses these image models through the generate_image tool:
 - flux for generic images (default, best quality)
 
 
-- flux-realism for photorealistic images
-
-
-- flux-anime for anime style
-
-
-- flux-3d for 3D rendered style
-
-
 - turbo for fast generation
+
+
+- gptimage for GPT-powered image generation
 
 
 
@@ -552,7 +546,7 @@ const DemoApp = {
         voice: 'sage',
         voicePlayback: false,
         voiceVolume: 50,
-        imageModel: 'flux',
+        imageModel: 'auto',  // Auto lets AI choose best model, or user can select: flux, turbo, gptimage
         seed: -1,
         systemPrompt: '',  // Custom system prompt for text models (not saved to cache)
         textTemperature: 0.7,
@@ -816,6 +810,15 @@ const DemoApp = {
             // Clear existing options
             imageModelSelect.innerHTML = '';
 
+            // Add "Auto" option first (let AI choose)
+            const autoOption = document.createElement('option');
+            autoOption.value = 'auto';
+            autoOption.textContent = 'Auto (AI Chooses)';
+            if (this.settings.imageModel === 'auto') {
+                autoOption.selected = true;
+            }
+            imageModelSelect.appendChild(autoOption);
+
             // Add models from API
             models.forEach(model => {
                 const option = document.createElement('option');
@@ -824,12 +827,6 @@ const DemoApp = {
                 option.value = modelValue;
                 // Use display name or name as label
                 option.textContent = model.displayName || model.name || modelValue;
-
-                // Select first model as default
-                if (models.indexOf(model) === 0 && !localStorage.getItem('unityDemoSettings')) {
-                    option.selected = true;
-                    this.settings.imageModel = modelValue;
-                }
 
                 // Select the cached model if it exists
                 if (modelValue === this.settings.imageModel) {
@@ -1562,6 +1559,14 @@ const DemoApp = {
         // Generate each image
         for (const imageRequest of imageRequests) {
             let { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
+
+            // Override model if user has selected a specific model (not "auto")
+            if (this.settings.imageModel && this.settings.imageModel !== 'auto') {
+                model = this.settings.imageModel;
+                console.log(`Using user-selected image model: ${model}`);
+            } else {
+                console.log(`Using AI-suggested model: ${model}`);
+            }
 
             // Handle auto dimensions based on settings
             if (this.settings.imageWidth === 'auto' || this.settings.imageHeight === 'auto') {
