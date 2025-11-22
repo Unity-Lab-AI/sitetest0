@@ -9,7 +9,7 @@
     // Determine base path relative to current app location
     function getBasePath() {
         const path = window.location.pathname;
-        const depth = path.split('/').filter(p => p && p !== 'sitetest0').length - 2;
+        const depth = path.split('/').filter(p => p && p !== 'sitetest0').length - 1;
         return depth > 0 ? '../'.repeat(depth) : '../';
     }
 
