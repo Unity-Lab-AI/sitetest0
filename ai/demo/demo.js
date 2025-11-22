@@ -1434,12 +1434,17 @@ const DemoApp = {
             payload.reasoning_effort = this.settings.reasoningEffort;
         }
 
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        payload.seed = seed;
+
         console.log('=== API Request (Tool Calling) ===');
         console.log('Model:', model);
         console.log('Original model:', this.settings.model);
         console.log('Tool schema:', isUnityModel ? 'SINGLE' : 'ARRAY');
         console.log('Tools available:', toolsToUse.length);
         console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
+        console.log('Seed:', seed);
         console.log('Payload:', JSON.stringify(payload, null, 2));
 
         try {
@@ -1633,8 +1638,13 @@ const DemoApp = {
             payload.temperature = this.settings.textTemperature;
         }
 
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        payload.seed = seed;
+
         console.log('=== Getting Final Response ===');
         console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
+        console.log('Seed:', seed);
 
         const response = await fetch(`${OPENAI_ENDPOINT}?referrer=UA-73J7ItT-ws`, {
             method: 'POST',
@@ -2122,16 +2132,23 @@ const DemoApp = {
             // Combine instructions with text - tell TTS to only speak the text
             const fullPrompt = `${instructions} Only speak the following text: "${chunk}"`;
 
-            // Build URL with fixed seed 420 for consistent voice
+            // Build URL with voice settings
             let url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}`;
 
-            // Use fixed seed 420 for consistent voice playback
-            // Note: safe mode not specified = unrestricted content by default
-            url += '&seed=420&private=true&referrer=UA-73J7ItT-ws';
+            // Use settings seed or generate random seed for TTS
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            url += `&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
+
+            console.log('Voice playback chunk:', chunk.substring(0, 50) + '...', 'Seed:', seed);
 
             // Create audio element
             this.currentAudio = new Audio(url);
             this.currentAudio.volume = this.settings.voiceVolume / 100;
+
+            // Mobile browser compatibility
+            this.currentAudio.setAttribute('playsinline', '');
+            this.currentAudio.setAttribute('webkit-playsinline', '');
+            this.currentAudio.preload = 'auto';
 
             // When this chunk ends, play next chunk
             this.currentAudio.addEventListener('ended', () => {
@@ -2144,8 +2161,27 @@ const DemoApp = {
                 this.playNextVoiceChunk();
             });
 
-            // Play audio
-            await this.currentAudio.play();
+            // When audio can play, start playback
+            this.currentAudio.addEventListener('canplaythrough', () => {
+                console.log('Audio ready to play');
+            });
+
+            // Play audio with mobile-compatible error handling
+            try {
+                const playPromise = this.currentAudio.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch((error) => {
+                        console.error('Mobile autoplay blocked:', error);
+                        // If autoplay is blocked, user needs to tap to enable audio
+                        // We'll continue to next chunk automatically
+                        this.playNextVoiceChunk();
+                    });
+                }
+            } catch (error) {
+                console.error('Voice playback error:', error);
+                this.playNextVoiceChunk();
+            }
 
         } catch (error) {
             console.error('Voice chunk playback error:', error);
