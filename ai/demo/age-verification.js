@@ -340,10 +340,21 @@ const AgeVerification = {
 
         console.log('Age Verification: Verification complete');
 
-        // Create visitor UID (cryptographically secure)
+        // Create and register visitor UID (cryptographically secure)
+        // This happens only once after age verification
         if (typeof VisitorTracking !== 'undefined' && !VisitorTracking.hasUID()) {
-            const uid = VisitorTracking.createUID();
-            console.log('Age Verification: Created secure visitor UID:', uid);
+            console.log('Age Verification: Creating and registering visitor UID...');
+            VisitorTracking.createAndRegisterUID('demo').then(result => {
+                if (result && result.success) {
+                    console.log('Age Verification: UID registered successfully, count:', result.count);
+                } else if (result && result.alreadyRegistered) {
+                    console.log('Age Verification: UID already registered');
+                } else {
+                    console.warn('Age Verification: UID registration failed or timed out');
+                }
+            }).catch(error => {
+                console.error('Age Verification: UID registration error:', error);
+            });
         }
 
         // Remove popup

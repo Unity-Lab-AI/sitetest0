@@ -2631,17 +2631,8 @@ const DemoApp = {
 document.addEventListener('DOMContentLoaded', () => {
     DemoApp.init();
 
-    // Track visitor after page loads and age verification completes
-    // Wait a bit for age verification to complete if needed
-    setTimeout(() => {
-        if (typeof VisitorTracking !== 'undefined' && VisitorTracking.hasUID()) {
-            VisitorTracking.trackVisitor('demo').then(result => {
-                if (result) {
-                    console.log('Demo page: Visitor tracked successfully');
-                }
-            });
-        }
-    }, 1000); // 1 second delay to ensure age verification completes
+    // Note: Visitor tracking happens automatically during age verification
+    // Registration is handled by age-verification.js after successful verification
 });
 
 // ===================================
