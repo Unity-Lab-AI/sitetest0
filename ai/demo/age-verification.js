@@ -393,7 +393,9 @@ const AgeVerification = {
 
             const voice = 'sage';
             const volume = 0.75; // 75% volume
-            const seed = 420; // Fixed seed for consistent age verification audio
+            // Generate random 6-8 digit seed
+            const seedDigits = Math.floor(Math.random() * 3) + 6; // 6, 7, or 8 digits
+            const seed = Math.floor(Math.random() * (Math.pow(10, seedDigits) - Math.pow(10, seedDigits - 1))) + Math.pow(10, seedDigits - 1);
 
             // Use Pollinations documented TTS endpoint (GET request)
             const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
@@ -447,6 +449,10 @@ const AgeVerification = {
 Respond with ONLY the welcome message text, nothing else.`;
 
         // Build request payload
+        // Generate random 6-8 digit seed
+        const seedDigits = Math.floor(Math.random() * 3) + 6; // 6, 7, or 8 digits
+        const randomSeed = Math.floor(Math.random() * (Math.pow(10, seedDigits) - Math.pow(10, seedDigits - 1))) + Math.pow(10, seedDigits - 1);
+
         const payload = {
             model: 'mistral', // Unity uses Mistral model
             messages: [
@@ -455,7 +461,7 @@ Respond with ONLY the welcome message text, nothing else.`;
             ],
             max_tokens: 200,
             temperature: 0.9,
-            seed: 420 // Fixed seed for consistency
+            seed: randomSeed // Random seed for varied responses
         };
 
         console.log('Age Verification: Requesting welcome message from Unity AI');
