@@ -60,13 +60,9 @@
 
     <!-- Critical CSS for above-the-fold content -->
     <style>
-        /* Prevent FOUC (Flash of Unstyled Content) */
+        /* Smooth transition when page loads */
         body {
-            opacity: 0;
             transition: opacity 0.3s ease-in;
-        }
-        body.loaded {
-            opacity: 1;
         }
 
         /* Ensure background is visible immediately */
@@ -432,7 +428,7 @@
                     <ul class="footer-links">
                         <li><a href="../ai">AI</a></li>
                         <li><a href="../about">About</a></li>
-                        <li><a href="#">Apps</a></li>
+                        <li><a href="../apps">Apps</a></li>
                         <li><a href="../services">Services</a></li>
                         <li><a href="../projects">Projects</a></li>
                         <li><a href="./">Contact</a></li>
