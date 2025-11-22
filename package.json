@@ -4,13 +4,18 @@
   "description": "**Test site for the latest version of the main Unity AI Lab website**",
   "main": "script.js",
   "scripts": {
+    "dev": "vite",
+    "build": "node generate-sitemap.js && vite build && node cache-bust.js",
+    "preview": "vite preview",
+    "sitemap": "node generate-sitemap.js",
+    "cache-bust": "node cache-bust.js",
     "test": "playwright test",
     "test:chromium": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "test:report": "playwright show-report",
     "minify": "npx terser script.js -c -m -o script.min.js && npx cleancss -o styles.min.css styles.css",
-    "build": "npm run minify && ./update-version.sh"
+    "build:legacy": "npm run minify && ./update-version.sh"
   },
   "repository": {
     "type": "git",
@@ -23,6 +28,7 @@
     "@playwright/test": "^1.56.1",
     "clean-css-cli": "^5.6.3",
     "lighthouse": "^13.0.1",
-    "terser": "^5.44.1"
+    "terser": "^5.44.1",
+    "vite": "^7.2.4"
   }
 }
