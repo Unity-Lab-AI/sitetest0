@@ -1268,7 +1268,7 @@ const DemoApp = {
         const currentModel = this.getCurrentModelMetadata();
         const isCommunityModel = currentModel && currentModel.community === true;
 
-        // Unity is treated as a community model for voice purposes (even though it uses Mistral)
+        // Unity is allowed voice playback (even though it's a community model)
         const isUnityModel = this.settings.model === 'unity';
 
         // Get ALL voice playback checkboxes (desktop sidebar + mobile modal)
@@ -1277,8 +1277,8 @@ const DemoApp = {
         voicePlaybackCheckboxes.forEach(voicePlaybackCheckbox => {
             const voiceSettings = voicePlaybackCheckbox.closest('.control-group');
 
-            if (isCommunityModel || isUnityModel) {
-                // Disable voice playback for community models and Unity
+            if (isCommunityModel && !isUnityModel) {
+                // Disable voice playback ONLY for community models (excluding Unity)
                 voicePlaybackCheckbox.disabled = true;
                 voicePlaybackCheckbox.checked = false;
                 this.settings.voicePlayback = false;
@@ -1286,12 +1286,10 @@ const DemoApp = {
                 // Add visual indicator
                 if (voiceSettings) {
                     voiceSettings.style.opacity = '0.5';
-                    voiceSettings.title = isUnityModel
-                        ? 'Voice playback is not available for Unity model (unrestricted content)'
-                        : 'Voice playback is not available for community models';
+                    voiceSettings.title = 'Voice playback is not available for community models';
                 }
             } else {
-                // Enable voice playback for non-community models
+                // Enable voice playback for Unity and non-community models
                 voicePlaybackCheckbox.disabled = false;
 
                 // Remove visual indicator
@@ -1303,7 +1301,7 @@ const DemoApp = {
         });
 
         // Stop any currently playing voice if disabling
-        if (isCommunityModel || isUnityModel) {
+        if (isCommunityModel && !isUnityModel) {
             this.stopVoicePlayback();
             console.log('Voice playback disabled for model:', this.settings.model);
         }
@@ -2050,13 +2048,13 @@ const DemoApp = {
     async playVoice(text) {
         if (!this.settings.voicePlayback) return;
 
-        // Check if current model is a community model or Unity - voice not supported
+        // Check if current model is a community model (excluding Unity) - voice not supported
         const currentModel = this.getCurrentModelMetadata();
         const isCommunityModel = currentModel && currentModel.community === true;
         const isUnityModel = this.settings.model === 'unity';
 
-        if (isCommunityModel || isUnityModel) {
-            console.log('Voice playback skipped: unrestricted/community models do not support voice playback');
+        if (isCommunityModel && !isUnityModel) {
+            console.log('Voice playback skipped: community models do not support voice playback');
             return;
         }
 
