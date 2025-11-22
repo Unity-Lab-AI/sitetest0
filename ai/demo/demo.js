@@ -46,8 +46,8 @@ const TOOLS_ARRAY = [
                                 },
                                 model: {
                                     type: 'string',
-                                    description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
-                                    enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
+                                    description: 'Image generation model: flux (default, best quality), turbo (fast generation), gptimage (GPT-powered generation). If user settings specify a model, use that model; otherwise choose the best model for the request.',
+                                    enum: ['flux', 'turbo', 'gptimage'],
                                     default: 'flux'
                                 }
                             },
@@ -89,8 +89,8 @@ const TOOLS_SINGLE = [
                     },
                     model: {
                         type: 'string',
-                        description: 'Image generation model: flux (default, best quality), flux-realism (photorealistic), flux-anime (anime style), flux-3d (3D rendered), turbo (fast generation)',
-                        enum: ['flux', 'flux-realism', 'flux-anime', 'flux-3d', 'turbo'],
+                        description: 'Image generation model: flux (default, best quality), turbo (fast generation), gptimage (GPT-powered generation). If user settings specify a model, use that model; otherwise choose the best model for the request.',
+                        enum: ['flux', 'turbo', 'gptimage'],
                         default: 'flux'
                     }
                 },
@@ -163,16 +163,10 @@ Unity uses these image models through the generate_image tool:
 - flux for generic images (default, best quality)
 
 
-- flux-realism for photorealistic images
-
-
-- flux-anime for anime style
-
-
-- flux-3d for 3D rendered style
-
-
 - turbo for fast generation
+
+
+- gptimage for GPT-powered image generation
 
 
 
@@ -552,7 +546,7 @@ const DemoApp = {
         voice: 'sage',
         voicePlayback: false,
         voiceVolume: 50,
-        imageModel: 'flux',
+        imageModel: 'auto',  // Auto lets AI choose best model, or user can select: flux, turbo, gptimage
         seed: -1,
         systemPrompt: '',  // Custom system prompt for text models (not saved to cache)
         textTemperature: 0.7,
@@ -753,11 +747,9 @@ const DemoApp = {
 
     // Populate text model dropdown
     populateTextModels(models) {
-        const modelSelect = document.getElementById('modelSelect');
-        if (!modelSelect || !models || models.length === 0) return;
-
-        // Clear existing options
-        modelSelect.innerHTML = '';
+        // Get ALL model select elements (desktop sidebar + mobile modal)
+        const modelSelects = document.querySelectorAll('#modelSelect');
+        if (modelSelects.length === 0 || !models || models.length === 0) return;
 
         // Sort models to put Unity first
         const sortedModels = [...models].sort((a, b) => {
@@ -768,68 +760,92 @@ const DemoApp = {
             return 0;
         });
 
-        // Add models from API
-        sortedModels.forEach((model, index) => {
-            const option = document.createElement('option');
-            // Use the model name or id as value
-            const modelValue = model.name || model.id || model;
-            option.value = modelValue;
-            // Use display name or name as label
-            option.textContent = model.displayName || model.name || modelValue;
+        // Update ALL model select dropdowns
+        modelSelects.forEach(modelSelect => {
+            // Clear existing options
+            modelSelect.innerHTML = '';
 
-            // Select Unity as default, or first model if Unity not found
-            if (modelValue === 'unity' || (index === 0 && !sortedModels.find(m => (m.name || m.id || m) === 'unity'))) {
-                option.selected = true;
-                // Only update settings.model if not already set from cache
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    this.settings.model = modelValue;
+            // Add models from API
+            sortedModels.forEach((model, index) => {
+                const option = document.createElement('option');
+                // Use the model name or id as value
+                const modelValue = model.name || model.id || model;
+                option.value = modelValue;
+                // Use display name or name as label
+                option.textContent = model.displayName || model.name || modelValue;
+
+                // Select Unity as default, or first model if Unity not found
+                if (modelValue === 'unity' || (index === 0 && !sortedModels.find(m => (m.name || m.id || m) === 'unity'))) {
+                    option.selected = true;
+                    // Only update settings.model if not already set from cache
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        this.settings.model = modelValue;
+                    }
                 }
-                this.updateModelInfo(this.settings.model);
-            }
 
-            // Select the cached model if it exists
-            if (modelValue === this.settings.model) {
-                option.selected = true;
-            }
+                // Select the cached model if it exists
+                if (modelValue === this.settings.model) {
+                    option.selected = true;
+                }
 
-            modelSelect.appendChild(option);
+                modelSelect.appendChild(option);
+            });
+
+            // Ensure the selected option matches current settings
+            modelSelect.value = this.settings.model;
         });
 
-        // Ensure the selected option matches current settings
-        modelSelect.value = this.settings.model;
+        // Update model info display
+        this.updateModelInfo(this.settings.model);
     },
 
     // Populate image model dropdown
     populateImageModels(models) {
-        const imageModelSelect = document.getElementById('imageModel');
-        if (!imageModelSelect || !models || models.length === 0) return;
+        // Get ALL image model select elements (desktop sidebar + mobile modal)
+        const imageModelSelects = document.querySelectorAll('#imageModel');
+        if (imageModelSelects.length === 0 || !models || models.length === 0) return;
 
-        // Clear existing options
-        imageModelSelect.innerHTML = '';
+        // Update ALL image model select dropdowns
+        imageModelSelects.forEach(imageModelSelect => {
+            // Clear existing options
+            imageModelSelect.innerHTML = '';
 
-        // Add models from API
-        models.forEach(model => {
-            const option = document.createElement('option');
-            // Use the model name or id as value
-            const modelValue = model.name || model.id || model;
-            option.value = modelValue;
-            // Use display name or name as label
-            option.textContent = model.displayName || model.name || modelValue;
-
-            // Select first model as default
-            if (models.indexOf(model) === 0) {
-                option.selected = true;
-                this.settings.imageModel = modelValue;
+            // Add "Auto" option first (let AI choose)
+            const autoOption = document.createElement('option');
+            autoOption.value = 'auto';
+            autoOption.textContent = 'Auto (AI Chooses)';
+            if (this.settings.imageModel === 'auto') {
+                autoOption.selected = true;
             }
+            imageModelSelect.appendChild(autoOption);
 
-            imageModelSelect.appendChild(option);
+            // Add models from API
+            models.forEach(model => {
+                const option = document.createElement('option');
+                // Use the model name or id as value
+                const modelValue = model.name || model.id || model;
+                option.value = modelValue;
+                // Use display name or name as label
+                option.textContent = model.displayName || model.name || modelValue;
+
+                // Select the cached model if it exists
+                if (modelValue === this.settings.imageModel) {
+                    option.selected = true;
+                }
+
+                imageModelSelect.appendChild(option);
+            });
+
+            // Ensure the selected option matches current settings
+            imageModelSelect.value = this.settings.imageModel;
         });
     },
 
     // Extract voices from text models that support TTS
     extractVoices(models) {
-        const voiceSelect = document.getElementById('voiceSelect');
-        if (!voiceSelect || !models) return;
+        // Get ALL voice select elements (desktop sidebar + mobile modal)
+        const voiceSelects = document.querySelectorAll('#voiceSelect');
+        if (voiceSelects.length === 0 || !models) return;
 
         // Find models that support text-to-speech
         const ttsModels = models.filter(model => {
@@ -852,34 +868,37 @@ const DemoApp = {
             // Remove duplicates
             voices = [...new Set(voices)];
 
-            // Clear existing options
-            voiceSelect.innerHTML = '';
+            // Update ALL voice select dropdowns
+            voiceSelects.forEach(voiceSelect => {
+                // Clear existing options
+                voiceSelect.innerHTML = '';
 
-            // Add voices
-            voices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = voice;
-                option.textContent = this.formatVoiceName(voice);
+                // Add voices
+                voices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = this.formatVoiceName(voice);
 
-                // Select sage as default, or first voice if sage not found
-                // Only set default if not already cached
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    if (voice === 'sage' || (index === 0 && !voices.includes('sage'))) {
-                        option.selected = true;
-                        this.settings.voice = voice;
+                    // Select sage as default, or first voice if sage not found
+                    // Only set default if not already cached
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        if (voice === 'sage' || (index === 0 && !voices.includes('sage'))) {
+                            option.selected = true;
+                            this.settings.voice = voice;
+                        }
                     }
-                }
 
-                // Select the cached voice if it exists
-                if (voice === this.settings.voice) {
-                    option.selected = true;
-                }
+                    // Select the cached voice if it exists
+                    if (voice === this.settings.voice) {
+                        option.selected = true;
+                    }
 
-                voiceSelect.appendChild(option);
+                    voiceSelect.appendChild(option);
+                });
+
+                // Ensure the selected option matches current settings
+                voiceSelect.value = this.settings.voice;
             });
-
-            // Ensure the selected option matches current settings
-            voiceSelect.value = this.settings.voice;
 
             this.availableVoices = voices;
             console.log('Voices loaded:', voices.length);
@@ -905,32 +924,35 @@ const DemoApp = {
 
         // Also populate fallback voices (extracted from openai-audio model)
         const fallbackVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral', 'verse', 'ballad', 'ash', 'sage', 'amuch', 'dan'];
-        const voiceSelect = document.getElementById('voiceSelect');
-        if (voiceSelect) {
-            voiceSelect.innerHTML = '';
-            fallbackVoices.forEach((voice) => {
-                const option = document.createElement('option');
-                option.value = voice;
-                option.textContent = this.formatVoiceName(voice);
+        // Get ALL voice select elements (desktop sidebar + mobile modal)
+        const voiceSelects = document.querySelectorAll('#voiceSelect');
+        if (voiceSelects.length > 0) {
+            voiceSelects.forEach(voiceSelect => {
+                voiceSelect.innerHTML = '';
+                fallbackVoices.forEach((voice) => {
+                    const option = document.createElement('option');
+                    option.value = voice;
+                    option.textContent = this.formatVoiceName(voice);
 
-                // Default to sage if not cached, otherwise use cached value
-                if (!localStorage.getItem('unityDemoSettings')) {
-                    if (voice === 'sage') {
-                        option.selected = true;
-                        this.settings.voice = voice;
+                    // Default to sage if not cached, otherwise use cached value
+                    if (!localStorage.getItem('unityDemoSettings')) {
+                        if (voice === 'sage') {
+                            option.selected = true;
+                            this.settings.voice = voice;
+                        }
                     }
-                }
 
-                // Select the cached voice if it exists
-                if (voice === this.settings.voice) {
-                    option.selected = true;
-                }
+                    // Select the cached voice if it exists
+                    if (voice === this.settings.voice) {
+                        option.selected = true;
+                    }
 
-                voiceSelect.appendChild(option);
+                    voiceSelect.appendChild(option);
+                });
+
+                // Ensure the selected option matches current settings
+                voiceSelect.value = this.settings.voice;
             });
-
-            // Ensure the selected option matches current settings
-            voiceSelect.value = this.settings.voice;
 
             this.availableVoices = fallbackVoices;
         }
@@ -1038,17 +1060,35 @@ const DemoApp = {
         }
     },
 
+    // Helper function to update all volume sliders (desktop + mobile modals)
+    updateAllVolumeSliders(value) {
+        // Update all volume sliders
+        const volumeSliders = document.querySelectorAll('#voiceVolume');
+        volumeSliders.forEach(slider => {
+            slider.value = value;
+        });
+
+        // Update all volume value displays
+        const volumeValues = document.querySelectorAll('#volumeValue');
+        volumeValues.forEach(display => {
+            display.textContent = value + '%';
+        });
+
+        // Update audio volume if playing
+        if (this.currentAudio) {
+            this.currentAudio.volume = value / 100;
+        }
+    },
+
     // Setup controls synchronization with settings
     setupControlsSync() {
         // Volume control
         const volumeSlider = document.getElementById('voiceVolume');
         const volumeValue = document.getElementById('volumeValue');
         volumeSlider.addEventListener('input', (e) => {
-            this.settings.voiceVolume = parseInt(e.target.value);
-            volumeValue.textContent = e.target.value + '%';
-            if (this.currentAudio) {
-                this.currentAudio.volume = e.target.value / 100;
-            }
+            const value = parseInt(e.target.value);
+            this.settings.voiceVolume = value;
+            this.updateAllVolumeSliders(value);
             this.saveSettings();
         });
 
@@ -1409,12 +1449,17 @@ const DemoApp = {
             payload.reasoning_effort = this.settings.reasoningEffort;
         }
 
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        payload.seed = seed;
+
         console.log('=== API Request (Tool Calling) ===');
         console.log('Model:', model);
         console.log('Original model:', this.settings.model);
         console.log('Tool schema:', isUnityModel ? 'SINGLE' : 'ARRAY');
         console.log('Tools available:', toolsToUse.length);
         console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
+        console.log('Seed:', seed);
         console.log('Payload:', JSON.stringify(payload, null, 2));
 
         try {
@@ -1533,6 +1578,14 @@ const DemoApp = {
         for (const imageRequest of imageRequests) {
             let { prompt, width = 1024, height = 1024, model = 'flux' } = imageRequest;
 
+            // Override model if user has selected a specific model (not "auto")
+            if (this.settings.imageModel && this.settings.imageModel !== 'auto') {
+                model = this.settings.imageModel;
+                console.log(`Using user-selected image model: ${model}`);
+            } else {
+                console.log(`Using AI-suggested model: ${model}`);
+            }
+
             // Handle auto dimensions based on settings
             if (this.settings.imageWidth === 'auto' || this.settings.imageHeight === 'auto') {
                 // Auto mode: intelligently determine dimensions based on prompt content
@@ -1608,8 +1661,13 @@ const DemoApp = {
             payload.temperature = this.settings.textTemperature;
         }
 
+        // Add seed - use settings seed or generate random 6-8 digit seed
+        const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+        payload.seed = seed;
+
         console.log('=== Getting Final Response ===');
         console.log('Temperature included:', !isOpenAI ? this.settings.textTemperature : 'default (1)');
+        console.log('Seed:', seed);
 
         const response = await fetch(`${OPENAI_ENDPOINT}?referrer=UA-73J7ItT-ws`, {
             method: 'POST',
@@ -2097,16 +2155,23 @@ const DemoApp = {
             // Combine instructions with text - tell TTS to only speak the text
             const fullPrompt = `${instructions} Only speak the following text: "${chunk}"`;
 
-            // Build URL with fixed seed 420 for consistent voice
+            // Build URL with voice settings
             let url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai-audio&voice=${voice}`;
 
-            // Use fixed seed 420 for consistent voice playback
-            // Note: safe mode not specified = unrestricted content by default
-            url += '&seed=420&private=true&referrer=UA-73J7ItT-ws';
+            // Use settings seed or generate random seed for TTS
+            const seed = (this.settings.seed !== -1) ? this.settings.seed : this.generateRandomSeed();
+            url += `&seed=${seed}&private=true&referrer=UA-73J7ItT-ws`;
+
+            console.log('Voice playback chunk:', chunk.substring(0, 50) + '...', 'Seed:', seed);
 
             // Create audio element
             this.currentAudio = new Audio(url);
             this.currentAudio.volume = this.settings.voiceVolume / 100;
+
+            // Mobile browser compatibility
+            this.currentAudio.setAttribute('playsinline', '');
+            this.currentAudio.setAttribute('webkit-playsinline', '');
+            this.currentAudio.preload = 'auto';
 
             // When this chunk ends, play next chunk
             this.currentAudio.addEventListener('ended', () => {
@@ -2119,8 +2184,27 @@ const DemoApp = {
                 this.playNextVoiceChunk();
             });
 
-            // Play audio
-            await this.currentAudio.play();
+            // When audio can play, start playback
+            this.currentAudio.addEventListener('canplaythrough', () => {
+                console.log('Audio ready to play');
+            });
+
+            // Play audio with mobile-compatible error handling
+            try {
+                const playPromise = this.currentAudio.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch((error) => {
+                        console.error('Mobile autoplay blocked:', error);
+                        // If autoplay is blocked, user needs to tap to enable audio
+                        // We'll continue to next chunk automatically
+                        this.playNextVoiceChunk();
+                    });
+                }
+            } catch (error) {
+                console.error('Voice playback error:', error);
+                this.playNextVoiceChunk();
+            }
 
         } catch (error) {
             console.error('Voice chunk playback error:', error);
@@ -2263,11 +2347,8 @@ const DemoApp = {
             }
         });
 
-        // Update volume display
-        const volumeValue = document.getElementById('volumeValue');
-        if (volumeValue) {
-            volumeValue.textContent = this.settings.voiceVolume + '%';
-        }
+        // Update all volume sliders and displays (desktop + mobile modals)
+        this.updateAllVolumeSliders(this.settings.voiceVolume);
 
         // Update temperature display
         const textTempValue = document.getElementById('textTempValue');
@@ -2358,6 +2439,9 @@ const DemoApp = {
             // Attach event listeners to cloned controls
             this.attachControlListeners(rightModalContent);
         }
+
+        // Sync volume sliders after cloning
+        this.updateAllVolumeSliders(this.settings.voiceVolume);
     },
 
     // Attach event listeners to controls within a container
@@ -2503,11 +2587,9 @@ const DemoApp = {
         const volumeValue = container.querySelector('#volumeValue');
         if (volumeSlider && volumeValue) {
             volumeSlider.addEventListener('input', (e) => {
-                this.settings.voiceVolume = parseInt(e.target.value);
-                volumeValue.textContent = e.target.value + '%';
-                if (this.currentAudio) {
-                    this.currentAudio.volume = this.settings.voiceVolume / 100;
-                }
+                const value = parseInt(e.target.value);
+                this.settings.voiceVolume = value;
+                this.updateAllVolumeSliders(value);
                 this.saveSettings();
             });
         }
