@@ -2386,24 +2386,150 @@ const DemoApp = {
         }
     },
 
+    // Helper: Show custom alert dialog
+    showAlert(title, message, isError = false) {
+        return new Promise((resolve) => {
+            // Create backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'verification-backdrop';
+            backdrop.style.opacity = '0';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'confirmation-popup';
+
+            popup.innerHTML = `
+                <h3 style="color: ${isError ? '#dc143c' : '#fff'}">${title}</h3>
+                <p>${message}</p>
+                <div class="confirmation-buttons">
+                    <button class="confirmation-btn confirm">OK</button>
+                </div>
+            `;
+
+            backdrop.appendChild(popup);
+            document.body.appendChild(backdrop);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                backdrop.style.opacity = '1';
+            });
+
+            // Button handler
+            const okBtn = popup.querySelector('.confirm');
+
+            const cleanup = () => {
+                backdrop.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(backdrop);
+                }, 300);
+            };
+
+            okBtn.addEventListener('click', () => {
+                cleanup();
+                resolve();
+            });
+
+            // Close on backdrop click
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) {
+                    cleanup();
+                    resolve();
+                }
+            });
+        });
+    },
+
+    // Helper: Show custom confirmation dialog
+    showConfirmation(title, message, items = null, isDanger = false) {
+        return new Promise((resolve) => {
+            // Create backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'verification-backdrop';
+            backdrop.style.opacity = '0';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'confirmation-popup';
+
+            // Build content
+            let content = `<h3>${title}</h3><p>${message}</p>`;
+
+            if (items && items.length > 0) {
+                content += '<ul>';
+                items.forEach(item => {
+                    content += `<li>${item}</li>`;
+                });
+                content += '</ul>';
+            }
+
+            popup.innerHTML = content + `
+                <div class="confirmation-buttons">
+                    <button class="confirmation-btn cancel">Cancel</button>
+                    <button class="confirmation-btn ${isDanger ? 'danger' : 'confirm'}">Confirm</button>
+                </div>
+            `;
+
+            backdrop.appendChild(popup);
+            document.body.appendChild(backdrop);
+
+            // Trigger animation
+            requestAnimationFrame(() => {
+                backdrop.style.opacity = '1';
+            });
+
+            // Button handlers
+            const cancelBtn = popup.querySelector('.cancel');
+            const confirmBtn = popup.querySelector('.confirm, .danger');
+
+            const cleanup = () => {
+                backdrop.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(backdrop);
+                }, 300);
+            };
+
+            cancelBtn.addEventListener('click', () => {
+                cleanup();
+                resolve(false);
+            });
+
+            confirmBtn.addEventListener('click', () => {
+                cleanup();
+                resolve(true);
+            });
+
+            // Close on backdrop click
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) {
+                    cleanup();
+                    resolve(false);
+                }
+            });
+        });
+    },
+
     // Delete all site data (cache, cookies, localStorage)
-    deleteAllData() {
-        // Confirmation popup
-        const confirmed = confirm(
-            'WARNING: This will delete ALL site data including:\n\n' +
-            '• Cached settings\n' +
-            '• Chat history\n' +
-            '• Cookies\n' +
-            '• Local storage\n\n' +
-            'This action cannot be undone. Are you sure?'
+    async deleteAllData() {
+        // First confirmation
+        const confirmed = await this.showConfirmation(
+            'WARNING: Delete All Data',
+            'This will delete ALL site data including:',
+            [
+                'Cached settings',
+                'Chat history',
+                'Cookies',
+                'Local storage'
+            ]
         );
 
         if (!confirmed) return;
 
         // Double confirmation for safety
-        const doubleConfirm = confirm(
-            'Are you ABSOLUTELY sure you want to delete all data?\n\n' +
-            'This will reset everything to defaults.'
+        const doubleConfirm = await this.showConfirmation(
+            'Final Confirmation',
+            'Are you ABSOLUTELY sure you want to delete all data? This will reset everything to defaults.',
+            null,
+            true
         );
 
         if (!doubleConfirm) return;
@@ -2437,13 +2563,24 @@ const DemoApp = {
             }
 
             console.log('All site data deleted');
-            alert('All data has been deleted successfully. The page will now reload.');
+
+            // Show success message
+            await this.showAlert(
+                'Success',
+                'All data has been deleted successfully. The page will now reload.'
+            );
 
             // Reload the page to apply changes
             window.location.reload();
         } catch (error) {
             console.error('Error deleting data:', error);
-            alert('An error occurred while deleting data. Check console for details.');
+
+            // Show error message
+            await this.showAlert(
+                'Error',
+                'An error occurred while deleting data. Check console for details.',
+                true
+            );
         }
     },
 
