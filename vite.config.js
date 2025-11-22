@@ -4,14 +4,10 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: 'apps',
-          dest: '.'
-        }
-      ]
-    })
+    // Static copy plugin - apps directory now handled via rollupOptions and copy-assets.js
+    // viteStaticCopy({
+    //   targets: []
+    // })
   ],
   // Base public path
   base: './',
@@ -31,6 +27,7 @@ export default defineConfig({
         projects: resolve(__dirname, 'projects/index.html'),
         ai: resolve(__dirname, 'ai/index.html'),
         demo: resolve(__dirname, 'ai/demo/index.html'),
+        apps: resolve(__dirname, 'apps/index.html'),
       },
       output: {
         // Aggressive content-based cache busting
