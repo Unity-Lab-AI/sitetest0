@@ -18,6 +18,7 @@ const ASSETS_TO_COPY = [
   { src: 'robots.txt', dest: 'robots.txt', type: 'file' },
   { src: 'sitemap.xml', dest: 'sitemap.xml', type: 'file' },
   { src: 'BingSiteAuth.xml', dest: 'BingSiteAuth.xml', type: 'file' },
+  { src: 'script.js', dest: 'script.js', type: 'file' },
   { src: 'visitor-tracking.js', dest: 'visitor-tracking.js', type: 'file' },
   { src: 'about/about.js', dest: 'about/about.js', type: 'file' },
   { src: 'ai/demo/age-verification.js', dest: 'ai/demo/age-verification.js', type: 'file' },
