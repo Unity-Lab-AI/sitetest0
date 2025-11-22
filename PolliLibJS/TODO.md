@@ -11,7 +11,7 @@ PolliLibJS is a comprehensive JavaScript/Node.js library providing complete acce
 
 **Quick Stats:**
 - **Modules:** 14 JavaScript files
-- **Lines of Code:** ~8,000+ lines
+- **Lines of Code:** ~3,700 lines
 - **API Coverage:** 100%
 - **Feature Parity:** Matches PolliLibPy 1:1
 

@@ -22,11 +22,12 @@ This document provides comprehensive guidance for AI assistants (like Claude) wo
 This is a test site for Unity AI Lab that serves as a development and testing environment for:
 
 - **Website**: A dark-themed interactive website showcasing AI capabilities
-- **AI Demo Page**: Fully functional interactive demo at /ai/demo showcasing PolliLibJS (~85% complete)
-- **PolliLibJS**: JavaScript/Node.js library for Pollinations.AI (✅ 100% complete)
-- **PolliLibPy**: Python library for Pollinations.AI (✅ 100% complete)
+- **AI Demo Page**: Fully functional interactive demo at /ai/demo showcasing PolliLibJS (~90% complete)
+- **PolliLibJS**: JavaScript/Node.js library for Pollinations.AI (✅ 100% complete, ~3,700 lines)
+- **PolliLibPy**: Python library for Pollinations.AI (✅ 100% complete, ~5,700 lines)
+- **Apps Gallery**: Collection of mini applications and utilities at /apps (~70% complete)
 
-The project features complete implementations of both libraries, a functional marketing website, and a working AI demo.
+The project features complete implementations of both libraries, a functional marketing website, a highly functional AI demo, and a growing collection of mini apps.
 
 **Key Technologies:**
 - HTML5, CSS3, JavaScript (vanilla)
@@ -96,33 +97,22 @@ sitetest0/
 │   └── __init__.py                    # Package initialization
 │
 ├── tests/                             # Active Playwright tests
-│   ├── navigation.spec.js             # Navigation tests
-│   ├── browser-compatibility.spec.js  # Browser compatibility & loading tests
-│   └── backup/                        # Backup test files
-│
-├── archived-tests/                    # Archived test files (see README)
-│   ├── README.md                      # Archive documentation
-│   ├── standalone-tool-calling-test.js        # Standalone tool test
-│   ├── unity_testing.js               # Unity testing script
-│   ├── unity_testing.html             # Unity test interface
-│   ├── model_parameter_test.js        # Parameter test script
-│   ├── model_parameter_test.html      # Parameter test interface
-│   ├── test_unity_tools.html          # Unity tools test interface
-│   ├── TOOL_CALLING_TESTS_README.md   # Tool calling test docs
-│   ├── ANALYSIS_DEMO_PARAMETERS.md    # Demo parameter analysis
-│   ├── MODEL_PARAMETER_COMPATIBILITY.md  # Model compatibility notes
-│   ├── FIXES_UNITY_IMAGE_GENERATION.md   # Unity image gen fixes
-│   ├── PLAYWRIGHT_CI_NOTES.md         # Playwright CI notes
-│   └── playwright-tests/
-│       └── tool-calling-rate-limited.spec.js  # Archived Playwright test
+│   ├── navigation.spec.js             # Navigation tests (10 tests)
+│   └── browser-compatibility.spec.js  # Browser compatibility tests
 │
 ├── ai/                                # AI Chat Section
 │   ├── index.html                     # AI landing page
-│   └── demo/                          # Interactive demo
+│   └── demo/                          # Interactive demo (~90% complete, ~8,000 lines)
 │       ├── index.html                 # Demo page
-│       ├── demo.css                   # Demo styles
-│       ├── demo.js                    # Demo functionality
+│       ├── demo.css                   # Demo styles (59KB)
+│       ├── demo.js                    # Demo functionality (149KB)
+│       ├── age-verification.js        # Age verification system
+│       ├── unity-persona.js           # Unity persona integration
+│       ├── unity-system-prompt-v*.js/txt  # Unity system prompts
 │       └── test-cors.html             # CORS testing page
+│
+├── apps/                              # Mini Applications Gallery (~70% complete)
+│   └── (various mini apps and utilities)
 │
 ├── about/                             # About page
 ├── contact/                           # Contact page
@@ -163,14 +153,15 @@ All documentation is centralized in the `Docs/` folder:
 
 ### Demo Page Documentation
 
-- **[ai/demo/index.html](./ai/demo/index.html)** - Interactive AI demo page (~85% complete)
+- **[ai/demo/index.html](./ai/demo/index.html)** - Interactive AI demo page (~90% complete, ~8,000 lines)
 - **[Docs/TODO/demo-page-TODO.md](./Docs/TODO/demo-page-TODO.md)** - Demo features and status
+- Unity persona integration with custom system prompts
+- Age verification system for NSFW content
 
-### Archived Tests Documentation
+### Apps Gallery Documentation
 
-- **[archived-tests/README.md](./archived-tests/README.md)** - Documentation for archived test files
-- Archived test files include tool calling tests, Unity testing utilities, and related documentation
-- See the archived-tests directory for historical test implementations
+- **[/apps](./apps)** - Mini applications and utilities gallery (~70% complete)
+- Active development with recent improvements (see git log for slideshow, navigation fixes)
 
 ### How to Update Documentation
 
@@ -198,10 +189,10 @@ When making changes to the codebase:
 Located in `Docs/TODO/`:
 
 - **website-TODO.md** - Website features and improvements (~90% complete)
-- **demo-page-TODO.md** - Demo page tasks (✅ ~85% complete - IMPLEMENTED!)
-- **main-app-TODO.md** - Main application planning (external/future)
-- **infrastructure-TODO.md** - Infrastructure and deployment
-- **TODO_EXTRAS.md** - Additional tasks and nice-to-haves
+- **demo-page-TODO.md** - Demo page tasks (✅ ~90% complete - HIGHLY COMPLETE!)
+- **main-app-TODO.md** - Main application planning (external, not in this repo)
+- **infrastructure-TODO.md** - Infrastructure and deployment (not applicable to static site)
+- **TODO_EXTRAS.md** - Additional tasks (legacy migration, mini apps, games)
 
 ### Library TODO Files
 
@@ -357,7 +348,7 @@ npx playwright test --debug
 
 - **navigation.spec.js** - Navigation and page loading tests (10 tests)
 - **browser-compatibility.spec.js** - Browser compatibility & element loading tests across Chromium, Firefox, and WebKit
-- **backup/** - More comprehensive tests (disabled due to flakiness)
+- **README.md** - Test documentation and guidelines
 
 ### After Testing
 
@@ -514,18 +505,24 @@ git commit -m "Test: Update test results after full suite run"
 
 ### 🟢 Mostly Complete / Polishing
 
-- AI Demo Page - Functional with core features (~85%)
+- AI Demo Page - Highly functional (~90%)
   - ✅ Text-to-text chat
   - ✅ Text-to-image generation
   - ✅ Text-to-speech (TTS)
+  - ✅ Unity persona integration
+  - ✅ Age verification system
+  - ✅ ~8,000 lines of code
   - ❌ Speech-to-text (STT) pending
-- Playwright tests - Working (10/15 passing, Chromium CI issues documented)
+- Apps Gallery - In development (~70%)
+  - ✅ Mini applications and utilities
+  - ✅ Recent improvements (slideshow, navigation fixes)
+- Playwright tests - Working navigation and browser compatibility tests
 - Performance - Optimizations applied, ongoing improvements
 
-### ❌ Not Started
+### ❌ Not Started / External
 
 - Main chat application (external project, not in this repo)
-- Full infrastructure automation (backend services)
+- Full infrastructure automation (backend services - not applicable to static site)
 - STT (speech-to-text) in demo page
 - Advanced demo features (conversation export, message editing)
 
@@ -574,6 +571,14 @@ This CLAUDE.md file should be updated when:
 
 ---
 
-**Last Updated:** 2025-11-21
-**Version:** 1.2.0
+**Last Updated:** 2025-11-22
+**Version:** 1.3.0
 **Maintained by:** Unity AI Lab Team
+
+**Change Log (v1.3.0):**
+- Removed references to non-existent `archived-tests/` directory
+- Added `/apps` gallery documentation (~70% complete)
+- Updated demo page status from ~85% to ~90% complete
+- Added Unity persona and age verification system documentation
+- Updated library line counts to accurate figures (PolliLibJS ~3,700, PolliLibPy ~5,700)
+- Updated test documentation to reflect current simple navigation tests
