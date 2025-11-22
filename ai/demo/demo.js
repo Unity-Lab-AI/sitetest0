@@ -2630,6 +2630,9 @@ const DemoApp = {
 
 document.addEventListener('DOMContentLoaded', () => {
     DemoApp.init();
+
+    // Note: Visitor tracking happens automatically during age verification
+    // Registration is handled by age-verification.js after successful verification
 });
 
 // ===================================

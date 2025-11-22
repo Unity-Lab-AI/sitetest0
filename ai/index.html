@@ -420,6 +420,10 @@
                     <a href="./demo/" class="btn btn-gothic-primary panel-button">
                         <i class="fas fa-rocket me-2"></i>Try the Demo
                     </a>
+                    <div class="visitor-count-container mt-4" style="color: var(--light-grey); font-size: 0.95rem;">
+                        <i class="fas fa-users" style="color: var(--crimson-red); margin-right: 8px;"></i>
+                        <span id="visitorCount">Loading...</span> visitors have experienced the demo
+                    </div>
                 </div>
 
                 <!-- Divider -->
@@ -529,10 +533,56 @@
     <!-- Custom JavaScript -->
     <script src="../script.min.js?v=82c818f"></script>
 
+    <!-- Visitor Tracking System -->
+    <script src="../visitor-tracking.js"></script>
+
     <!-- Remove FOUC class when page loads -->
     <script>
         window.addEventListener('load', function() {
             document.body.classList.add('loaded');
+        });
+
+        // Load and auto-refresh visitor count for demo page
+        document.addEventListener('DOMContentLoaded', function() {
+            const countElement = document.getElementById('visitorCount');
+            if (!countElement || typeof VisitorTracking === 'undefined') {
+                return;
+            }
+
+            let currentCount = null;
+
+            // Function to fetch and update visitor count
+            async function updateVisitorCount() {
+                try {
+                    const count = await VisitorTracking.getVisitorCount('demo');
+                    if (count) {
+                        // Only update if count has changed or is first load
+                        if (currentCount !== count) {
+                            countElement.textContent = count;
+                            currentCount = count;
+                            console.log('Visitor count updated:', count);
+                        }
+                    } else {
+                        if (currentCount === null) {
+                            countElement.textContent = '0';
+                            currentCount = '0';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load visitor count:', error);
+                    if (currentCount === null) {
+                        countElement.textContent = '0';
+                        currentCount = '0';
+                    }
+                }
+            }
+
+            // Initial load
+            updateVisitorCount();
+
+            // Auto-refresh every 5 minutes (300,000 ms)
+            setInterval(updateVisitorCount, 300000);
+            console.log('Visitor count auto-refresh enabled (every 5 minutes)');
         });
     </script>
 </body>
