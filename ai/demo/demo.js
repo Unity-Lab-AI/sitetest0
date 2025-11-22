@@ -1186,8 +1186,9 @@ const DemoApp = {
 
     // Update model info display
     updateModelInfo(modelValue) {
-        const modelInfo = document.getElementById('modelInfo');
-        if (!modelInfo) return;
+        // Get ALL modelInfo elements (desktop sidebar + mobile modal)
+        const modelInfoElements = document.querySelectorAll('#modelInfo');
+        if (modelInfoElements.length === 0) return;
 
         // Try to find the model in available models
         const model = this.availableTextModels.find(m =>
@@ -1210,10 +1211,13 @@ const DemoApp = {
             infoText = `${modelValue.charAt(0).toUpperCase() + modelValue.slice(1)} model`;
         }
 
-        const spanElement = modelInfo.querySelector('span');
-        if (spanElement) {
-            spanElement.textContent = infoText;
-        }
+        // Update ALL model info elements
+        modelInfoElements.forEach(modelInfo => {
+            const spanElement = modelInfo.querySelector('span');
+            if (spanElement) {
+                spanElement.textContent = infoText;
+            }
+        });
 
         // Update voice playback availability based on community model status
         this.updateVoiceAvailability();
@@ -1227,36 +1231,41 @@ const DemoApp = {
         // Unity is treated as a community model for voice purposes (even though it uses Mistral)
         const isUnityModel = this.settings.model === 'unity';
 
-        const voicePlaybackCheckbox = document.getElementById('voicePlayback');
-        const voiceSettings = voicePlaybackCheckbox.closest('.control-group');
+        // Get ALL voice playback checkboxes (desktop sidebar + mobile modal)
+        const voicePlaybackCheckboxes = document.querySelectorAll('#voicePlayback');
 
+        voicePlaybackCheckboxes.forEach(voicePlaybackCheckbox => {
+            const voiceSettings = voicePlaybackCheckbox.closest('.control-group');
+
+            if (isCommunityModel || isUnityModel) {
+                // Disable voice playback for community models and Unity
+                voicePlaybackCheckbox.disabled = true;
+                voicePlaybackCheckbox.checked = false;
+                this.settings.voicePlayback = false;
+
+                // Add visual indicator
+                if (voiceSettings) {
+                    voiceSettings.style.opacity = '0.5';
+                    voiceSettings.title = isUnityModel
+                        ? 'Voice playback is not available for Unity model (unrestricted content)'
+                        : 'Voice playback is not available for community models';
+                }
+            } else {
+                // Enable voice playback for non-community models
+                voicePlaybackCheckbox.disabled = false;
+
+                // Remove visual indicator
+                if (voiceSettings) {
+                    voiceSettings.style.opacity = '1';
+                    voiceSettings.title = '';
+                }
+            }
+        });
+
+        // Stop any currently playing voice if disabling
         if (isCommunityModel || isUnityModel) {
-            // Disable voice playback for community models and Unity
-            voicePlaybackCheckbox.disabled = true;
-            voicePlaybackCheckbox.checked = false;
-            this.settings.voicePlayback = false;
-
-            // Add visual indicator
-            if (voiceSettings) {
-                voiceSettings.style.opacity = '0.5';
-                voiceSettings.title = isUnityModel
-                    ? 'Voice playback is not available for Unity model (unrestricted content)'
-                    : 'Voice playback is not available for community models';
-            }
-
-            // Stop any currently playing voice
             this.stopVoicePlayback();
-
             console.log('Voice playback disabled for model:', this.settings.model);
-        } else {
-            // Enable voice playback for non-community models
-            voicePlaybackCheckbox.disabled = false;
-
-            // Remove visual indicator
-            if (voiceSettings) {
-                voiceSettings.style.opacity = '1';
-                voiceSettings.title = '';
-            }
         }
     },
 
@@ -2339,11 +2348,186 @@ const DemoApp = {
         if (leftPanel && leftModalContent) {
             // Clone left panel content
             leftModalContent.innerHTML = leftPanel.innerHTML;
+            // Attach event listeners to cloned controls
+            this.attachControlListeners(leftModalContent);
         }
 
         if (rightPanel && rightModalContent) {
             // Clone right panel content
             rightModalContent.innerHTML = rightPanel.innerHTML;
+            // Attach event listeners to cloned controls
+            this.attachControlListeners(rightModalContent);
+        }
+    },
+
+    // Attach event listeners to controls within a container
+    attachControlListeners(container) {
+        // Model select
+        const modelSelect = container.querySelector('#modelSelect');
+        if (modelSelect) {
+            modelSelect.addEventListener('change', (e) => {
+                this.settings.model = e.target.value;
+                this.updateModelInfo(e.target.value);
+                this.saveSettings();
+            });
+        }
+
+        // Voice select
+        const voiceSelect = container.querySelector('#voiceSelect');
+        if (voiceSelect) {
+            voiceSelect.addEventListener('change', (e) => {
+                this.settings.voiceName = e.target.value;
+                this.saveSettings();
+            });
+        }
+
+        // Image model select
+        const imageModel = container.querySelector('#imageModel');
+        if (imageModel) {
+            imageModel.addEventListener('change', (e) => {
+                this.settings.imageModel = e.target.value;
+                this.saveSettings();
+            });
+        }
+
+        // Seed input
+        const seedInput = container.querySelector('#seedInput');
+        if (seedInput) {
+            seedInput.addEventListener('change', (e) => {
+                this.settings.seed = parseInt(e.target.value);
+                this.saveSettings();
+            });
+        }
+
+        // System prompt
+        const systemPrompt = container.querySelector('#systemPrompt');
+        if (systemPrompt) {
+            systemPrompt.addEventListener('input', (e) => {
+                this.settings.systemPrompt = e.target.value;
+                this.saveSettings();
+            });
+        }
+
+        // Text temperature slider
+        const textTempSlider = container.querySelector('#textTemperature');
+        const textTempValue = container.querySelector('#textTempValue');
+        if (textTempSlider && textTempValue) {
+            textTempSlider.addEventListener('input', (e) => {
+                this.settings.textTemperature = parseFloat(e.target.value);
+                textTempValue.textContent = e.target.value;
+                this.saveSettings();
+            });
+        }
+
+        // Reasoning effort
+        const reasoningEffort = container.querySelector('#reasoningEffort');
+        if (reasoningEffort) {
+            reasoningEffort.addEventListener('change', (e) => {
+                this.settings.reasoningEffort = e.target.value;
+                this.saveSettings();
+            });
+        }
+
+        // Image width
+        const imageWidthSelect = container.querySelector('#imageWidth');
+        if (imageWidthSelect) {
+            imageWidthSelect.addEventListener('change', (e) => {
+                const value = e.target.value;
+                if (value === 'auto') {
+                    this.settings.imageWidth = null;
+                } else {
+                    this.settings.imageWidth = parseInt(value);
+                }
+                this.saveSettings();
+            });
+        }
+
+        // Image height
+        const imageHeightSelect = container.querySelector('#imageHeight');
+        if (imageHeightSelect) {
+            imageHeightSelect.addEventListener('change', (e) => {
+                const value = e.target.value;
+                if (value === 'auto') {
+                    this.settings.imageHeight = null;
+                } else {
+                    this.settings.imageHeight = parseInt(value);
+                }
+                this.saveSettings();
+            });
+        }
+
+        // Image enhance checkbox
+        const imageEnhanceCheckbox = container.querySelector('#imageEnhance');
+        if (imageEnhanceCheckbox) {
+            imageEnhanceCheckbox.addEventListener('change', (e) => {
+                this.settings.imageEnhance = e.target.checked;
+                this.saveSettings();
+            });
+
+            // Make the entire toggle switch clickable
+            const imageEnhanceToggle = imageEnhanceCheckbox.closest('.toggle-switch');
+            if (imageEnhanceToggle) {
+                imageEnhanceToggle.addEventListener('click', (e) => {
+                    if (e.target !== imageEnhanceCheckbox) {
+                        e.preventDefault();
+                        imageEnhanceCheckbox.checked = !imageEnhanceCheckbox.checked;
+                        imageEnhanceCheckbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+        }
+
+        // Voice playback checkbox
+        const voicePlaybackCheckbox = container.querySelector('#voicePlayback');
+        if (voicePlaybackCheckbox) {
+            voicePlaybackCheckbox.addEventListener('change', (e) => {
+                this.settings.voicePlayback = e.target.checked;
+                this.saveSettings();
+            });
+
+            // Make the entire toggle switch clickable
+            const voicePlaybackToggle = voicePlaybackCheckbox.closest('.toggle-switch');
+            if (voicePlaybackToggle) {
+                voicePlaybackToggle.addEventListener('click', (e) => {
+                    if (e.target !== voicePlaybackCheckbox) {
+                        e.preventDefault();
+                        voicePlaybackCheckbox.checked = !voicePlaybackCheckbox.checked;
+                        voicePlaybackCheckbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+        }
+
+        // Voice volume slider
+        const volumeSlider = container.querySelector('#voiceVolume');
+        const volumeValue = container.querySelector('#volumeValue');
+        if (volumeSlider && volumeValue) {
+            volumeSlider.addEventListener('input', (e) => {
+                this.settings.voiceVolume = parseInt(e.target.value);
+                volumeValue.textContent = e.target.value + '%';
+                if (this.currentAudio) {
+                    this.currentAudio.volume = this.settings.voiceVolume / 100;
+                }
+                this.saveSettings();
+            });
+        }
+
+        // Clear session button
+        const clearSessionBtn = container.querySelector('#clearSession');
+        if (clearSessionBtn) {
+            clearSessionBtn.addEventListener('click', () => this.clearSession());
+        }
+
+        // Stop talking button
+        const stopTalkingBtn = container.querySelector('#stopTalking');
+        if (stopTalkingBtn) {
+            stopTalkingBtn.addEventListener('click', () => this.stopVoicePlayback());
+        }
+
+        // Delete all data button
+        const deleteAllDataBtn = container.querySelector('#deleteAllData');
+        if (deleteAllDataBtn) {
+            deleteAllDataBtn.addEventListener('click', () => this.deleteAllData());
         }
     },
 
