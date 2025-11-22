@@ -340,6 +340,12 @@ const AgeVerification = {
 
         console.log('Age Verification: Verification complete');
 
+        // Create visitor UID (cryptographically secure)
+        if (typeof VisitorTracking !== 'undefined' && !VisitorTracking.hasUID()) {
+            const uid = VisitorTracking.createUID();
+            console.log('Age Verification: Created secure visitor UID:', uid);
+        }
+
         // Remove popup
         this.removeCurrentPopup();
 
