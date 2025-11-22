@@ -903,6 +903,13 @@ body {
     border-top: 1px solid rgba(220, 20, 60, 0.3);
 }
 
+/* Hide footer on mobile to save space */
+@media (max-width: 992px) {
+    .demo-footer {
+        display: none;
+    }
+}
+
 /* Custom Scrollbar for Panels */
 .left-panel::-webkit-scrollbar,
 .right-panel::-webkit-scrollbar,
@@ -1460,11 +1467,13 @@ body {
     .chat-section {
         width: 100%;
         height: 100vh;
+        height: 100dvh; /* Dynamic viewport height - excludes browser UI on mobile */
         flex: 1;
     }
 
     .chat-messages {
-        padding: 80px 15px 20px; /* Top padding to avoid overlap with menu buttons */
+        padding: 80px 15px 110px; /* Top padding for menu buttons, bottom for fixed input */
+        padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
     }
 
     .message-bubble.user,
@@ -1473,11 +1482,17 @@ body {
         margin-right: 10%;
     }
 
-    /* Adjust input container for mobile */
+    /* Fix input container to bottom on mobile for better accessibility */
     .message-input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         padding: 15px;
-        position: relative;
-        z-index: 50;
+        padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+        z-index: 100;
+        background: rgba(26, 26, 26, 0.98);
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
     }
 }
 
@@ -1487,11 +1502,13 @@ body {
     }
 
     .chat-messages {
-        padding: 20px 15px;
+        padding: 80px 15px 120px; /* Increased bottom padding for smaller screens */
+        padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
     }
 
     .message-input-container {
-        padding: 15px;
+        padding: 12px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     }
 
     .message-bubble {
@@ -1946,42 +1963,6 @@ body {
     }
 }
 
-/* ===================================
-   Mobile Browser UI Adjustments
-   Fixes input accessibility with browser navigation bars
-   =================================== */
-
-/* Account for mobile browser UI (address bars, home buttons, etc.) */
-@media (max-width: 992px) {
-    /* Use safe-area-inset for devices with notches/home indicators */
-    .message-input-container {
-        padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
-        padding-left: calc(15px + env(safe-area-inset-left, 0px));
-        padding-right: calc(15px + env(safe-area-inset-right, 0px));
-    }
-
-    /* Ensure chat messages don't get hidden behind input area */
-    .chat-messages {
-        padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
-    }
-
-    /* Adjust chat section height to account for browser chrome */
-    .chat-section {
-        height: 100vh;
-        height: 100dvh; /* Dynamic viewport height - excludes browser UI */
-    }
-}
-
-/* Extra spacing for very small screens */
-@media (max-width: 576px) {
-    .message-input-container {
-        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    }
-
-    .chat-messages {
-        padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
-    }
-}
 
 /* ===================================
    Improved Font Responsiveness
