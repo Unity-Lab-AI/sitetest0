@@ -25,7 +25,7 @@ body {
   border-right: 2px solid #404040;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 2px;
   overflow-y: auto;
 }
 
@@ -33,14 +33,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .sidebar-btn {
   background: #404040;
   color: #e0e0e0;
   border: none;
-  padding: 6px 10px;
+  padding: 2px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -55,16 +55,16 @@ body {
 
 .session-list {
   list-style: none;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .session-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px;
+  padding: 2px;
   border-radius: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   cursor: pointer;
   background: #404040;
   color: #e0e0e0;
@@ -108,20 +108,20 @@ body {
 }
 
 .sidebar-label {
-  margin-top: 6px;
+  margin-top: 2px;
   display: block;
   font-weight: bold;
   font-size: 0.9rem;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: #e0e0e0;
 }
 
 .sidebar-select {
   width: 100%;
-  padding: 8px;
+  padding: 2px;
   border-radius: 8px;
   border: 1px solid #505050;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   background-color: #333333;
   color: #e0e0e0;
 }
@@ -129,7 +129,7 @@ body {
 .divider {
   border: none;
   border-bottom: 1px solid #505050;
-  margin: 8px 0;
+  margin: 2px 0;
 }
 
 .chat-layout {
@@ -149,14 +149,14 @@ body {
 
 .chat-box {
   flex: 1;
-  padding: 10px;
+  padding: 2px;
   overflow-y: auto;
   scrollbar-width: thin;
 }
 
 .chat-input-container {
   display: flex;
-  padding: 8px 10px;
+  padding: 2px;
   background: #2a2a2a;
   align-items: center;
 }
@@ -215,7 +215,7 @@ body {
 .chat-controls {
   display: flex;
   justify-content: space-between;
-  padding: 6px 10px;
+  padding: 2px;
   background: #2a2a2a;
   border-top: 1px solid #505050;
 }
@@ -237,8 +237,8 @@ body {
 }
 
 .message {
-  margin: 8px 0;
-  padding: 8px 12px;
+  margin: 2px 0;
+  padding: 2px;
   border-radius: 18px;
   animation: fadeIn 0.3s ease;
   word-break: break-word;
