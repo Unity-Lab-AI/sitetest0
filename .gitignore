@@ -7,9 +7,6 @@ node_modules/
 dist/
 
 # Test results
-test-results/
-playwright-report/
-playwright/.cache/
 test-output*.txt
 test-output.log
 standalone-test-results.log

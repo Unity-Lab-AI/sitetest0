@@ -33,7 +33,6 @@ The project features complete implementations of both libraries, a functional ma
 - HTML5, CSS3, JavaScript (vanilla)
 - Python 3.7+
 - Pollinations.AI API
-- Playwright for testing
 - GitHub Actions for CI/CD
 
 ---
@@ -95,10 +94,6 @@ sitetest0/
 │   ├── test_utils_demo.py             # Testing demos
 │   ├── test_safety_and_reasoning.py   # Safety/reasoning tests
 │   └── __init__.py                    # Package initialization
-│
-├── tests/                             # Active Playwright tests
-│   ├── navigation.spec.js             # Navigation tests (10 tests)
-│   └── browser-compatibility.spec.js  # Browser compatibility tests
 │
 ├── ai/                                # AI Chat Section
 │   ├── index.html                     # AI landing page
@@ -321,42 +316,6 @@ git commit -m "Docs: Update TODO list
 
 ## Testing Guidelines
 
-### Playwright Tests
-
-Located in `tests/` directory.
-
-**Running Tests:**
-
-```bash
-# Install dependencies
-npm install
-
-# Run all tests
-npx playwright test
-
-# Run specific test
-npx playwright test tests/navigation.spec.js
-
-# Run with UI
-npx playwright test --ui
-
-# Debug mode
-npx playwright test --debug
-```
-
-### Test Organization
-
-- **navigation.spec.js** - Navigation and page loading tests (10 tests)
-- **browser-compatibility.spec.js** - Browser compatibility & element loading tests across Chromium, Firefox, and WebKit
-- **README.md** - Test documentation and guidelines
-
-### After Testing
-
-1. Review test output
-2. Update `Docs/TEST_RESULTS.md` with findings
-3. Fix any failing tests before committing
-4. Document known issues or flaky tests
-
 ### Library Testing
 
 **JavaScript:**
@@ -395,7 +354,6 @@ Both PolliLibJS and PolliLibPy follow the same modular structure:
 ### Configuration Files
 
 - **package.json** - NPM configuration
-- **playwright.config.js** - Playwright test configuration
 - **.github/workflows/** - CI/CD configuration
 
 ---
@@ -465,28 +423,25 @@ Both PolliLibJS and PolliLibPy follow the same modular structure:
 5. Commit changes in logical groups
 6. Update this CLAUDE.md if structure changes significantly
 
-### Running a Full Test Suite
+### Running Library Tests
 
 ```bash
-# 1. Test website functionality
-npx playwright test
-
-# 2. Test JavaScript library
+# 1. Test JavaScript library
 cd PolliLibJS
 node test-utils-demo.js
 cd ..
 
-# 3. Test Python library
+# 2. Test Python library
 cd PolliLibPy
 python test_utils_demo.py
 cd ..
 
-# 4. Update test results
+# 3. Update test results (if applicable)
 # Edit Docs/TEST_RESULTS.md with findings
 
-# 5. Commit test results
+# 4. Commit test results
 git add Docs/TEST_RESULTS.md
-git commit -m "Test: Update test results after full suite run"
+git commit -m "Test: Update test results after library tests"
 ```
 
 ---
@@ -501,7 +456,6 @@ git commit -m "Test: Update test results after full suite run"
 - SEO - Comprehensive implementation
 - Documentation - Well-documented
 - CSS/JS Minification - Automated deployment
-- Cross-browser testing - Firefox & WebKit 100% passing
 
 ### 🟢 Mostly Complete / Polishing
 
@@ -516,7 +470,6 @@ git commit -m "Test: Update test results after full suite run"
 - Apps Gallery - In development (~70%)
   - ✅ Mini applications and utilities
   - ✅ Recent improvements (slideshow, navigation fixes)
-- Playwright tests - Working navigation and browser compatibility tests
 - Performance - Optimizations applied, ongoing improvements
 
 ### ❌ Not Started / External
@@ -552,7 +505,6 @@ git commit -m "Test: Update test results after full suite run"
 ### External Resources
 
 - [Pollinations.AI Documentation](https://github.com/pollinations/pollinations)
-- [Playwright Documentation](https://playwright.dev/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ---
@@ -572,8 +524,14 @@ This CLAUDE.md file should be updated when:
 ---
 
 **Last Updated:** 2025-11-22
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Maintained by:** Unity AI Lab Team
+
+**Change Log (v1.4.0):**
+- Removed all Playwright test references and documentation
+- Removed tests/ directory section from repository structure
+- Updated Testing Guidelines to focus on library testing only
+- Removed Playwright from Key Technologies and External Resources
 
 **Change Log (v1.3.0):**
 - Removed references to non-existent `archived-tests/` directory

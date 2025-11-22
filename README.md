@@ -145,11 +145,6 @@ sitetest0/
 ├── apps/                           # Mini apps gallery (~70% complete)
 │   └── ... (various utilities and mini apps)
 │
-├── tests/                          # Playwright test suite
-│   ├── navigation.spec.js          # Navigation tests (10 tests)
-│   ├── browser-compatibility.spec.js  # Compatibility tests
-│   └── README.md                   # Test documentation
-│
 ├── about/                          # About page
 ├── services/                       # Services page
 ├── projects/                       # Projects page
@@ -157,7 +152,7 @@ sitetest0/
 ├── index.html                      # Main landing page
 ├── styles.css                      # Main stylesheet
 ├── script.js                       # Main JavaScript
-├── CLAUDE.md                       # ⭐ AI assistant guide (v1.3.0)
+├── CLAUDE.md                       # ⭐ AI assistant guide (v1.4.0)
 └── README.md                       # This file
 ```
 
@@ -194,7 +189,6 @@ Both libraries are feature-complete and provide:
 - **Dark Gothic UI**: Immersive dark-themed interface
 - **Responsive Design**: Works on desktop and mobile devices
 - **Cache Busting**: Automated version control for assets
-- **Cross-browser Support**: Tested on Chromium, Firefox, and WebKit
 
 ## Authentication
 
@@ -220,7 +214,7 @@ Changes tested here are promoted to the main Unity AI Lab website after validati
 ## Documentation
 
 ### For Developers & AI Assistants
-- **⭐ AI Assistant Guide**: [CLAUDE.md](./CLAUDE.md) - Complete development guide (v1.3.0)
+- **⭐ AI Assistant Guide**: [CLAUDE.md](./CLAUDE.md) - Complete development guide (v1.4.0)
 - **⭐ Project Roadmap**: [Docs/TODO/TODO.md](./Docs/TODO/TODO.md) - Master TODO and project status
 
 ### API & Libraries
