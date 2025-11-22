@@ -208,6 +208,61 @@ export function updateVoiceAvailability(settings) {
 }
 
 /**
+ * Update system prompt availability based on current model
+ */
+export function updateSystemPromptAvailability(settings) {
+    const currentModel = getCurrentModelMetadata(settings.model);
+    const isCommunityModel = currentModel && currentModel.community === true;
+
+    // Unity is allowed system prompts (user prompt gets appended to Unity prompt)
+    const isUnityModel = settings.model === 'unity';
+
+    // Get ALL system prompt textareas (desktop sidebar + mobile modal)
+    const systemPromptTextareas = document.querySelectorAll('#systemPrompt');
+
+    systemPromptTextareas.forEach(systemPromptTextarea => {
+        const systemPromptSection = systemPromptTextarea.closest('.control-section');
+
+        if (isCommunityModel && !isUnityModel) {
+            // Disable system prompt for community models (excluding Unity)
+            systemPromptTextarea.disabled = true;
+            systemPromptTextarea.value = '';
+            settings.systemPrompt = '';
+
+            // Add visual indicator
+            if (systemPromptSection) {
+                systemPromptSection.style.opacity = '0.5';
+                systemPromptTextarea.title = 'System prompts are not available for community models';
+            }
+        } else if (isUnityModel) {
+            // Enable system prompt for Unity (it will be appended to Unity prompt)
+            systemPromptTextarea.disabled = false;
+            systemPromptTextarea.placeholder = 'Add to Unity\'s system prompt (optional)';
+
+            // Remove visual indicator and set Unity-specific styling
+            if (systemPromptSection) {
+                systemPromptSection.style.opacity = '1';
+                systemPromptTextarea.title = 'Your prompt will be appended to Unity\'s system prompt';
+            }
+        } else {
+            // Enable system prompt for non-community models
+            systemPromptTextarea.disabled = false;
+            systemPromptTextarea.placeholder = 'Set AI personality (leave empty for default)';
+
+            // Remove visual indicator
+            if (systemPromptSection) {
+                systemPromptSection.style.opacity = '1';
+                systemPromptTextarea.title = '';
+            }
+        }
+    });
+
+    if (isCommunityModel && !isUnityModel) {
+        console.log('System prompt disabled for model:', settings.model);
+    }
+}
+
+/**
  * Expand image to fullscreen overlay
  */
 export function expandImage(imageUrl, prompt) {

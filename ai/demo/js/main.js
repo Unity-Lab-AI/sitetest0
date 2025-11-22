@@ -29,6 +29,7 @@ import {
     autoResizeTextarea,
     updateModelInfo,
     updateVoiceAvailability,
+    updateSystemPromptAvailability,
     expandImage,
     setupMobileModalListeners,
     deleteAllData,
@@ -105,6 +106,9 @@ const DemoApp = {
         // Update voice availability based on initial model
         updateVoiceAvailability(this.settings);
 
+        // Update system prompt availability based on initial model
+        updateSystemPromptAvailability(this.settings);
+
         console.log('Unity AI Lab Demo initialized');
     },
 
@@ -122,6 +126,7 @@ const DemoApp = {
                 this.settings.model = modelValue;
                 updateModelInfo(modelValue, getAvailableTextModels());
                 updateVoiceAvailability(this.settings);
+                updateSystemPromptAvailability(this.settings);
                 this.saveSettings();
             },
             () => this.saveSettings(),
