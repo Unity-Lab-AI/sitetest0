@@ -222,6 +222,7 @@ export function handleSlashCommandInput(slashCommands) {
         );
 
         if (matches.length > 0) {
+            console.log('[SlashCmd] Found', matches.length, 'matches, showing autocomplete');
             showAutocomplete(matches, commandPart, paramPart);
             autocompleteVisible = true;
         } else {
