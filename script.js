@@ -528,6 +528,10 @@ function initSmokeEffect() {
     // Text elements cache for collision detection
     var textElements = [];
 
+    // Temporary canvas for text measurement (must be initialized before resizeCanvas)
+    var measureCanvas = document.createElement('canvas');
+    var measureCtx = measureCanvas.getContext('2d');
+
     // Set canvas size
     function resizeCanvas() {
         smokeCanvas.width = window.innerWidth;
@@ -536,10 +540,6 @@ function initSmokeEffect() {
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
-    // Temporary canvas for text measurement
-    var measureCanvas = document.createElement('canvas');
-    var measureCtx = measureCanvas.getContext('2d');
 
     // Cache text element positions for collision detection
     function cacheTextElements() {
