@@ -3,7 +3,9 @@
  * Slideshow functionality for AI-generated images
  */
 
-const imageApiUrl = 'https://image.pollinations.ai/prompt/';
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
+
 let slideshowInterval;
 let imageHistory = [];
 const MAX_HISTORY = 10;
@@ -39,13 +41,16 @@ function buildImageUrl(prompt) {
   const enhance = document.getElementById('enhance-mode').checked;
   const refine = document.getElementById('refine-mode').checked;
 
-  let url = `${imageApiUrl}${encodeURIComponent(prompt)}?nologo=true`;
+  // Use PolliLibJS for URL building
+  const encodedPrompt = polliAPI.encodePrompt(prompt);
+  let url = `${PollinationsAPI.IMAGE_API}/prompt/${encodedPrompt}?nologo=true`;
   url += `&width=${dims.width}&height=${dims.height}`;
   url += `&model=${model}`;
   if (isPrivate) url += '&private=true';
   if (enhance) url += '&enhance=true';
   if (refine) url += '&refine=true';
   url += `&seed=${Math.floor(Math.random() * 1000000)}`;
+  url += `&referrer=${encodeURIComponent(polliAPI.referrer)}`;
 
   return url;
 }

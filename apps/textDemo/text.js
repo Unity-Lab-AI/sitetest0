@@ -1,6 +1,9 @@
 // Text Chat Demo - JavaScript
 // Unity AI Lab - AI Text Chat Interface
 
+// Initialize PolliLibJS API
+const polliAPI = new PollinationsAPI();
+
 const BASE_INSTRUCTIONS = `
 I can help format code examples using [CODE] and [/CODE] tags. I will only use these tags for actual code examples.
 When providing image URLs, please output them as plain URLs (e.g., https://image.pollinations.ai/prompt/your_prompt?params) without wrapping them in [CODE] tags so they display as images in the chat.
@@ -236,7 +239,7 @@ async function sendChatMessage(prompt, retryCount = 0) {
   userInput.focus();
 
   try {
-    const response = await fetch('https://text.pollinations.ai/', {
+    const response = await polliAPI.retryRequest(PollinationsAPI.TEXT_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody)
