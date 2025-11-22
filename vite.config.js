@@ -21,6 +21,24 @@ export default defineConfig({
         ai: resolve(__dirname, 'ai/index.html'),
         demo: resolve(__dirname, 'ai/demo/index.html'),
       },
+      output: {
+        // Aggressive content-based cache busting
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+
+        // Manual chunks for better caching strategy
+        manualChunks(id) {
+          // Vendor chunks
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          // Shared modules
+          if (id.includes('js/')) {
+            return 'shared';
+          }
+        },
+      },
     },
 
     // Asset handling
@@ -42,6 +60,9 @@ export default defineConfig({
 
     // Sourcemaps for debugging (can disable in production)
     sourcemap: false,
+
+    // Generate manifest for tracking asset versions
+    manifest: false,
   },
 
   // Server configuration for development
