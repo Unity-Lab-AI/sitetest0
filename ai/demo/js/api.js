@@ -283,23 +283,39 @@ export async function getAIResponse(message, chatHistory, settings, generateRand
 
     // CUSTOM: If Unity model is selected, use Mistral with Unity system prompt and tool calling
     let actualModel = settings.model;
-    let effectiveSystemPrompt = settings.systemPrompt;
+    let effectiveSystemPrompt = '';
     let useToolCalling = supportsTools;
 
     if (settings.model === 'unity') {
         // Use Mistral model with Unity persona and enable tool calling
         actualModel = 'mistral';
-        effectiveSystemPrompt = unitySystemPrompt + TOOL_CALLING_ADDON;
+        // Append user's system prompt to Unity prompt if provided
+        if (settings.systemPrompt && settings.systemPrompt.trim()) {
+            effectiveSystemPrompt = unitySystemPrompt + '\n\n' + settings.systemPrompt + '\n\n' + TOOL_CALLING_ADDON;
+            console.log('Unity model: appending user system prompt to Unity persona');
+        } else {
+            effectiveSystemPrompt = unitySystemPrompt + TOOL_CALLING_ADDON;
+        }
         useToolCalling = true;
         console.log('Unity model selected: using Mistral with Unity persona and tool calling');
+    } else if (isCommunityModel) {
+        // Community models: ignore user system prompts, only add tool calling addon if supported
+        if (supportsTools) {
+            effectiveSystemPrompt = TOOL_CALLING_ADDON.trim();
+        } else {
+            effectiveSystemPrompt = '';
+        }
+        console.log('Community model: user system prompts are disabled');
     } else if (supportsTools) {
-        // Add tool calling addon to system prompt for models that support it
-        // This includes community models - voice playback is already disabled for them separately
-        if (effectiveSystemPrompt) {
-            effectiveSystemPrompt += TOOL_CALLING_ADDON;
+        // Non-community models with tool support: use user system prompt + tool calling addon
+        if (settings.systemPrompt && settings.systemPrompt.trim()) {
+            effectiveSystemPrompt = settings.systemPrompt + '\n\n' + TOOL_CALLING_ADDON;
         } else {
             effectiveSystemPrompt = TOOL_CALLING_ADDON.trim();
         }
+    } else {
+        // Non-community models without tool support: use user system prompt as-is
+        effectiveSystemPrompt = settings.systemPrompt || '';
     }
 
     // If model supports tool calling, use OpenAI endpoint
@@ -509,17 +525,21 @@ async function getAIResponseLegacy(message, model, systemPrompt, chatHistory, se
     url += url.includes('?') ? '&' : '?';
     url += 'private=true';
 
-    // Add system prompt if specified
+    // Add system prompt if specified (but not for community models, except Unity which is handled separately)
     const currentModel = getCurrentModelMetadata(settings.model);
     const isCommunityModel = currentModel && currentModel.community === true;
+    const isUnityModel = settings.model === 'unity';
 
     if (systemPrompt) {
+        // Use the provided system prompt (this should already be processed correctly)
         url += url.includes('?') ? '&' : '?';
         url += `system=${encodeURIComponent(systemPrompt)}`;
     } else if (settings.systemPrompt && !isCommunityModel) {
+        // For non-community models, use user's system prompt
         url += url.includes('?') ? '&' : '?';
         url += `system=${encodeURIComponent(settings.systemPrompt)}`;
     }
+    // For community models (excluding Unity), system prompts are ignored
 
     // Add reasoning effort if specified and model supports it
     const supportsReasoning = currentModel && currentModel.reasoning === true;
