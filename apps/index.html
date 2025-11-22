@@ -24,21 +24,74 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../styles.css">
 
+    <!-- AOS Animation Library CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        /* Prevent FOUC and ensure proper theme loading */
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* Ensure background is visible immediately */
+        .background-overlay,
+        .red-streaks {
+            will-change: auto;
+        }
+
+        /* Skip to main content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #dc143c;
+            color: #fff;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 10000;
+            font-weight: bold;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+
     <style>
         /* App-specific styles */
         body {
             padding-top: 80px;
             background: var(--primary-black);
+            background: #0a0a0a; /* Fallback */
+            color: var(--light-grey);
+            color: #cccccc; /* Fallback */
             min-height: 100vh;
         }
 
         .page-header {
             padding: 60px 0 40px;
             text-align: center;
+            background: transparent;
+        }
+
+        .page-header h1 {
+            color: var(--white);
+            color: #ffffff; /* Fallback */
+        }
+
+        .page-header p {
+            color: var(--light-grey);
+            color: #cccccc; /* Fallback */
         }
 
         .apps-container {
             padding: 40px 0 80px;
+            background: var(--secondary-black);
+            background: #1a1a1a; /* Fallback */
         }
 
         .app-card {
@@ -79,6 +132,7 @@
         .app-icon {
             font-size: 3.5rem;
             color: var(--crimson-red);
+            color: #dc143c; /* Fallback */
             margin-bottom: 20px;
             text-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
         }
@@ -86,12 +140,14 @@
         .app-card h3 {
             font-family: 'Trajan Pro', serif;
             color: var(--white);
+            color: #ffffff; /* Fallback */
             margin-bottom: 15px;
             font-size: 1.8rem;
         }
 
         .app-card p {
             color: var(--light-grey);
+            color: #cccccc; /* Fallback */
             line-height: 1.8;
             margin-bottom: 20px;
             flex-grow: 1;
@@ -101,7 +157,9 @@
             display: inline-block;
             padding: 12px 30px;
             background: var(--gradient-red);
+            background: linear-gradient(135deg, #8b0000 0%, #dc143c 50%, #ff0033 100%); /* Fallback */
             color: var(--white);
+            color: #ffffff; /* Fallback */
             text-decoration: none;
             border-radius: 8px;
             font-family: 'Trajan Pro', serif;
@@ -116,6 +174,7 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(220, 20, 60, 0.5);
             color: var(--white);
+            color: #ffffff; /* Fallback */
         }
 
         .badge-new {
@@ -151,6 +210,9 @@
     </style>
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Animated Background -->
     <div class="background-overlay"></div>
     <div class="red-streaks"></div>
@@ -356,6 +418,13 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+    </script>
+
+    <!-- Remove FOUC class when page loads -->
+    <script>
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
         });
     </script>
 </body>
