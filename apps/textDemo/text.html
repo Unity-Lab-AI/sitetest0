@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Text Chat - Unity AI Lab</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared-theme.css">
   <style>
     * {
       margin: 0;
@@ -19,25 +20,7 @@
       overflow-x: hidden;
     }
     .home-link {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 9999;
-      background: #000;
-      padding: 8px 15px;
-      border-radius: 12px;
-      border: 1px solid #333;
-    }
-    .home-link a {
-      color: #ff3e3e;
-      text-decoration: none;
-      font-family: 'Orbitron', sans-serif;
-      font-weight: bold;
-      font-size: 16px;
-      transition: color 0.3s ease;
-    }
-    .home-link a:hover {
-      color: #fff;
+      display: none !important; /* Hidden - using Unity nav instead */
     }
     #main-container {
       max-width: 1400px;
@@ -730,5 +713,8 @@ For images and media, I will provide properly formatted HTML elements instead of
     });
   </script>
   <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9289c270bae27bd6',t:'MTc0MzM2MDI3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+  <!-- Unity AI Lab Navigation -->
+  <script src="../shared-nav.js"></script>
 </body>
 </html>
