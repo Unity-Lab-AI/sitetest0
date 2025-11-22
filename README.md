@@ -22,7 +22,9 @@ The website features:
 **Live Site Structure:**
 - `index.html` - Main landing page
 - `about/` - About page with project information
-- `header.html` / `footer.html` - Reusable page templates
+- `ai/` - AI chat landing page
+- `ai/demo/` - Interactive AI demo (~90% complete, ~8,000 lines of code)
+- `apps/` - Mini applications gallery (~70% complete)
 - `styles.css` - Custom styling with dark gothic theme
 - `script.js` - Interactive functionality and AI integrations
 
@@ -103,34 +105,59 @@ npx serve .
 
 ```
 sitetest0/
-├── Docs/                           # API documentation
-│   ├── README.md
-│   └── Pollinations_API_Documentation.md
-├── PolliLibJS/                     # JavaScript library
-│   ├── README.md
+├── Docs/                           # Documentation hub
+│   ├── TODO/                       # Project planning and TODO lists
+│   │   ├── TODO.md                 # Main project roadmap ⭐ START HERE
+│   │   ├── website-TODO.md         # Website tasks (~90% complete)
+│   │   ├── demo-page-TODO.md       # Demo page tasks (~90% complete)
+│   │   ├── main-app-TODO.md        # Main app (external, reference only)
+│   │   ├── infrastructure-TODO.md  # Infrastructure (not applicable)
+│   │   └── TODO_EXTRAS.md          # Additional tasks
+│   ├── Pollinations_API_Documentation.md  # Complete API reference
+│   ├── API_COVERAGE.md             # Implementation status
+│   ├── TEST_GUIDE.md               # Testing procedures
+│   ├── TEST_RESULTS.md             # Test results
+│   ├── PERFORMANCE_AUDIT.md        # Performance metrics
+│   └── SEO_IMPLEMENTATION.md       # SEO details
+│
+├── PolliLibJS/                     # JavaScript library (~3,700 lines)
+│   ├── README.md                   # Library documentation
+│   ├── TODO.md                     # ✅ 100% complete
 │   ├── pollylib.js                 # Core library
-│   ├── text-to-image.js
-│   ├── text-to-text.js
-│   └── ... (other modules)
-├── PolliLibPy/                     # Python library
-│   ├── README.md
+│   └── ... (14 modules total)
+│
+├── PolliLibPy/                     # Python library (~5,700 lines)
+│   ├── README.md                   # Library documentation
+│   ├── TODO.md                     # ✅ 100% complete
 │   ├── pollylib.py                 # Core library
-│   ├── text_to_image.py
-│   ├── text_to_text.py
-│   └── ... (other modules)
+│   └── ... (13 modules total)
+│
+├── ai/                             # AI Chat Section
+│   ├── index.html                  # AI landing page (~95% complete)
+│   └── demo/                       # Interactive demo (~90% complete)
+│       ├── index.html              # Demo page
+│       ├── demo.css                # Demo styles (59KB)
+│       ├── demo.js                 # Demo functionality (149KB)
+│       ├── age-verification.js     # Age verification system
+│       ├── unity-persona.js        # Unity persona integration
+│       └── ... (8,000+ lines total)
+│
+├── apps/                           # Mini apps gallery (~70% complete)
+│   └── ... (various utilities and mini apps)
+│
+├── tests/                          # Playwright test suite
+│   ├── navigation.spec.js          # Navigation tests (10 tests)
+│   ├── browser-compatibility.spec.js  # Compatibility tests
+│   └── README.md                   # Test documentation
+│
 ├── about/                          # About page
-│   └── index.html
+├── services/                       # Services page
+├── projects/                       # Projects page
+├── contact/                        # Contact page
 ├── index.html                      # Main landing page
-├── header.html                     # Reusable header template
-├── footer.html                     # Reusable footer template
-├── styles.css                      # Site styling
-├── script.js                       # Site functionality
-├── template-loader.js              # Template loading utility
-├── Docs/                           # Documentation and project tracking
-│   ├── TODO/                       # TODO files and roadmaps
-│   │   └── TODO.md                 # Main project roadmap
-│   ├── API_COVERAGE.md             # API implementation status
-│   └── ... (other documentation)
+├── styles.css                      # Main stylesheet
+├── script.js                       # Main JavaScript
+├── CLAUDE.md                       # ⭐ AI assistant guide (v1.3.0)
 └── README.md                       # This file
 ```
 
@@ -156,11 +183,18 @@ Both libraries are feature-complete and provide:
 
 ### Website Features
 
-- **Interactive Demos**: Live demonstrations of AI capabilities
+- **Interactive AI Demo**: Full-featured demo at `/ai/demo` (~90% complete)
+  - Text-to-text chat with multiple AI models
+  - Text-to-image generation (6 image models)
+  - Text-to-speech with 6 voices
+  - Unity persona with custom system prompts
+  - Age verification system
+  - ~8,000 lines of implementation code
+- **Apps Gallery**: Mini applications and utilities at `/apps` (~70% complete)
 - **Dark Gothic UI**: Immersive dark-themed interface
 - **Responsive Design**: Works on desktop and mobile devices
-- **Template System**: Modular header/footer templates
 - **Cache Busting**: Automated version control for assets
+- **Cross-browser Support**: Tested on Chromium, Firefox, and WebKit
 
 ## Authentication
 
@@ -185,12 +219,19 @@ Changes tested here are promoted to the main Unity AI Lab website after validati
 
 ## Documentation
 
+### For Developers & AI Assistants
+- **⭐ AI Assistant Guide**: [CLAUDE.md](./CLAUDE.md) - Complete development guide (v1.3.0)
+- **⭐ Project Roadmap**: [Docs/TODO/TODO.md](./Docs/TODO/TODO.md) - Master TODO and project status
+
+### API & Libraries
 - **API Documentation**: [Docs/Pollinations_API_Documentation.md](./Docs/Pollinations_API_Documentation.md)
 - **JavaScript Library**: [PolliLibJS/README.md](./PolliLibJS/README.md)
 - **Python Library**: [PolliLibPy/README.md](./PolliLibPy/README.md)
-- **Project Roadmap**: [Docs/TODO/TODO.md](./Docs/TODO/TODO.md)
 - **API Coverage**: [Docs/API_COVERAGE.md](./Docs/API_COVERAGE.md)
+
+### Testing & Performance
 - **Test Guide**: [Docs/TEST_GUIDE.md](./Docs/TEST_GUIDE.md)
+- **Test Results**: [Docs/TEST_RESULTS.md](./Docs/TEST_RESULTS.md)
 - **Performance Audit**: [Docs/PERFORMANCE_AUDIT.md](./Docs/PERFORMANCE_AUDIT.md)
 - **SEO Implementation**: [Docs/SEO_IMPLEMENTATION.md](./Docs/SEO_IMPLEMENTATION.md)
 
