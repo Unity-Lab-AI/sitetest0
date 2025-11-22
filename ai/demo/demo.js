@@ -1060,17 +1060,35 @@ const DemoApp = {
         }
     },
 
+    // Helper function to update all volume sliders (desktop + mobile modals)
+    updateAllVolumeSliders(value) {
+        // Update all volume sliders
+        const volumeSliders = document.querySelectorAll('#voiceVolume');
+        volumeSliders.forEach(slider => {
+            slider.value = value;
+        });
+
+        // Update all volume value displays
+        const volumeValues = document.querySelectorAll('#volumeValue');
+        volumeValues.forEach(display => {
+            display.textContent = value + '%';
+        });
+
+        // Update audio volume if playing
+        if (this.currentAudio) {
+            this.currentAudio.volume = value / 100;
+        }
+    },
+
     // Setup controls synchronization with settings
     setupControlsSync() {
         // Volume control
         const volumeSlider = document.getElementById('voiceVolume');
         const volumeValue = document.getElementById('volumeValue');
         volumeSlider.addEventListener('input', (e) => {
-            this.settings.voiceVolume = parseInt(e.target.value);
-            volumeValue.textContent = e.target.value + '%';
-            if (this.currentAudio) {
-                this.currentAudio.volume = e.target.value / 100;
-            }
+            const value = parseInt(e.target.value);
+            this.settings.voiceVolume = value;
+            this.updateAllVolumeSliders(value);
             this.saveSettings();
         });
 
@@ -2329,11 +2347,8 @@ const DemoApp = {
             }
         });
 
-        // Update volume display
-        const volumeValue = document.getElementById('volumeValue');
-        if (volumeValue) {
-            volumeValue.textContent = this.settings.voiceVolume + '%';
-        }
+        // Update all volume sliders and displays (desktop + mobile modals)
+        this.updateAllVolumeSliders(this.settings.voiceVolume);
 
         // Update temperature display
         const textTempValue = document.getElementById('textTempValue');
@@ -2424,6 +2439,9 @@ const DemoApp = {
             // Attach event listeners to cloned controls
             this.attachControlListeners(rightModalContent);
         }
+
+        // Sync volume sliders after cloning
+        this.updateAllVolumeSliders(this.settings.voiceVolume);
     },
 
     // Attach event listeners to controls within a container
@@ -2569,11 +2587,9 @@ const DemoApp = {
         const volumeValue = container.querySelector('#volumeValue');
         if (volumeSlider && volumeValue) {
             volumeSlider.addEventListener('input', (e) => {
-                this.settings.voiceVolume = parseInt(e.target.value);
-                volumeValue.textContent = e.target.value + '%';
-                if (this.currentAudio) {
-                    this.currentAudio.volume = this.settings.voiceVolume / 100;
-                }
+                const value = parseInt(e.target.value);
+                this.settings.voiceVolume = value;
+                this.updateAllVolumeSliders(value);
                 this.saveSettings();
             });
         }
