@@ -975,14 +975,22 @@ const DemoApp = {
         // Message input - Enter to send, Shift+Enter for new line
         const messageInput = document.getElementById('messageInput');
         messageInput.addEventListener('keydown', (e) => {
+            // Handle autocomplete navigation
+            if (this.handleAutocompleteNavigation(e)) {
+                return; // Autocomplete handled the event
+            }
+
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 this.sendMessage();
             }
         });
 
-        // Auto-resize textarea
-        messageInput.addEventListener('input', () => this.autoResizeTextarea(messageInput));
+        // Auto-resize textarea and handle slash commands
+        messageInput.addEventListener('input', () => {
+            this.autoResizeTextarea(messageInput);
+            this.handleSlashCommandInput();
+        });
 
         // Input wrapper click - focus on textarea
         const inputWrapper = document.querySelector('.input-wrapper');
@@ -3022,6 +3030,428 @@ const DemoApp = {
         }, 2100); // Animation is 2s + small buffer
 
         console.log('🔥 Lighter effect triggered');
+    },
+
+    // ===================================
+    // Slash Command System
+    // ===================================
+
+    // Define all available slash commands
+    slashCommands: [
+        {
+            command: '/image',
+            title: 'Generate Image',
+            description: 'Generate an image with AI',
+            requiresParam: true,
+            paramPlaceholder: '<prompt>',
+            handler: function(param) {
+                if (!param) {
+                    this.addMessage('ai', 'Please provide a prompt for the image. Example: /image a beautiful sunset');
+                    return;
+                }
+                // Add user message showing the command
+                this.addMessage('user', `/image ${param}`);
+                // Add to history
+                this.chatHistory.push({
+                    role: 'user',
+                    content: `Generate an image: ${param}`
+                });
+                // Trigger image generation
+                this.generateImageFromCommand(param);
+            }
+        },
+        {
+            command: '/speak',
+            title: 'Speak Text',
+            description: 'Make Unity speak specific text',
+            requiresParam: true,
+            paramPlaceholder: '<text>',
+            handler: function(param) {
+                if (!param) {
+                    this.addMessage('ai', 'Please provide text to speak. Example: /speak Hello world');
+                    return;
+                }
+                // Add user message
+                this.addMessage('user', `/speak ${param}`);
+                // Prepend instruction and speak
+                const textToSpeak = `Speak only the following: ${param}`;
+                if (this.settings.voicePlayback) {
+                    this.playVoice(param);
+                }
+                this.addMessage('ai', param);
+            }
+        },
+        {
+            command: '/clear',
+            title: 'Clear Chat',
+            description: 'Clear all chat history',
+            handler: function() {
+                this.addMessage('user', '/clear');
+                this.clearSession();
+            }
+        },
+        {
+            command: '/delete-data',
+            title: 'Delete All Data',
+            description: 'Delete all stored data and settings',
+            handler: function() {
+                this.addMessage('user', '/delete-data');
+                this.deleteAllData();
+            }
+        },
+        {
+            command: '/model',
+            title: 'Select Model',
+            description: 'Change the AI model',
+            requiresParam: true,
+            paramPlaceholder: '<model>',
+            subOptions: ['unity', 'openai', 'mistral', 'claude'],
+            handler: function(param) {
+                const validModels = ['unity', 'openai', 'mistral', 'claude'];
+                if (!param || !validModels.includes(param.toLowerCase())) {
+                    this.addMessage('ai', `Please specify a valid model: ${validModels.join(', ')}`);
+                    return;
+                }
+                this.addMessage('user', `/model ${param}`);
+                document.getElementById('modelSelect').value = param.toLowerCase();
+                this.settings.model = param.toLowerCase();
+                this.updateModelInfo(param.toLowerCase());
+                this.saveSettings();
+                this.addMessage('ai', `Model changed to ${param}`);
+            }
+        },
+        {
+            command: '/voice',
+            title: 'Select Voice',
+            description: 'Change the voice model',
+            requiresParam: true,
+            paramPlaceholder: '<voice>',
+            subOptions: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
+            handler: function(param) {
+                const validVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+                if (!param || !validVoices.includes(param.toLowerCase())) {
+                    this.addMessage('ai', `Please specify a valid voice: ${validVoices.join(', ')}`);
+                    return;
+                }
+                this.addMessage('user', `/voice ${param}`);
+                document.getElementById('voiceSelect').value = param.toLowerCase();
+                this.settings.voice = param.toLowerCase();
+                this.saveSettings();
+                this.addMessage('ai', `Voice changed to ${param}`);
+            }
+        },
+        {
+            command: '/playback',
+            title: 'Toggle Voice Playback',
+            description: 'Enable or disable voice playback',
+            requiresParam: true,
+            paramPlaceholder: 'on|off',
+            subOptions: ['on', 'off'],
+            handler: function(param) {
+                if (param === 'on') {
+                    this.addMessage('user', '/playback on');
+                    document.getElementById('voicePlayback').checked = true;
+                    this.settings.voicePlayback = true;
+                    this.saveSettings();
+                    this.addMessage('ai', 'Voice playback enabled');
+                } else if (param === 'off') {
+                    this.addMessage('user', '/playback off');
+                    document.getElementById('voicePlayback').checked = false;
+                    this.settings.voicePlayback = false;
+                    this.saveSettings();
+                    this.addMessage('ai', 'Voice playback disabled');
+                } else {
+                    this.addMessage('ai', 'Please specify "on" or "off". Example: /playback on');
+                }
+            }
+        },
+        {
+            command: '/smoke',
+            title: 'Smoke Effect',
+            description: 'Trigger smoke particle effect',
+            handler: function() {
+                this.addMessage('user', '/smoke');
+                this.triggerSmokeEffect();
+                this.addMessage('ai', '🌫️ Smoke effect activated');
+            }
+        },
+        {
+            command: '/light-up',
+            title: 'Lighter Effect',
+            description: 'Trigger lighter flame effect',
+            handler: function() {
+                this.addMessage('user', '/light-up');
+                this.triggerLighterEffect();
+                this.addMessage('ai', '🔥 Lighter effect activated');
+            }
+        },
+        {
+            command: '/shutup',
+            title: 'Stop Voice',
+            description: 'Stop all voice playback and disable',
+            handler: function() {
+                this.addMessage('user', '/shutup');
+                this.stopVoicePlayback();
+                document.getElementById('voicePlayback').checked = false;
+                this.settings.voicePlayback = false;
+                this.saveSettings();
+                this.addMessage('ai', '🔇 Voice playback stopped and disabled');
+            }
+        },
+        {
+            command: '/420',
+            title: '420 Effect',
+            description: 'Trigger green pot leaf animation',
+            handler: function() {
+                this.addMessage('user', '/420');
+                this.trigger420Effect();
+                this.addMessage('ai', '🍃 420 effect activated');
+            }
+        }
+    ],
+
+    // Current autocomplete state
+    autocompleteSelectedIndex: -1,
+    autocompleteVisible: false,
+
+    // Handle slash command input
+    handleSlashCommandInput() {
+        const input = document.getElementById('messageInput');
+        const text = input.value;
+        const autocompleteEl = document.getElementById('slashAutocomplete');
+
+        // Check if input starts with "/"
+        if (text.startsWith('/')) {
+            const parts = text.slice(1).split(' ');
+            const commandPart = parts[0].toLowerCase();
+            const paramPart = parts.slice(1).join(' ');
+
+            // Find matching commands
+            const matches = this.slashCommands.filter(cmd =>
+                cmd.command.slice(1).toLowerCase().startsWith(commandPart)
+            );
+
+            if (matches.length > 0) {
+                this.showAutocomplete(matches, commandPart, paramPart);
+                this.autocompleteVisible = true;
+            } else {
+                this.hideAutocomplete();
+            }
+        } else {
+            this.hideAutocomplete();
+        }
+    },
+
+    // Show autocomplete dropdown
+    showAutocomplete(commands, commandPart, paramPart) {
+        const autocompleteEl = document.getElementById('slashAutocomplete');
+        autocompleteEl.innerHTML = '';
+        this.autocompleteSelectedIndex = -1;
+
+        commands.forEach((cmd, index) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.dataset.index = index;
+            item.dataset.command = cmd.command;
+
+            const titleRow = document.createElement('div');
+            titleRow.style.display = 'flex';
+            titleRow.style.alignItems = 'center';
+
+            const commandSpan = document.createElement('span');
+            commandSpan.className = 'autocomplete-item-command';
+            commandSpan.textContent = cmd.command;
+            if (cmd.requiresParam) {
+                commandSpan.textContent += ' ' + cmd.paramPlaceholder;
+            }
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'autocomplete-item-title';
+            titleSpan.textContent = cmd.title;
+
+            titleRow.appendChild(commandSpan);
+            titleRow.appendChild(titleSpan);
+
+            const descSpan = document.createElement('div');
+            descSpan.className = 'autocomplete-item-description';
+            descSpan.textContent = cmd.description;
+
+            item.appendChild(titleRow);
+            item.appendChild(descSpan);
+
+            // Add sub-options if available and command is partially typed
+            if (cmd.subOptions && commandPart === cmd.command.slice(1).toLowerCase()) {
+                const subOptionsContainer = document.createElement('div');
+                subOptionsContainer.className = 'autocomplete-suboptions';
+
+                cmd.subOptions.forEach(option => {
+                    const subOption = document.createElement('div');
+                    subOption.className = 'autocomplete-suboption';
+                    subOption.textContent = option;
+                    subOption.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.applySlashCommand(cmd.command, option);
+                    });
+                    subOptionsContainer.appendChild(subOption);
+                });
+
+                item.appendChild(subOptionsContainer);
+            }
+
+            // Click handler for main item
+            item.addEventListener('click', () => {
+                if (cmd.requiresParam && !paramPart) {
+                    // Just fill in the command, let user type parameter
+                    const input = document.getElementById('messageInput');
+                    input.value = cmd.command + ' ';
+                    input.focus();
+                    this.hideAutocomplete();
+                } else {
+                    this.applySlashCommand(cmd.command, paramPart);
+                }
+            });
+
+            autocompleteEl.appendChild(item);
+        });
+
+        autocompleteEl.classList.add('active');
+    },
+
+    // Hide autocomplete
+    hideAutocomplete() {
+        const autocompleteEl = document.getElementById('slashAutocomplete');
+        autocompleteEl.classList.remove('active');
+        autocompleteEl.innerHTML = '';
+        this.autocompleteVisible = false;
+        this.autocompleteSelectedIndex = -1;
+    },
+
+    // Handle autocomplete navigation with arrow keys
+    handleAutocompleteNavigation(e) {
+        if (!this.autocompleteVisible) return false;
+
+        const autocompleteEl = document.getElementById('slashAutocomplete');
+        const items = autocompleteEl.querySelectorAll('.autocomplete-item');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.autocompleteSelectedIndex = Math.min(this.autocompleteSelectedIndex + 1, items.length - 1);
+            this.updateAutocompleteSelection(items);
+            return true;
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.autocompleteSelectedIndex = Math.max(this.autocompleteSelectedIndex - 1, -1);
+            this.updateAutocompleteSelection(items);
+            return true;
+        } else if (e.key === 'Enter' && this.autocompleteSelectedIndex >= 0) {
+            e.preventDefault();
+            items[this.autocompleteSelectedIndex].click();
+            return true;
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            this.hideAutocomplete();
+            return true;
+        }
+
+        return false;
+    },
+
+    // Update autocomplete selection visual
+    updateAutocompleteSelection(items) {
+        items.forEach((item, index) => {
+            if (index === this.autocompleteSelectedIndex) {
+                item.classList.add('selected');
+                item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    },
+
+    // Apply slash command
+    applySlashCommand(command, param) {
+        const cmd = this.slashCommands.find(c => c.command === command);
+        if (cmd && cmd.handler) {
+            // Clear input
+            const input = document.getElementById('messageInput');
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Hide autocomplete
+            this.hideAutocomplete();
+
+            // Execute command handler
+            cmd.handler.call(this, param);
+        }
+    },
+
+    // Generate image from command
+    async generateImageFromCommand(prompt) {
+        try {
+            const imageModel = this.settings.imageModel || 'flux';
+            const width = this.settings.imageWidth === 'auto' ? 1024 : parseInt(this.settings.imageWidth);
+            const height = this.settings.imageHeight === 'auto' ? 1024 : parseInt(this.settings.imageHeight);
+            const enhance = this.settings.imageEnhance;
+            const seed = this.settings.seed === -1 ? Math.floor(Math.random() * 1000000) : this.settings.seed;
+
+            // Show typing indicator
+            this.showTypingIndicator();
+
+            // Build image URL
+            let imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+            imageUrl += `?model=${imageModel}`;
+            imageUrl += `&width=${width}`;
+            imageUrl += `&height=${height}`;
+            imageUrl += `&seed=${seed}`;
+            imageUrl += `&enhance=${enhance}`;
+            imageUrl += `&nologo=true`;
+
+            // Remove typing indicator
+            this.removeTypingIndicator();
+
+            // Display the generated image
+            this.addMessage('ai', `Generated image for: "${prompt}"`, [imageUrl]);
+        } catch (error) {
+            this.removeTypingIndicator();
+            this.addMessage('ai', 'Failed to generate image: ' + error.message);
+            console.error('Image generation error:', error);
+        }
+    },
+
+    // Trigger 420 effect (pot leaves)
+    trigger420Effect() {
+        const container = document.body;
+
+        // Create 20 pot leaf emojis
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                const leaf = document.createElement('div');
+                leaf.textContent = '🍃';
+                leaf.style.position = 'fixed';
+                leaf.style.fontSize = '2rem';
+                leaf.style.left = Math.random() * 100 + 'vw';
+                leaf.style.bottom = '-50px';
+                leaf.style.zIndex = '9999';
+                leaf.style.pointerEvents = 'none';
+                leaf.style.transition = 'all 4s ease-out';
+
+                container.appendChild(leaf);
+
+                // Animate upward
+                setTimeout(() => {
+                    leaf.style.bottom = '100vh';
+                    leaf.style.opacity = '0';
+                    leaf.style.transform = `translateX(${(Math.random() - 0.5) * 200}px) rotate(${Math.random() * 360}deg)`;
+                }, 50);
+
+                // Remove after animation
+                setTimeout(() => {
+                    leaf.remove();
+                }, 4100);
+            }, i * 200); // Stagger creation
+        }
+
+        console.log('🍃 420 effect triggered');
     }
 };
 
