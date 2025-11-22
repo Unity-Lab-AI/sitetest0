@@ -6,20 +6,28 @@
 (function() {
     'use strict';
 
-    // Determine base path relative to current app location
-    function getBasePath() {
-        const path = window.location.pathname;
-        const depth = path.split('/').filter(p => p && p !== 'sitetest0').length - 1;
-        return depth > 0 ? '../'.repeat(depth) : '../';
+    // Determine base URL based on environment
+    function getBaseURL() {
+        const hostname = window.location.hostname;
+        // Production: www.unityailab.com or unityailab.com
+        if (hostname.includes('unityailab.com')) {
+            return '/sitetest0/';
+        }
+        // GitHub Pages: unity-lab-ai.github.io
+        if (hostname.includes('github.io')) {
+            return '/sitetest0/';
+        }
+        // Local development: localhost, 127.0.0.1, or file://
+        return '/';
     }
 
-    const basePath = getBasePath();
+    const BASE_URL = getBaseURL();
 
-    // Navigation HTML - using root-relative paths
+    // Navigation HTML - using absolute paths from site root
     const navHTML = `
         <nav class="navbar navbar-expand-lg navbar-dark" role="navigation" aria-label="Main navigation">
             <div class="container-fluid px-4">
-                <a class="navbar-brand gothic-logo" href="${basePath}">
+                <a class="navbar-brand gothic-logo" href="${BASE_URL}">
                     <i class="fas fa-brain" aria-hidden="true"></i>
                     <span>UNITYAILAB</span>
                 </a>
@@ -29,22 +37,22 @@
                 <div class="collapse navbar-collapse" id="unityNavbar">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}ai">AI</a>
+                            <a class="nav-link" href="${BASE_URL}ai">AI</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}about">About</a>
+                            <a class="nav-link" href="${BASE_URL}about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}apps">Apps</a>
+                            <a class="nav-link" href="${BASE_URL}apps">Apps</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}services">Services</a>
+                            <a class="nav-link" href="${BASE_URL}services">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}projects">Projects</a>
+                            <a class="nav-link" href="${BASE_URL}projects">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${basePath}contact">Contact</a>
+                            <a class="nav-link" href="${BASE_URL}contact">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -137,7 +145,7 @@
         if (!existingLink) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = '../shared-theme.css';
+            link.href = BASE_URL + 'apps/shared-theme.css';
             document.head.appendChild(link);
         }
 
@@ -145,7 +153,7 @@
         if (!document.querySelector('link[href*="bootstrap"]')) {
             const bootstrapLink = document.createElement('link');
             bootstrapLink.rel = 'stylesheet';
-            bootstrapLink.href = basePath + 'vendor/bootstrap/bootstrap.min.css';
+            bootstrapLink.href = BASE_URL + 'vendor/bootstrap/bootstrap.min.css';
             document.head.appendChild(bootstrapLink);
         }
 
@@ -154,7 +162,7 @@
             !document.querySelector('link[href*="font-awesome"]')) {
             const faLink = document.createElement('link');
             faLink.rel = 'stylesheet';
-            faLink.href = basePath + 'vendor/fontawesome/all.min.css';
+            faLink.href = BASE_URL + 'vendor/fontawesome/all.min.css';
             document.head.appendChild(faLink);
         }
     }
@@ -164,7 +172,7 @@
         // Load Bootstrap JS if not present
         if (typeof bootstrap === 'undefined') {
             const script = document.createElement('script');
-            script.src = basePath + 'vendor/bootstrap/bootstrap.bundle.min.js';
+            script.src = BASE_URL + 'vendor/bootstrap/bootstrap.bundle.min.js';
             document.body.appendChild(script);
         }
     }
