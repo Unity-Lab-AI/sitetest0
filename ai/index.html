@@ -542,22 +542,47 @@
             document.body.classList.add('loaded');
         });
 
-        // Load visitor count for demo page
+        // Load and auto-refresh visitor count for demo page
         document.addEventListener('DOMContentLoaded', function() {
             const countElement = document.getElementById('visitorCount');
-            if (countElement && typeof VisitorTracking !== 'undefined') {
-                VisitorTracking.getVisitorCount('demo').then(count => {
-                    if (count) {
-                        countElement.textContent = count;
-                        console.log('Visitor count loaded:', count);
-                    } else {
-                        countElement.textContent = '0';
-                    }
-                }).catch(error => {
-                    console.error('Failed to load visitor count:', error);
-                    countElement.textContent = '0';
-                });
+            if (!countElement || typeof VisitorTracking === 'undefined') {
+                return;
             }
+
+            let currentCount = null;
+
+            // Function to fetch and update visitor count
+            async function updateVisitorCount() {
+                try {
+                    const count = await VisitorTracking.getVisitorCount('demo');
+                    if (count) {
+                        // Only update if count has changed or is first load
+                        if (currentCount !== count) {
+                            countElement.textContent = count;
+                            currentCount = count;
+                            console.log('Visitor count updated:', count);
+                        }
+                    } else {
+                        if (currentCount === null) {
+                            countElement.textContent = '0';
+                            currentCount = '0';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load visitor count:', error);
+                    if (currentCount === null) {
+                        countElement.textContent = '0';
+                        currentCount = '0';
+                    }
+                }
+            }
+
+            // Initial load
+            updateVisitorCount();
+
+            // Auto-refresh every 5 minutes (300,000 ms)
+            setInterval(updateVisitorCount, 300000);
+            console.log('Visitor count auto-refresh enabled (every 5 minutes)');
         });
     </script>
 </body>
