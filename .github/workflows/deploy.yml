@@ -22,204 +22,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Job 1: Minification - Minify CSS and JS assets
-  minify:
-    name: Minify Assets
-    runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check_changes.outputs.has_changes }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: |
-          echo "📦 Installing minification dependencies..."
-          npm install --save-dev terser clean-css-cli
-
-      - name: Minify JavaScript
-        run: |
-          echo "🔨 Minifying JavaScript..."
-          npx terser script.js -c -m -o script.min.js
-          echo "✅ script.js → script.min.js"
-          ls -lh script.js script.min.js
-
-      - name: Minify CSS
-        run: |
-          echo "🎨 Minifying CSS..."
-          npx cleancss -o styles.min.css styles.css
-          echo "✅ styles.css → styles.min.css"
-          ls -lh styles.css styles.min.css
-
-      - name: Check for changes
-        id: check_changes
-        run: |
-          if git diff --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "ℹ️  No minification changes"
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "✨ Minified files updated"
-          fi
-
-      - name: Commit minified assets
-        if: steps.check_changes.outputs.has_changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-          git add script.min.js styles.min.css
-          git commit -m "chore: minify assets for deployment [skip ci]"
-
-          # Push with retry logic
-          max_retries=4
-          retry_count=0
-          retry_delay=2
-
-          while [ $retry_count -lt $max_retries ]; do
-            echo "📤 Pushing minified assets (attempt $((retry_count + 1))/$max_retries)..."
-            if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
-              echo "✅ Successfully pushed minified assets"
-              exit 0
-            else
-              retry_count=$((retry_count + 1))
-              if [ $retry_count -lt $max_retries ]; then
-                echo "⚠️  Push failed, retrying in ${retry_delay}s..."
-                sleep $retry_delay
-                retry_delay=$((retry_delay * 2))
-              fi
-            fi
-          done
-
-          echo "❌ Failed to push after $max_retries attempts"
-          exit 1
-
-  # Job 2: Cache Busting - Updates all asset versions
-  cache-busting:
-    name: Update Cache Busting
-    needs: minify
-    runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check_changes.outputs.has_changes }}
-      version: ${{ steps.get_version.outputs.version }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
-
-      - name: Pull latest minified assets
-        run: |
-          echo "🔄 Pulling latest minified assets..."
-          git pull origin ${{ github.ref_name }}
-          echo "✅ Working with minified assets"
-
-      - name: Get version hash
-        id: get_version
-        run: |
-          VERSION=$(git rev-parse --short HEAD)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Using version: $VERSION"
-
-      - name: Update all asset versions
-        env:
-          VERSION: ${{ steps.get_version.outputs.version }}
-        run: |
-          echo "🔄 Updating asset versions to: $VERSION"
-
-          # List of HTML files to update
-          HTML_FILES=(
-            "index.html"
-            "about/index.html"
-            "contact/index.html"
-            "projects/index.html"
-            "services/index.html"
-          )
-
-          # Update each HTML file to use minified assets with cache-busting
-          for file in "${HTML_FILES[@]}"; do
-            if [ -f "$file" ]; then
-              echo "  📝 Updating $file..."
-              # Update to use minified CSS
-              sed -i "s/styles\.css?v=[^\"']*/styles.min.css?v=$VERSION/g" "$file"
-              sed -i "s/styles\.min\.css?v=[^\"']*/styles.min.css?v=$VERSION/g" "$file"
-              # Update to use minified JS
-              sed -i "s/script\.js?v=[^\"']*/script.min.js?v=$VERSION/g" "$file"
-              sed -i "s/script\.min\.js?v=[^\"']*/script.min.js?v=$VERSION/g" "$file"
-              # Update other JS files (keep non-minified for now)
-              sed -i "s/template-loader\.js?v=[^\"']*/template-loader.js?v=$VERSION/g" "$file" || true
-              sed -i "s/about\.js?v=[^\"']*/about.js?v=$VERSION/g" "$file" || true
-              sed -i "s/contact\.js?v=[^\"']*/contact.js?v=$VERSION/g" "$file" || true
-              sed -i "s/projects\.js?v=[^\"']*/projects.js?v=$VERSION/g" "$file" || true
-              sed -i "s/services\.js?v=[^\"']*/services.js?v=$VERSION/g" "$file" || true
-            else
-              echo "  ⚠️  Skipping $file (not found)"
-            fi
-          done
-
-          echo "✅ Asset versions updated successfully in all HTML files"
-
-      - name: Check for changes
-        id: check_changes
-        run: |
-          if git diff --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "ℹ️  No changes to commit"
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "✨ Changes detected"
-          fi
-
-      - name: Commit and push changes
-        if: steps.check_changes.outputs.has_changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-          git add index.html about/index.html contact/index.html projects/index.html services/index.html || true
-          git commit -m "chore: update asset cache-busting versions to ${{ steps.get_version.outputs.version }} [skip ci]"
-
-          # Push with retry logic for network resilience
-          max_retries=4
-          retry_count=0
-          retry_delay=2
-
-          while [ $retry_count -lt $max_retries ]; do
-            echo "📤 Attempting to push (attempt $((retry_count + 1))/$max_retries)..."
-            if git push origin HEAD:${GITHUB_REF#refs/heads/}; then
-              echo "✅ Successfully pushed cache-busting updates"
-              exit 0
-            else
-              retry_count=$((retry_count + 1))
-              if [ $retry_count -lt $max_retries ]; then
-                echo "⚠️  Push failed, retrying in ${retry_delay}s..."
-                sleep $retry_delay
-                retry_delay=$((retry_delay * 2))
-              fi
-            fi
-          done
-
-          echo "❌ Failed to push after $max_retries attempts"
-          exit 1
-
-  # Job 3: Build - Validate and prepare for deployment
+  # Job 1: Build with Vite
   build:
-    name: Build and Validate
-    needs: cache-busting
+    name: Build with Vite
+    needs: []
     runs-on: ubuntu-latest
     outputs:
       build_status: ${{ steps.build_check.outputs.status }}
@@ -231,63 +37,68 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      - name: Pull latest cache-busting changes
-        run: |
-          echo "🔄 Pulling latest changes including cache-busting updates..."
-          git pull origin ${{ github.ref_name }}
-          echo "✅ Now working with cache-busted assets"
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Validate HTML structure
+      - name: Install dependencies
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci
+
+      - name: Build with Vite
         id: build_check
         run: |
-          echo "🔍 Validating HTML files..."
+          echo "🏗️  Building with Vite..."
+          npm run build
 
-          # Check if required HTML files exist
-          if [ ! -f "index.html" ]; then
-            echo "❌ index.html not found!"
+          # Check if build succeeded
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed - dist directory not created!"
             echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
           fi
 
-          if [ ! -f "about/index.html" ]; then
-            echo "❌ about/index.html not found!"
+          # Verify critical files exist
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed - index.html not found in dist!"
             echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
           fi
 
-          # Validate that minified assets with cache-busting versions are present
-          if ! grep -q "styles.min.css?v=" index.html; then
-            echo "❌ Minified CSS with cache-busting version missing in index.html"
-            echo "status=failed" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-          if ! grep -q "script.min.js?v=" index.html; then
-            echo "❌ Minified JS with cache-busting version missing in index.html"
-            echo "status=failed" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-          # Check for broken internal links (basic check)
-          echo "🔗 Checking for minified asset files..."
-          if [ ! -f "styles.min.css" ] || [ ! -f "script.min.js" ]; then
-            echo "❌ Required minified assets missing!"
-            echo "status=failed" >> $GITHUB_OUTPUT
-            exit 1
-          fi
-
-          echo "✅ Build validation passed"
+          echo "✅ Vite build completed successfully"
+          echo "📦 Build output:"
+          ls -lh dist/
+          echo ""
+          echo "📦 Assets:"
+          ls -lh dist/assets/ | head -20
           echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Copy additional files to dist
+        run: |
+          echo "📋 Copying additional files..."
+          # Copy files that Vite doesn't process but are needed
+          cp -r vendor dist/ 2>/dev/null || echo "No vendor directory to copy"
+          cp -r fonts dist/ 2>/dev/null || echo "No fonts directory to copy"
+          cp -r PolliLibJS dist/ 2>/dev/null || echo "No PolliLibJS directory to copy"
+          cp robots.txt dist/ 2>/dev/null || echo "No robots.txt to copy"
+          cp sitemap.xml dist/ 2>/dev/null || echo "No sitemap.xml to copy"
+          cp BingSiteAuth.xml dist/ 2>/dev/null || echo "No BingSiteAuth.xml to copy"
+          cp visitor-tracking.js dist/ 2>/dev/null || echo "No visitor-tracking.js to copy"
+
+          # Copy page-specific JS files
+          cp about/about.js dist/about/ 2>/dev/null || echo "No about.js to copy"
+          cp ai/demo/age-verification.js dist/ai/demo/ 2>/dev/null || echo "No age-verification.js to copy"
+          cp ai/demo/js/main.js dist/ai/demo/js/ 2>/dev/null || mkdir -p dist/ai/demo/js && cp ai/demo/js/main.js dist/ai/demo/js/ || echo "No main.js to copy"
+
+          echo "✅ Additional files copied"
 
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: 'dist'
 
   # Job 4a: Report Build Status
   report-status:
@@ -302,7 +113,7 @@ jobs:
         run: |
           echo "✅ BUILD SUCCESSFUL"
           echo "================================"
-          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "Built with: Vite"
           echo "Status: SUCCESS"
           echo "Ready for deployment"
           echo "================================"
@@ -312,7 +123,7 @@ jobs:
         run: |
           echo "❌ BUILD FAILED"
           echo "================================"
-          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "Built with: Vite"
           echo "Status: FAILED"
           echo "Check build logs for details"
           echo "================================"
@@ -324,7 +135,6 @@ jobs:
         with:
           script: |
             const status = '${{ needs.build.outputs.build_status }}';
-            const version = '${{ needs.cache-busting.outputs.version }}';
             const icon = status === 'success' ? '✅' : '❌';
             const message = status === 'success' ? 'Build successful!' : 'Build failed!';
 
@@ -332,7 +142,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `${icon} **${message}**\n\n**Version:** \`${version}\`\n**Status:** ${status.toUpperCase()}`
+              body: `${icon} **${message}**\n\n**Built with:** Vite\n**Status:** ${status.toUpperCase()}`
             });
 
   # Job 4b: Deploy to GitHub Pages
@@ -356,11 +166,11 @@ jobs:
           echo "🚀 DEPLOYMENT SUCCESSFUL"
           echo "================================"
           echo "URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "Version: ${{ needs.cache-busting.outputs.version }}"
+          echo "Built with: Vite (optimized)"
           echo "================================"
           echo ""
           echo "✨ Your site is now live with the latest updates!"
-          echo "🔄 Dynamic content (like GitHub stats) will update automatically"
+          echo "📦 Bundled, minified, and optimized for production"
 
   # Job 4c: Run Playwright Tests
   playwright-tests:
@@ -375,12 +185,6 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
-
-      - name: Pull latest cache-busting changes
-        run: |
-          echo "🔄 Pulling latest changes including cache-busting updates..."
-          git pull origin ${{ github.ref_name }}
-          echo "✅ Now working with cache-busted assets"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

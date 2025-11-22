@@ -14,7 +14,7 @@ module.exports = defineConfig({
   timeout: 30000,
 
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     actionTimeout: 10000,
     navigationTimeout: 15000,
@@ -61,8 +61,9 @@ module.exports = defineConfig({
   ],
 
   webServer: {
-    command: 'python3 -m http.server 8080',
-    url: 'http://localhost:8080',
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    timeout: 120000,
   },
 });
