@@ -1947,33 +1947,39 @@ body {
 }
 
 /* ===================================
-   Mobile Modal Active State Adjustments
-   Fixes overlay of chat input when modal is open
+   Mobile Browser UI Adjustments
+   Fixes input accessibility with browser navigation bars
    =================================== */
 
-/* When mobile modal is active, adjust chat section to prevent overlap */
-body.modal-active .chat-section {
-    height: calc(100vh - 0px); /* Ensure full height calculation */
-}
-
-body.modal-active .chat-messages {
-    padding-bottom: 120px; /* Extra padding when modal is open */
-}
-
-body.modal-active .message-input-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 150; /* Higher than normal but lower than modal */
-    max-width: 100%;
-}
-
-/* Prevent modal from covering input on small screens */
+/* Account for mobile browser UI (address bars, home buttons, etc.) */
 @media (max-width: 992px) {
-    body.modal-active .message-input-container {
-        z-index: 150;
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+    /* Use safe-area-inset for devices with notches/home indicators */
+    .message-input-container {
+        padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+        padding-left: calc(15px + env(safe-area-inset-left, 0px));
+        padding-right: calc(15px + env(safe-area-inset-right, 0px));
+    }
+
+    /* Ensure chat messages don't get hidden behind input area */
+    .chat-messages {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Adjust chat section height to account for browser chrome */
+    .chat-section {
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height - excludes browser UI */
+    }
+}
+
+/* Extra spacing for very small screens */
+@media (max-width: 576px) {
+    .message-input-container {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .chat-messages {
+        padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
     }
 }
 

@@ -2361,9 +2361,8 @@ const DemoApp = {
                 modal.classList.add('active');
             }, 10);
 
-            // Prevent body scroll and add modal-active class
+            // Prevent body scroll
             document.body.style.overflow = 'hidden';
-            document.body.classList.add('modal-active');
         }
     },
 
@@ -2383,7 +2382,6 @@ const DemoApp = {
             if (!leftModal.classList.contains('active') && !rightModal.classList.contains('active')) {
                 backdrop.classList.remove('active');
                 document.body.style.overflow = '';
-                document.body.classList.remove('modal-active');
             }
         }
     },
