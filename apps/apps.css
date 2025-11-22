@@ -55,7 +55,7 @@ body {
 
 /* App-specific styles */
 .page-header {
-    padding: 60px 0 40px;
+    padding: 140px 0 60px;
     text-align: center;
     background: transparent;
 }
@@ -174,7 +174,7 @@ body {
 
 @media (max-width: 768px) {
     .page-header {
-        padding: 40px 0 20px;
+        padding: 120px 0 40px;
     }
 
     .app-card {
