@@ -23,6 +23,19 @@ const ASSETS_TO_COPY = [
   { src: 'about/about.js', dest: 'about/about.js', type: 'file' },
   { src: 'ai/demo/age-verification.js', dest: 'ai/demo/age-verification.js', type: 'file' },
   { src: 'ai/demo/js/main.js', dest: 'ai/demo/js/main.js', type: 'file' },
+  // Apps subdirectories (apps/index.html is handled by Vite)
+  { src: 'apps/helperInterfaceDemo', dest: 'apps/helperInterfaceDemo', type: 'dir' },
+  { src: 'apps/oldSiteProject', dest: 'apps/oldSiteProject', type: 'dir' },
+  { src: 'apps/personaDemo', dest: 'apps/personaDemo', type: 'dir' },
+  { src: 'apps/screensaverDemo', dest: 'apps/screensaverDemo', type: 'dir' },
+  { src: 'apps/slideshowDemo', dest: 'apps/slideshowDemo', type: 'dir' },
+  { src: 'apps/talkingWithUnity', dest: 'apps/talkingWithUnity', type: 'dir' },
+  { src: 'apps/textDemo', dest: 'apps/textDemo', type: 'dir' },
+  { src: 'apps/unityDemo', dest: 'apps/unityDemo', type: 'dir' },
+  { src: 'apps/shared-nav.html', dest: 'apps/shared-nav.html', type: 'file' },
+  { src: 'apps/shared-nav.js', dest: 'apps/shared-nav.js', type: 'file' },
+  { src: 'apps/shared-theme.css', dest: 'apps/shared-theme.css', type: 'file' },
+  { src: 'apps/update-apps.sh', dest: 'apps/update-apps.sh', type: 'file' },
 ];
 
 /**
